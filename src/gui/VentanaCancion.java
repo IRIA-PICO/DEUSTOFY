@@ -13,6 +13,10 @@ import javax.swing.JPanel;
 import domain.Cancion;
 
 public class VentanaCancion extends JFrame {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel pSur, pCentral;
 	private JButton btnpausa, btnatras, btnalante;
 	private JLabel lblTitulo, lblImagen;
