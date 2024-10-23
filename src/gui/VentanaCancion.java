@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 
 import javax.swing.ImageIcon;
@@ -17,22 +18,22 @@ public class VentanaCancion extends JFrame {
 	private JLabel lblTitulo, lblImagen;
 	
 	public VentanaCancion(Cancion c) {
-		setBounds(500, 200, 400, 600);		//TODO poner que se te ponga en el centro automaticamente
+		setSize(350, 500);
+		setLocationRelativeTo(null);
 		
-		pCentral = new JPanel(new GridLayout(1,2));
+		setTitle("DEUSTOFY - Canciones");
+		
+		pCentral = new JPanel(new GridLayout(2,1));
 		pSur= new JPanel();
-		
-		
-		lblImagen= new JLabel(new ImageIcon("resources/images/imgPrueba.png"));
-		lblTitulo= new JLabel(c.getTitulo());
-		
+			
+		lblImagen= new JLabel(new ImageIcon("resources/images/imgPrueba.jpg"));
+		lblTitulo= new JLabel(c.reproducir());
 		pCentral.add(lblImagen);
 		pCentral.add(lblTitulo);
 		
 		btnatras= new JButton("<<");
 		btnpausa= new JButton("Para");
-		btnalante= new JButton(">>");
-		
+		btnalante= new JButton(">>");		
 		pSur.add(btnatras);
 		pSur.add(btnpausa);
 		pSur.add(btnalante);
@@ -47,7 +48,7 @@ public class VentanaCancion extends JFrame {
 	}
 	
 	public static void main(String[] args) {
-		Cancion nuevo= new Cancion("a", 3.46, null, null);
+		Cancion nuevo= new Cancion("CancionPrueba", 3.46, null, null);
 		 new VentanaCancion(nuevo);
 	}
 }
