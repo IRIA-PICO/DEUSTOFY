@@ -2,24 +2,21 @@ package gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class VentanaAlbumArtista extends JFrame {
 
-    /**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public VentanaAlbumArtista() {
+    public VentanaAlbumArtista() {
         setTitle("DEUSTOFY");
         setSize(800, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+        // Barra de búsqueda
         JTextField busqueda = new JTextField("Buscar artistas, álbumes...");
         busqueda.setForeground(Color.GRAY);
         busqueda.setPreferredSize(new Dimension(800, 35));
@@ -36,61 +33,101 @@ public class VentanaAlbumArtista extends JFrame {
                 .getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
         Panelbusqueda.add(imagen_lupa, BorderLayout.WEST);
         Panelbusqueda.add(busqueda, BorderLayout.CENTER);
-        
-        JPanel albumGrid = new JPanel(new GridLayout(0, 3, 15, 15));
-        albumGrid.setBackground(new Color(18, 18, 18));
-        albumGrid.setBorder(new EmptyBorder(20, 20, 20, 20));
-        
-        JScrollPane scrollPane = new JScrollPane(albumGrid);
+
+        // Panel con cuadrícula para álbumes y artistas
+        JPanel albumArtistaGrid = new JPanel(new GridLayout(2, 3, 15, 15)); // Dos filas: una para álbumes y otra para artistas
+        albumArtistaGrid.setBackground(new Color(18, 18, 18));
+        albumArtistaGrid.setBorder(new EmptyBorder(20, 20, 20, 20));
+
+        JScrollPane scrollPane = new JScrollPane(albumArtistaGrid);
         scrollPane.setBorder(null);
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBackground(new Color(18, 18, 18));
 
-        for (int i = 0; i < 12; i++) {
+        // Añadir álbumes en la primera fila
+        for (int i = 0; i < 3; i++) {
             JPanel albumPanel = createAlbumPanel("Álbum " + (i + 1));
-            albumGrid.add(albumPanel);
+            albumArtistaGrid.add(albumPanel);
         }
-        
+
+        // Añadir artistas en la segunda fila
+        for (int i = 0; i < 3; i++) {
+            JPanel artistaPanel = createArtistaPanel("Artista " + (i + 1));
+            albumArtistaGrid.add(artistaPanel);
+        }
+
         add(Panelbusqueda, BorderLayout.NORTH);
         add(scrollPane, BorderLayout.CENTER);
 
         setVisible(true);
     }
 
-	private JPanel createAlbumPanel(String albumName) {
-	    JPanel albumPanel = new JPanel(new BorderLayout());
-	    albumPanel.setBackground(new Color(24, 24, 24));
-	    albumPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+    private JPanel createAlbumPanel(String albumName) {
+        JPanel albumPanel = new JPanel(new BorderLayout());
+        albumPanel.setBackground(new Color(24, 24, 24));
+        albumPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-	    // Imagen de álbum
-	    JLabel albumCover = new JLabel();
-	    albumCover.setIcon(new ImageIcon(new ImageIcon("https://via.placeholder.com/150")
-	            .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
-	    albumCover.setHorizontalAlignment(SwingConstants.CENTER);
+        // Imagen del álbum
+        JLabel albumCover = new JLabel();
+        albumCover.setIcon(new ImageIcon(new ImageIcon("https://via.placeholder.com/150")
+                .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+        albumCover.setHorizontalAlignment(SwingConstants.CENTER);
 
-	    albumCover.addMouseListener(new MouseAdapter() {
-	        @Override
-	        public void mouseEntered(MouseEvent e) {
-	            albumPanel.setBackground(new Color(34, 34, 34));  // Cambio de color al pasar el mouse
-	        }
+        albumCover.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                albumPanel.setBackground(new Color(34, 34, 34));  // Cambio de color al pasar el mouse
+            }
 
-	        @Override
-	        public void mouseExited(MouseEvent e) {
-	            albumPanel.setBackground(new Color(24, 24, 24));  // Volver al color original
-	        }
-	    });
-	    
-	    JLabel albumLabel = new JLabel(albumName, SwingConstants.CENTER);
+            @Override
+            public void mouseExited(MouseEvent e) {
+                albumPanel.setBackground(new Color(24, 24, 24));  // Volver al color original
+            }
+        });
+
+        JLabel albumLabel = new JLabel(albumName, SwingConstants.CENTER);
         albumLabel.setForeground(Color.WHITE);
         albumLabel.setBorder(new EmptyBorder(10, 0, 0, 0));
 
         albumPanel.add(albumCover, BorderLayout.CENTER);
         albumPanel.add(albumLabel, BorderLayout.SOUTH);
         return albumPanel;
-	}
+    }
+
+    private JPanel createArtistaPanel(String artistaName) {
+        JPanel artistaPanel = new JPanel(new BorderLayout());
+        artistaPanel.setBackground(new Color(24, 24, 24));
+        artistaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        // Imagen del artista
+        JLabel artistaCover = new JLabel();
+        artistaCover.setIcon(new ImageIcon(new ImageIcon("https://via.placeholder.com/150")
+                .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
+        artistaCover.setHorizontalAlignment(SwingConstants.CENTER);
+
+        artistaCover.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                artistaPanel.setBackground(new Color(34, 34, 34));  // Cambio de color al pasar el mouse
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                artistaPanel.setBackground(new Color(24, 24, 24));  // Volver al color original
+            }
+        });
+
+        JLabel artistaLabel = new JLabel(artistaName, SwingConstants.CENTER);
+        artistaLabel.setForeground(Color.WHITE);
+        artistaLabel.setBorder(new EmptyBorder(10, 0, 0, 0));
+
+        artistaPanel.add(artistaCover, BorderLayout.CENTER);
+        artistaPanel.add(artistaLabel, BorderLayout.SOUTH);
+        return artistaPanel;
+    }
+
     public static void main(String[] args) {
         // Ejecutar la aplicación
         SwingUtilities.invokeLater(() -> new VentanaAlbumArtista());
     }
 }
-
