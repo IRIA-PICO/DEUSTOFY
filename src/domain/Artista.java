@@ -1,5 +1,72 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Artista {
-	//propiedades artista
+	private Long id;
+	private String nombre;
+	private Genero genero;
+	private List<Album> albumes;
+	private List<Cancion> canciones;
+	
+	public Artista(Long id, String nombre, Genero genero) {
+		this.id = id;
+		this.nombre = nombre;
+		this.genero = genero;
+		this.albumes = new ArrayList<>();
+		this.canciones = new ArrayList<>();
+	}
+	
+	// Getters and setters
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
+	}
+	
+	public String getNombre() {
+		return nombre;
+	}
+	
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	
+	public Genero getGenero() {
+		return genero;
+	}
+	
+	public void setGenero(Genero genero) {
+		this.genero = genero;
+	}
+	
+	public List<Album> getAlbumes() {
+		return albumes;
+	}
+	
+	// Agregar album y sus canciones
+	public void agregarAlbum(Album album) {
+		if (!albumes.contains(album)) {
+			albumes.add(album);
+			for (Cancion cancion:album.getListacanciones()) {
+				if (!canciones.contains(cancion)) {
+					canciones.add(cancion);
+				}
+			}
+		}
+	}
+	
+	public List<Cancion> getCanciones() {
+		return canciones;
+	}
+	
+	// Agregar cancion suelta
+	public void agregarCancion(Cancion cancion) {
+		if (!canciones.contains(cancion)) {
+			canciones.add(cancion);
+		}
+	}
 }
