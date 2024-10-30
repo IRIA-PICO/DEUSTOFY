@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import main.Main;
+
 
 public class VentanaIdentificacion extends JFrame{
 	private static final long serialVersionUID = 1L;
@@ -62,5 +64,10 @@ public class VentanaIdentificacion extends JFrame{
 		
 		pNorte.add(lblTitulo);
 		
+		setVisible(true);
+		
+	}
+	public static void main(String[] args) {
+		VentanaIdentificacion v= new VentanaIdentificacion();
 	}
 }
