@@ -1,10 +1,8 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +18,7 @@ import domain.Album;
 import domain.Cancion;
 
 public class VentanaCancion extends JFrame {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 	private JPanel pSur, pCentral;
 	private JButton btnpausa, btnatras, btnalante;
@@ -73,7 +69,7 @@ public class VentanaCancion extends JFrame {
 				c = lcan.get(pos);
 				modificarDatos();
 			}else {
-				JOptionPane.showMessageDialog(null, "La lista de reproducciones a finalizado");
+				JOptionPane.showMessageDialog(null, "La lista de reproducciones ha finalizado");
 			}
 		});
 		btnatras.addActionListener((e) -> {		
@@ -82,7 +78,7 @@ public class VentanaCancion extends JFrame {
 				c = lcan.get(pos);
 				modificarDatos();
 			} else {
-				JOptionPane.showMessageDialog(null, "La lista de reproducciones a finalizado");
+				JOptionPane.showMessageDialog(null, "La lista de reproducciones ha finalizado");
 			}
 		});
 		
