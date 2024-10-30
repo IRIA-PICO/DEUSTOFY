@@ -12,12 +12,16 @@ public class VentanaAlbumArtista extends JFrame {
 
     public VentanaAlbumArtista() {
         setTitle("DEUSTOFY");
+        ImageIcon imagen = new ImageIcon("resources/images/logo.png");
+        setIconImage(imagen.getImage());
         setSize(800, 600);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
         // Barra de búsqueda
         JTextField busqueda = new JTextField("Buscar artistas, álbumes...");
+        busqueda.setFont(new Font("Gotham", Font.BOLD, 16));
         busqueda.setForeground(Color.GRAY);
         busqueda.setPreferredSize(new Dimension(800, 35));
         busqueda.setBackground(new Color(24, 24, 24));
@@ -30,11 +34,12 @@ public class VentanaAlbumArtista extends JFrame {
         Panelbusqueda.setBorder(new EmptyBorder(15, 20, 15, 20));
         Panelbusqueda.setBackground(new Color(40, 40, 40));
         JLabel imagen_lupa = new JLabel(new ImageIcon(new ImageIcon("resources/images/lupa.png")
-                .getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+                .getImage().getScaledInstance(26, 24, Image.SCALE_SMOOTH)));
+        imagen_lupa.setBorder(new EmptyBorder(0,10,0,10));
         Panelbusqueda.add(imagen_lupa, BorderLayout.WEST);
         Panelbusqueda.add(busqueda, BorderLayout.CENTER);
 
-        // Panel con cuadrícula para álbumes y artistas
+        // PANEL GRID ALBUM
         JPanel albumArtistaGrid = new JPanel(new GridLayout(2, 3, 15, 15)); // Dos filas: una para álbumes y otra para artistas
         albumArtistaGrid.setBackground(new Color(18, 18, 18));
         albumArtistaGrid.setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -44,13 +49,11 @@ public class VentanaAlbumArtista extends JFrame {
         scrollPane.getVerticalScrollBar().setUnitIncrement(16);
         scrollPane.setBackground(new Color(18, 18, 18));
 
-        // Añadir álbumes en la primera fila
         for (int i = 0; i < 3; i++) {
             JPanel albumPanel = createAlbumPanel("Álbum " + (i + 1));
             albumArtistaGrid.add(albumPanel);
         }
 
-        // Añadir artistas en la segunda fila
         for (int i = 0; i < 3; i++) {
             JPanel artistaPanel = createArtistaPanel("Artista " + (i + 1));
             albumArtistaGrid.add(artistaPanel);
@@ -67,21 +70,20 @@ public class VentanaAlbumArtista extends JFrame {
         albumPanel.setBackground(new Color(24, 24, 24));
         albumPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Imagen del álbum
         JLabel albumCover = new JLabel();
-        albumCover.setIcon(new ImageIcon(new ImageIcon("https://via.placeholder.com/150")
+        albumCover.setIcon(new ImageIcon(new ImageIcon("\resources\\images\\nadie_sabe.jpg\"")
                 .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
         albumCover.setHorizontalAlignment(SwingConstants.CENTER);
 
         albumCover.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                albumPanel.setBackground(new Color(34, 34, 34));  // Cambio de color al pasar el mouse
+                albumPanel.setBackground(new Color(34, 34, 34));  
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                albumPanel.setBackground(new Color(24, 24, 24));  // Volver al color original
+                albumPanel.setBackground(new Color(24, 24, 24));  
             }
         });
 
@@ -99,7 +101,6 @@ public class VentanaAlbumArtista extends JFrame {
         artistaPanel.setBackground(new Color(24, 24, 24));
         artistaPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        // Imagen del artista
         JLabel artistaCover = new JLabel();
         artistaCover.setIcon(new ImageIcon(new ImageIcon("https://via.placeholder.com/150")
                 .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
