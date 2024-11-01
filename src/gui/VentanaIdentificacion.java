@@ -69,5 +69,6 @@ public class VentanaIdentificacion extends JFrame{
 	}
 	public static void main(String[] args) {
 		VentanaIdentificacion v= new VentanaIdentificacion();
+		v.setVisible(true);
 	}
 }
