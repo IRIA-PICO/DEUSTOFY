@@ -63,6 +63,6 @@ public class Cancion {
 	 
 	//String de que se esta reproduciendo
 	public String reproducir() {
-		return this.titulo; //TODO falta añadir el nombre del artista
+		return this.titulo + "    "+ this.artista.getNombre(); 
 	}
 }
