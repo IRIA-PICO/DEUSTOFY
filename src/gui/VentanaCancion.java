@@ -123,8 +123,8 @@ public class VentanaCancion extends JFrame {
 		Artista art1= new Artista(1, "pepe", null);
 		Artista art2= new Artista(2, "maria", null);
 		
-		Album a1= new Album("a", 48.03, null, art1, null, "resources/images/imgPrueba.jpg");
-		Album a2= new Album("b", 9.03, null, art2, null, "resources/images/img2.jpg");
+		Album a1= new Album("a", 48.03, null, art1, "resources/images/imgPrueba.jpg");
+		Album a2= new Album("b", 9.03, null, art2, "resources/images/img2.jpg");
 		
 		Cancion nuevo= new Cancion("CancionPrueba", 3.06, a1, art1);
 		Cancion n1= new Cancion("CancionPrueba1", 2.43, a2, art2);

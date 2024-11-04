@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Album {
@@ -11,14 +12,13 @@ public class Album {
 	private String rutaFoto;
 	
 	
-	public Album(String titulo, double duracion, Genero genero, Artista artista, List<Cancion> listacanciones,
-			String rutaFoto) {
+	public Album(String titulo, double duracion, Genero genero, Artista artista,String rutaFoto) {
 		super();
 		this.titulo = titulo;
 		this.duracion = duracion;
 		this.genero = genero;
 		this.artista = artista;
-		this.listacanciones = listacanciones;
+		this.listacanciones = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
 	}
 
