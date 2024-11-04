@@ -2,20 +2,36 @@ package gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+
+import domain.Artista;
+import domain.Album;
 
 import java.awt.*;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VentanaAlbumArtista extends JFrame {
 
     private static final long serialVersionUID = 1L;
     
     private JPanel panel_artistas_albumes;
-
+    private List<Album> albumes;
+    private List<Artista> artistas;
+    private JTextField busqueda;
+    private JPanel albumGrid;
+    private JPanel artistaGrid;
+    
     public VentanaAlbumArtista() {
+    	
+    	cargarArtistas();
+    	cargarAlbum();
+    	
         setTitle("DEUSTOFY");
         ImageIcon imagen = new ImageIcon("resources/images/logo.png");
         setIconImage(imagen.getImage());
@@ -25,7 +41,7 @@ public class VentanaAlbumArtista extends JFrame {
         setLayout(new BorderLayout());
 
         // Barra de búsqueda
-        JTextField busqueda = new JTextField("Buscar artistas, álbumes...");
+        busqueda = new JTextField("Buscar artistas, álbumes...");
         busqueda.setFont(new Font("Gotham", Font.BOLD, 16));
         busqueda.setForeground(Color.GRAY);
         busqueda.setPreferredSize(new Dimension(800, 35));
@@ -49,6 +65,30 @@ public class VentanaAlbumArtista extends JFrame {
                 }
             }
         });
+        DocumentListener dl = new DocumentListener() {
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				if (!busqueda.getText().equals("Buscar artistas, álbumes...")) {
+        			buscarAlbumesArtistas();
+        		}
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				buscarAlbumesArtistas();
+				
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        };
+        
+        this.busqueda.getDocument().addDocumentListener(dl);
         
         JPanel Panelbusqueda = new JPanel(new BorderLayout());
         Panelbusqueda.setBorder(new EmptyBorder(15, 20, 15, 20));
@@ -65,12 +105,12 @@ public class VentanaAlbumArtista extends JFrame {
         panel_artistas_albumes.setBorder(new EmptyBorder(10, 20, 10, 20));
 
         // PANEL HORIZONTAL DE ÁLBUMES
-        JPanel albumGrid = new JPanel();
+        albumGrid = new JPanel();
         albumGrid.setLayout(new BoxLayout(albumGrid, BoxLayout.X_AXIS));
         albumGrid.setBackground(new Color(18, 18, 18));
         
-        for (int i = 0; i < 10; i++) {
-            albumGrid.add(createAlbumPanel("Álbum " + (i + 1)));
+        for (Album a:albumes) {
+            albumGrid.add(createAlbumPanel(a.getTitulo()));
         }
 
         JScrollPane albumScroll = new JScrollPane(albumGrid);
@@ -82,12 +122,12 @@ public class VentanaAlbumArtista extends JFrame {
         albumScroll.setBackground(new Color(18, 18, 18));
      
         // PANEL HORIZONTAL DE ARTISTAS
-        JPanel artistaGrid = new JPanel();
+        artistaGrid = new JPanel();
         artistaGrid.setLayout(new BoxLayout(artistaGrid, BoxLayout.X_AXIS));
         artistaGrid.setBackground(new Color(18, 18, 18));
 
-        for (int i = 0; i < 10; i++) {
-            artistaGrid.add(createArtistaPanel("Artista " + (i + 1)));
+        for (Artista a: artistas) {
+            artistaGrid.add(createArtistaPanel(a.getNombre()));
         }
 
         JScrollPane artistaScroll = new JScrollPane(artistaGrid);
@@ -177,7 +217,39 @@ public class VentanaAlbumArtista extends JFrame {
         artistaPanel.add(artistaLabel, BorderLayout.SOUTH);
         return artistaPanel;
     }
-
+    private void buscarAlbumesArtistas() {
+    	albumGrid = new JPanel();
+        albumGrid.setLayout(new BoxLayout(albumGrid, BoxLayout.X_AXIS));
+        albumGrid.setBackground(new Color(18, 18, 18));
+        
+		this.albumes.forEach(a -> {
+			if (a.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
+				albumGrid.add(createAlbumPanel(a.getTitulo()));
+			} else if (a.getArtista().getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
+				albumGrid.add(createAlbumPanel(a.getTitulo()));
+			}
+		});
+		
+		artistaGrid = new JPanel();
+        artistaGrid.setLayout(new BoxLayout(artistaGrid, BoxLayout.X_AXIS));
+        artistaGrid.setBackground(new Color(18, 18, 18));
+		
+		this.artistas.forEach(a -> {
+			if (a.getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
+				artistaGrid.add(createArtistaPanel(a.getNombre()));
+			}
+		});
+	}
+    
+    private void cargarArtistas() {
+    	artistas = new ArrayList<>();
+    	
+    	// cargar fichero y añadir los artistas
+    }
+    
+    private void cargarAlbum() {
+    	albumes = new ArrayList<>();
+    }
     public static void main(String[] args) {
         // Ejecutar la aplicación
         SwingUtilities.invokeLater(() -> new VentanaAlbumArtista());
