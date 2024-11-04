@@ -6,15 +6,13 @@ import java.util.List;
 public class Artista {
 	private int id;
 	private String nombre;
-	private Genero genero;
 	private List<Album> albumes;
 	private List<Cancion> canciones;
 	private String rutaFoto;
 
-	public Artista(int id, String nombre, Genero genero, String rutaFoto) {
+	public Artista(int id, String nombre, String rutaFoto) {
 		this.id = id;
 		this.nombre = nombre;
-		this.genero = genero;
 		this.albumes = new ArrayList<>();
 		this.canciones = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
@@ -35,14 +33,6 @@ public class Artista {
 	
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
-	}
-	
-	public Genero getGenero() {
-		return genero;
-	}
-	
-	public void setGenero(Genero genero) {
-		this.genero = genero;
 	}
 	
 	public List<Album> getAlbumes() {

@@ -274,7 +274,7 @@ public class VentanaListaCanciones extends JFrame {
 	public static void main(String[] args) {
 		List<Cancion> cancionesPrueba = new ArrayList<>();
 		Album albumPrueba = new Album("Nadie sabe lo que va a pasar mañana", 2760, Genero.TRAP, null, cancionesPrueba, "resources/images/nadie_sabe.jpg");
-		Artista artistaPrueba = new Artista(1, "Bad Bunny", Genero.TRAP, null);
+		Artista artistaPrueba = new Artista(1, "Bad Bunny", null);
 		for (int i = 1; i <= 30; i++) {
 			albumPrueba.getListacanciones().add(new Cancion("cancion" + i, (Math.random()*4 + 1)*60, albumPrueba, artistaPrueba));
 		}
