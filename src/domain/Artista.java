@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Artista {
-	private Long id;
+	private int id;
 	private String nombre;
 	private Genero genero;
 	private List<Album> albumes;
 	private List<Cancion> canciones;
 	
-	public Artista(Long id, String nombre, Genero genero) {
+	public Artista(int id, String nombre, Genero genero) {
 		this.id = id;
 		this.nombre = nombre;
 		this.genero = genero;
@@ -19,11 +19,11 @@ public class Artista {
 	}
 	
 	// Getters and setters
-	public Long getId() {
+	public int getId() {
 		return id;
 	}
 	
-	public void setId(Long id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	

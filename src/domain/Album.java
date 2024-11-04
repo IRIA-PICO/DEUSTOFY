@@ -6,18 +6,18 @@ public class Album {
 	private String titulo;
 	private double duracion;
 	private Genero genero;
-	private Artista Artista;
+	private Artista artista;
 	private List<Cancion> listacanciones;
 	private String rutaFoto;
 	
 	
-	public Album(String titulo, double duracion, Genero genero, domain.Artista artista, List<Cancion> listacanciones,
+	public Album(String titulo, double duracion, Genero genero, Artista artista, List<Cancion> listacanciones,
 			String rutaFoto) {
 		super();
 		this.titulo = titulo;
 		this.duracion = duracion;
 		this.genero = genero;
-		Artista = artista;
+		this.artista = artista;
 		this.listacanciones = listacanciones;
 		this.rutaFoto = rutaFoto;
 	}
@@ -54,12 +54,12 @@ public class Album {
 
 
 	public Artista getArtista() {
-		return Artista;
+		return artista;
 	}
 
 
 	public void setArtista(Artista artista) {
-		Artista = artista;
+		this.artista = artista;
 	}
 
 
