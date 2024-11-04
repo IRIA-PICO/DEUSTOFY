@@ -9,13 +9,15 @@ public class Artista {
 	private Genero genero;
 	private List<Album> albumes;
 	private List<Cancion> canciones;
-	
-	public Artista(int id, String nombre, Genero genero) {
+	private String rutaFoto;
+
+	public Artista(int id, String nombre, Genero genero, String rutaFoto) {
 		this.id = id;
 		this.nombre = nombre;
 		this.genero = genero;
 		this.albumes = new ArrayList<>();
 		this.canciones = new ArrayList<>();
+		this.rutaFoto = rutaFoto;
 	}
 	
 	// Getters and setters
@@ -45,6 +47,15 @@ public class Artista {
 	
 	public List<Album> getAlbumes() {
 		return albumes;
+	}
+	
+	public String getRutaFoto() {
+		return rutaFoto;
+	}
+
+
+	public void setRutaFoto(String rutaFoto) {
+		this.rutaFoto = rutaFoto;
 	}
 	
 	// Agregar album y sus canciones
