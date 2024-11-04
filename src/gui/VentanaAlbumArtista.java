@@ -74,6 +74,7 @@ public class VentanaAlbumArtista extends JFrame {
         }
 
         JScrollPane albumScroll = new JScrollPane(albumGrid);
+        //Para que sea Horizontal
         albumScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         albumScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         albumScroll.getHorizontalScrollBar().setUnitIncrement(16);
