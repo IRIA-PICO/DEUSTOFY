@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 
 import java.util.ArrayList;
@@ -28,25 +30,43 @@ public class VentanaCancion extends JFrame {
 	private int pos;
 	private Cancion c;
 	public VentanaCancion(List<Cancion> lcan) {
+		//propiedades JFrame
 		setSize(350, 600);
 		setLocationRelativeTo(null);
 		pos = 0;
-		setTitle("DEUSTOFY - Canciones");
+		setTitle("DEUSTOFY - Cancion");
+		ImageIcon imagen = new ImageIcon("resources/images/logo.png");
+		Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
+		
+        setIconImage(imagen.getImage());
+        getContentPane().setBackground(new Color(60, 60, 60));
+		
+        //Cargamos la cancion que vamos a estar usando
 		c= lcan.get(pos);
 		
 		pCentral = new JPanel(new GridLayout(3,1));
+		pCentral.setBackground(new Color(60, 60, 60)); 
 		pSur= new JPanel();
-			
+		pSur.setBackground(new Color(60, 60, 60)); 
+		
+		//Cargamos Foto del album, nombre del artista y nombre de la cancion
 		lblImagen= new JLabel(new ImageIcon(c.getAlbum().getRutaFoto()));
 		lblTitulo= new JLabel(c.reproducir());
+		lblTitulo.setForeground(Color.WHITE);
 		pSlider= new JPanel();
+		pSlider.setBackground(new Color(60, 60, 60));
 		
+		//Cargamos Slider y duracion de la cancion
 		slmusica = new JSlider(0, 1000, 0);
 		slmusica.setPaintLabels(true);
 		slmusica.setMinorTickSpacing(1);
-		lblDur0= new JLabel("0");
+		lblDur0= new JLabel("0.00");
+		lblDur0.setForeground(Color.WHITE);
 		lblDurTotal= new JLabel(String.valueOf(c.getDuracion()));
+		lblDurTotal.setForeground(Color.WHITE);
+	
 		
+		//Añadir al JFrame
 		pSlider.add(lblDur0);
 		pSlider.add(slmusica);
 		pSlider.add(lblDurTotal);
@@ -55,8 +75,10 @@ public class VentanaCancion extends JFrame {
 		pCentral.add(lblTitulo);
 		pCentral.add(pSlider);
 		
+		//Creacion de botones
 		btnatras= new JButton("<<");
 		btnpausa= new JButton("Para");
+		
 		btnalante= new JButton(">>");		
 		pSur.add(btnatras);
 		pSur.add(btnpausa);
@@ -66,7 +88,7 @@ public class VentanaCancion extends JFrame {
 		getContentPane().add(pSur, BorderLayout.SOUTH);
 		//LISTENERS
 		btnpausa.addActionListener((e) -> {		
-			btnpausa.setText("reinciar");
+			btnpausa.setText("||");
 		});
 		
 		btnalante.addActionListener((e) -> {		
