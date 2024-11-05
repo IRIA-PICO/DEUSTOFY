@@ -2,6 +2,7 @@ package gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -71,19 +72,14 @@ public class VentanaAlbumArtista extends JFrame {
         			buscarAlbumesArtistas();
         		}
 			}
-
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				buscarAlbumesArtistas();
-				
 			}
-
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				// TODO Auto-generated method stub
-				
 			}
-        	
         };
         
         this.busqueda.getDocument().addDocumentListener(dl);
@@ -108,15 +104,22 @@ public class VentanaAlbumArtista extends JFrame {
         albumGrid.setBackground(new Color(18, 18, 18));
         
         for (Album a:albumes) {
-            albumGrid.add(createAlbumPanel(a.getTitulo()));
+            albumGrid.add(createAlbumPanel(a));
         }
 
         JScrollPane albumScroll = new JScrollPane(albumGrid);
         //Para que sea Horizontal
+        albumScroll.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(18, 18, 18)), // Borde del mismo color que el fondo
+                "ÁLBUMES",                                             // Título
+                TitledBorder.CENTER,                                   // Centrar el título
+                TitledBorder.TOP,                                      // Posición en la parte superior
+                new Font("Arial", Font.BOLD, 14),                      // Fuente del título
+                Color.WHITE                                            // Color del texto
+        ));
         albumScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         albumScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         albumScroll.getHorizontalScrollBar().setUnitIncrement(16);
-        albumScroll.setBorder(null);
         albumScroll.setBackground(new Color(18, 18, 18));
      
         // PANEL HORIZONTAL DE ARTISTAS
@@ -125,14 +128,21 @@ public class VentanaAlbumArtista extends JFrame {
         artistaGrid.setBackground(new Color(18, 18, 18));
 
         for (Artista a: artistas) {
-            artistaGrid.add(createArtistaPanel(a.getNombre()));
+            artistaGrid.add(createArtistaPanel(a));
         }
 
         JScrollPane artistaScroll = new JScrollPane(artistaGrid);
+        artistaScroll.setBorder(BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(new Color(18, 18, 18)), // Borde del mismo color que el fondo
+                "ARTISTAS",                                             // Título
+                TitledBorder.CENTER,                                   // Centrar el título
+                TitledBorder.TOP,                                      // Posición en la parte superior
+                new Font("Arial", Font.BOLD, 14),                      // Fuente del título
+                Color.WHITE                                            // Color del texto
+        ));
         artistaScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
         artistaScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         artistaScroll.getHorizontalScrollBar().setUnitIncrement(16);
-        artistaScroll.setBorder(null);
         artistaScroll.setBackground(new Color(18, 18, 18));
 
         // Agregar los JScrollPane al panel principal
@@ -146,7 +156,7 @@ public class VentanaAlbumArtista extends JFrame {
         setVisible(true);
     }
 
-    private JPanel createAlbumPanel(String albumName) {
+    private JPanel createAlbumPanel(Album album) {
         JPanel albumPanel = new JPanel(new BorderLayout());
         albumPanel.setBackground(new Color(24, 24, 24));
         albumPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -156,7 +166,7 @@ public class VentanaAlbumArtista extends JFrame {
         albumPanel.setPreferredSize(new Dimension(200, 200));
 
         JLabel albumCover = new JLabel();
-        albumCover.setIcon(new ImageIcon(new ImageIcon("resources/images/nadie_sabe.png")
+        albumCover.setIcon(new ImageIcon(new ImageIcon(album.getRutaFoto())
                 .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
         albumCover.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -172,7 +182,7 @@ public class VentanaAlbumArtista extends JFrame {
             }
         });
 
-        JLabel albumLabel = new JLabel(albumName, SwingConstants.CENTER);
+        JLabel albumLabel = new JLabel(album.getTitulo(), SwingConstants.CENTER);
         albumLabel.setForeground(Color.WHITE);
         albumLabel.setBorder(new EmptyBorder(10, 0, 0, 0));
 
@@ -181,7 +191,7 @@ public class VentanaAlbumArtista extends JFrame {
         return albumPanel;
     }
 
-    private JPanel createArtistaPanel(String artistaName) {
+    private JPanel createArtistaPanel(Artista artista) {
         JPanel artistaPanel = new JPanel(new BorderLayout());
         artistaPanel.setBackground(new Color(24, 24, 24));
         artistaPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -191,7 +201,7 @@ public class VentanaAlbumArtista extends JFrame {
         artistaPanel.setPreferredSize(new Dimension(200, 200));
 
         JLabel artistaCover = new JLabel();
-        artistaCover.setIcon(new ImageIcon(new ImageIcon("https://via.placeholder.com/150")
+        artistaCover.setIcon(new ImageIcon(new ImageIcon(artista.getRutaFoto())
                 .getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH)));
         artistaCover.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -207,7 +217,7 @@ public class VentanaAlbumArtista extends JFrame {
             }
         });
 
-        JLabel artistaLabel = new JLabel(artistaName, SwingConstants.CENTER);
+        JLabel artistaLabel = new JLabel(artista.getNombre(), SwingConstants.CENTER);
         artistaLabel.setForeground(Color.WHITE);
         artistaLabel.setBorder(new EmptyBorder(10, 0, 0, 0));
 
@@ -222,9 +232,9 @@ public class VentanaAlbumArtista extends JFrame {
         
 		this.albumes.forEach(a -> {
 			if (a.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
-				albumGrid.add(createAlbumPanel(a.getTitulo()));
+				albumGrid.add(createAlbumPanel(a));
 			} else if (a.getArtista().getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
-				albumGrid.add(createAlbumPanel(a.getTitulo()));
+				albumGrid.add(createAlbumPanel(a));
 			}
 		});
 		
@@ -234,7 +244,7 @@ public class VentanaAlbumArtista extends JFrame {
 		
 		this.artistas.forEach(a -> {
 			if (a.getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
-				artistaGrid.add(createArtistaPanel(a.getNombre()));
+				artistaGrid.add(createArtistaPanel(a));
 			}
 		});
 	}
