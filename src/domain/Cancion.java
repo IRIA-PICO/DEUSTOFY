@@ -1,5 +1,7 @@
 package domain;
 
+import java.util.Objects;
+
 public class Cancion {
 	 private String titulo;
 	 private double duracion;
@@ -13,6 +15,25 @@ public class Cancion {
         this.duracion = duracion;
         this.album = album;
         this.artista = artista;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(album, artista, duracion, titulo);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Cancion other = (Cancion) obj;
+		return Objects.equals(album, other.album) && Objects.equals(artista, other.artista)
+				&& Double.doubleToLongBits(duracion) == Double.doubleToLongBits(other.duracion)
+				&& Objects.equals(titulo, other.titulo);
 	}
 
 	//Getters and Setters
