@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Label;
+import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
@@ -256,6 +257,21 @@ public class VentanaListaCanciones extends JFrame {
 		
 		this.tablaCanciones.getTableHeader().setDefaultRenderer(headerRenderer);
 		this.tablaCanciones.setDefaultRenderer(Object.class, cellRenderer);
+		
+		//Saltar a VentanaCancion cuando se haga click en una canci
+		this.tablaCanciones.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==2) {
+					Point p= e.getPoint();
+					int fila= tablaCanciones.rowAtPoint(p);
+					System.out.println(fila);
+					int id_cancion= (int) tablaCanciones.getValueAt(fila, 0);
+					new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1 );
+				}
+			}
+		});
 	}
 	
 	private void loadCanciones() {
@@ -293,6 +309,7 @@ public class VentanaListaCanciones extends JFrame {
 			}
 		});
 	}
+	
 	
 	public static void main(String[] args) {
 		List<Cancion> cancionesPrueba = new ArrayList<>();

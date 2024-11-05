@@ -27,12 +27,12 @@ public class VentanaCancion extends JFrame {
 	private JButton btnpausa, btnatras, btnalante;
 	private JLabel lblTitulo, lblImagen, lblDur0, lblDurTotal;
 	private JSlider slmusica;
+	private boolean enPausa = false;
 	private int pos;
 	private Cancion c;
 	public VentanaCancion(List<Cancion> lcan, int posicion) {
 		//propiedades JFrame
-		setSize(350, 600);
-		setLocationRelativeTo(null);
+		setBounds(1000, 100, 350, 600);
 		pos = posicion;
 		setTitle("DEUSTOFY - Cancion");
 		ImageIcon imagen = new ImageIcon("resources/images/logo.png");
@@ -60,6 +60,8 @@ public class VentanaCancion extends JFrame {
 		slmusica = new JSlider(0, 1000, 0);
 		slmusica.setPaintLabels(true);
 		slmusica.setMinorTickSpacing(1);
+		slmusica.setBackground(new Color(60, 60, 60));
+		
 		lblDur0= new JLabel("0.00");
 		lblDur0.setForeground(Color.WHITE);
 		lblDurTotal= new JLabel(String.valueOf(c.getDuracion()));
@@ -96,8 +98,16 @@ public class VentanaCancion extends JFrame {
 		getContentPane().add(pSur, BorderLayout.SOUTH);
 		//LISTENERS
 		btnpausa.addActionListener((e) -> {		
-			ImageIcon imgOrg=new ImageIcon("resources/images/ButtonPause.png");
-			btnpausa.setIcon(new ImageIcon(imgOrg.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+			if (enPausa) {
+		        ImageIcon imgPlay = new ImageIcon("resources/images/ButonPlay.png");
+		        btnpausa.setIcon(new ImageIcon(imgPlay.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+		    } else {
+		        // Cambia a imagen de "pause"
+		        ImageIcon imgPause = new ImageIcon("resources/images/ButtonPause.png");
+		        btnpausa.setIcon(new ImageIcon(imgPause.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+		    }
+		    
+		    enPausa = !enPausa;
 		});
 		
 		btnalante.addActionListener((e) -> {		
@@ -126,8 +136,9 @@ public class VentanaCancion extends JFrame {
 		lblImagen.setIcon(new ImageIcon(c.getAlbum().getRutaFoto()));
 		lblTitulo.setText(c.reproducir());
 		lblDurTotal.setText(String.valueOf(c.getDuracion()));
+		slmusica.setValue(0);
 	}
-	
+	/*
 	public static void main(String[] args) {
 		Artista art1= new Artista(1, "pepe", null);
 		Artista art2= new Artista(2, "maria", null);
@@ -143,6 +154,6 @@ public class VentanaCancion extends JFrame {
 		lcanciones.add(n1);
 		lcanciones.add(n2);
 		 new VentanaCancion(lcanciones, 0);
-	}
+	}*/
 }
 
