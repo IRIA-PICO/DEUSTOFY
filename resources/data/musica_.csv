@@ -1,9 +1,8 @@
-id_artista;nombre_artista;rutaFoto_artista;titulo_album;duracion_album;genero_album;rutaFoto_album;titulo_cancion;duracion_cancion
-1;Bad Bunny;badbunny.jpg;YHLQMDLG;65.0;Reggaeton;yhlqmdlg.jpg;Safaera;4.55
-1;Bad Bunny;badbunny.jpg;YHLQMDLG;65.0;Reggaeton;yhlqmdlg.jpg;Yo Perreo Sola;3.13
-2;Olivia Rodrigo;oliviarodrigo.jpg;SOUR;34.2;Pop;sour.jpg;Drivers License;4.02
-2;Olivia Rodrigo;oliviarodrigo.jpg;SOUR;34.2;Pop;sour.jpg;Good 4 U;2.58
-3;Hombres G;hombresg.jpg;Voy a Pasarmelo Bien;40.5;Rock;voyapasarmelobien.jpg;Devuelveme a Mi Chica;3.3
-3;Hombres G;hombresg.jpg;Voy a Pasarmelo Bien;40.5;Rock;voyapasarmelobien.jpg;Voy a Pasarmelo Bien;3.4
-4;Eminem;eminem.jpg;The Eminem Show;77.5;HipHop;eminemshow.jpg;Without Me;4.51
-4;Eminem;eminem.jpg;The Eminem Show;77.5;HipHop;eminemshow.jpg;Cleanin' Out My Closet;4.58
+1;Bad Bunny;badbunny.jpg;YHLQMDLG;65.0;Reggaeton;resources/images/yhlqmdlg.jpg;Safaera;4.55
+1;Bad Bunny;badbunny.jpg;YHLQMDLG;65.0;Reggaeton;resources/images/yhlqmdlg.jpg;Yo Perreo Sola;3.13
+2;Olivia Rodrigo;oliviarodrigo.jpg;SOUR;34.2;Pop;resources/images/sour.jpg;Drivers License;4.02
+2;Olivia Rodrigo;oliviarodrigo.jpg;SOUR;34.2;Pop;resources/images/sour.jpg;Good 4 U;2.58
+3;Hombres G;hombresg.jpg;Voy a Pasarmelo Bien;40.5;Rock;resources/images/voyapasarmelobien.jpg;Devuelveme a Mi Chica;3.3
+3;Hombres G;hombresg.jpg;Voy a Pasarmelo Bien;40.5;Rock;resources/images/voyapasarmelobien.jpg;Voy a Pasarmelo Bien;3.4
+4;Eminem;eminem.jpg;The Eminem Show;77.5;HipHop;resources/images/theEminemshow.jpg;Without Me;4.51
+4;Eminem;eminem.jpg;The Eminem Show;77.5;HipHop;resources/images/theEminemshow.jpg;Cleanin' Out My Closet;4.58

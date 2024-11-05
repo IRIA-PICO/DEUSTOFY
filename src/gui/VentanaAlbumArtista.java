@@ -13,7 +13,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.List;
 
 public class VentanaAlbumArtista extends JFrame {
@@ -27,10 +26,9 @@ public class VentanaAlbumArtista extends JFrame {
     private JPanel albumGrid;
     private JPanel artistaGrid;
     
-    public VentanaAlbumArtista() {
-    	
-    	cargarArtistas();
-    	cargarAlbum();
+    public VentanaAlbumArtista(List<Album> albumes1, List<Artista> artistas1) {
+    	albumes = albumes1;
+    	artistas = artistas1;
     	
         setTitle("DEUSTOFY");
         ImageIcon imagen = new ImageIcon("resources/images/logo.png");
@@ -240,18 +238,4 @@ public class VentanaAlbumArtista extends JFrame {
 			}
 		});
 	}
-    
-    private void cargarArtistas() {
-    	artistas = new ArrayList<>();
-    	
-    	// cargar fichero y añadir los artistas
-    }
-    
-    private void cargarAlbum() {
-    	albumes = new ArrayList<>();
-    }
-    public static void main(String[] args) {
-        // Ejecutar la aplicación
-        SwingUtilities.invokeLater(() -> new VentanaAlbumArtista());
-    }
 }
