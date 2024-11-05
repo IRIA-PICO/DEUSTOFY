@@ -226,26 +226,30 @@ public class VentanaAlbumArtista extends JFrame {
         return artistaPanel;
     }
     private void buscarAlbumesArtistas() {
-    	albumGrid = new JPanel();
+    	albumGrid.removeAll();
+        artistaGrid.removeAll();
+        
         albumGrid.setLayout(new BoxLayout(albumGrid, BoxLayout.X_AXIS));
         albumGrid.setBackground(new Color(18, 18, 18));
-        
-		this.albumes.forEach(a -> {
-			if (a.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
-				albumGrid.add(createAlbumPanel(a));
-			} else if (a.getArtista().getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
-				albumGrid.add(createAlbumPanel(a));
-			}
-		});
-		
-		artistaGrid = new JPanel();
+
+        this.albumes.forEach(a -> {
+            if (a.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase()) ||
+                a.getArtista().getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
+                albumGrid.add(createAlbumPanel(a));
+            }
+        });
+
         artistaGrid.setLayout(new BoxLayout(artistaGrid, BoxLayout.X_AXIS));
         artistaGrid.setBackground(new Color(18, 18, 18));
-		
-		this.artistas.forEach(a -> {
-			if (a.getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
-				artistaGrid.add(createArtistaPanel(a));
-			}
-		});
+
+        this.artistas.forEach(a -> {
+            if (a.getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
+                artistaGrid.add(createArtistaPanel(a));
+            }
+        });
+		albumGrid.revalidate();
+	    albumGrid.repaint();
+	    artistaGrid.revalidate();
+	    artistaGrid.repaint();
 	}
 }

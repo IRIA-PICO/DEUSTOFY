@@ -40,17 +40,24 @@ public class Main {
                     String tituloCancion = datos[7];
                     double duracionCancion = Double.parseDouble(datos[8]);
                     
-                    Artista artista = new Artista(idArtista, nombreArtista, rutaFotoArtista);
-                    if (!artistas.contains(artista)) artistas.add(artista);
+                    Artista artista = buscarArtista(idArtista);
+                    if (artista == null) {
+                        artista = new Artista(idArtista, nombreArtista, rutaFotoArtista);
+                        artistas.add(artista);
+                    }
 
-                    Album album = new Album(tituloAlbum, duracionAlbum, Genero.valueOf(generoAlbum), artista, rutaFotoAlbum);
-                    if (!albumes.contains(album)) albumes.add(album);
-                    
+                    // Buscar si el álbum ya existe
+                    Album album = buscarAlbum(tituloAlbum, artista);
+                    if (album == null) {
+                        album = new Album(tituloAlbum, duracionAlbum, Genero.valueOf(generoAlbum), artista, rutaFotoAlbum);
+                        albumes.add(album);
+                        artista.getAlbumes().add(album); // Añadir el álbum a la lista de álbumes del artista
+                    }
+
+                    // Crear la canción y añadirla al álbum y a la lista general de canciones
                     Cancion cancion = new Cancion(tituloCancion, duracionCancion, album, artista);
                     canciones.add(cancion);
-
-                    if (!artista.getAlbumes().contains(album)) artista.getAlbumes().add(album);
-                    if (!album.getListacanciones().contains(cancion)) album.getListacanciones().add(cancion);
+                    album.getListacanciones().add(cancion);
 				}
 				sc.close();
 			} catch (FileNotFoundException e) {
@@ -63,6 +70,23 @@ public class Main {
 		new Main().cargarCSV();
         SwingUtilities.invokeLater(() -> new VentanaAlbumArtista(albumes, artistas));
 	}
-	
+	private Artista buscarArtista(int idArtista) {
+        for (Artista a : artistas) {
+            if (a.getId() == idArtista) {
+                return a;
+            }
+        }
+        return null;
+    }
+
+    // Método para buscar un álbum por título y artista
+    private Album buscarAlbum(String titulo, Artista artista) {
+        for (Album a : albumes) {
+            if (a.getTitulo().equalsIgnoreCase(titulo) && a.getArtista().equals(artista)) {
+                return a;
+            }
+        }
+        return null;
+    }
 	}
 
