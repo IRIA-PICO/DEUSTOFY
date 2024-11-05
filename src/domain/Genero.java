@@ -1,5 +1,5 @@
 package domain;
 
 public enum Genero {
-	TRAP
+	TRAP, REGGAETON, POP, ROCK, HIPHOP
 }
