@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridLayout;
-
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,11 +29,11 @@ public class VentanaCancion extends JFrame {
 	private JSlider slmusica;
 	private int pos;
 	private Cancion c;
-	public VentanaCancion(List<Cancion> lcan) {
+	public VentanaCancion(List<Cancion> lcan, int posicion) {
 		//propiedades JFrame
 		setSize(350, 600);
 		setLocationRelativeTo(null);
-		pos = 0;
+		pos = posicion;
 		setTitle("DEUSTOFY - Cancion");
 		ImageIcon imagen = new ImageIcon("resources/images/logo.png");
 		Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
@@ -77,9 +77,17 @@ public class VentanaCancion extends JFrame {
 		
 		//Creacion de botones
 		btnatras= new JButton("<<");
-		btnpausa= new JButton("Para");
+		ImageIcon imgOriginal=new ImageIcon("resources/images/ButonPlay.png");
+		btnpausa= new JButton(new ImageIcon(imgOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+		btnalante= new JButton(">>");	
 		
-		btnalante= new JButton(">>");		
+		Color botonColor = new Color(90, 90, 90);
+		btnatras.setBackground(botonColor);
+        btnatras.setForeground(Color.WHITE);
+        btnpausa.setBackground(botonColor);
+        btnalante.setBackground(botonColor);
+        btnalante.setForeground(Color.WHITE);
+        
 		pSur.add(btnatras);
 		pSur.add(btnpausa);
 		pSur.add(btnalante);
@@ -88,7 +96,8 @@ public class VentanaCancion extends JFrame {
 		getContentPane().add(pSur, BorderLayout.SOUTH);
 		//LISTENERS
 		btnpausa.addActionListener((e) -> {		
-			btnpausa.setText("||");
+			ImageIcon imgOrg=new ImageIcon("resources/images/ButtonPause.png");
+			btnpausa.setIcon(new ImageIcon(imgOrg.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 		});
 		
 		btnalante.addActionListener((e) -> {		
@@ -133,7 +142,7 @@ public class VentanaCancion extends JFrame {
 		lcanciones.add(nuevo);
 		lcanciones.add(n1);
 		lcanciones.add(n2);
-		 new VentanaCancion(lcanciones);
+		 new VentanaCancion(lcanciones, 0);
 	}
 }
 

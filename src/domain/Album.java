@@ -2,6 +2,7 @@ package domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Album {
 	private String titulo;
@@ -20,6 +21,28 @@ public class Album {
 		this.artista = artista;
 		this.listacanciones = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
+	}
+
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(artista, duracion, genero, listacanciones, rutaFoto, titulo);
+	}
+
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Album other = (Album) obj;
+		return Objects.equals(artista, other.artista)
+				&& Double.doubleToLongBits(duracion) == Double.doubleToLongBits(other.duracion)
+				&& genero == other.genero && Objects.equals(listacanciones, other.listacanciones)
+				&& Objects.equals(rutaFoto, other.rutaFoto) && Objects.equals(titulo, other.titulo);
 	}
 
 

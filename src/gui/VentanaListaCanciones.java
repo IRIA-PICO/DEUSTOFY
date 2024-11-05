@@ -251,7 +251,7 @@ public class VentanaListaCanciones extends JFrame {
 	}
 	
 	private int posicionCancion(Cancion c) {
-		for (int i=0; i>canciones.size(); i++) {
+		for (int i=0; i<canciones.size(); i++) {
 			if(canciones.get(i).equals(c)) {
 				return i;
 			}
