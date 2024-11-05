@@ -247,9 +247,18 @@ public class VentanaListaCanciones extends JFrame {
 	private void loadCanciones() {
 		this.modeloDatosCanciones.setRowCount(0);
 		this.canciones.forEach(c -> this.modeloDatosCanciones.addRow(new Object[] {
-				this.modeloDatosCanciones.getRowCount() + 1, c.getTitulo(), c.getArtista(), formatoDuracion(c)}));
+				posicionCancion(c) + 1, c.getTitulo(), c.getArtista(), formatoDuracion(c)}));
 	}
 	
+	private int posicionCancion(Cancion c) {
+		for (int i=0; i>canciones.size(); i++) {
+			if(canciones.get(i).equals(c)) {
+				return i;
+			}
+		}
+		return 0;
+	}
+
 	private static String formatoDuracion(Cancion c) {
 		int minutes = (int) (c.getDuracion()/60);
 		int seconds = (int) (c.getDuracion()%60);
@@ -266,7 +275,7 @@ public class VentanaListaCanciones extends JFrame {
 		this.canciones.forEach(c -> {
 			if (c.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
 				this.modeloDatosCanciones.addRow(
-						new Object[] {this.modeloDatosCanciones.getRowCount() + 1, c.getTitulo(), c.getArtista(), formatoDuracion(c)} );
+						new Object[] {posicionCancion(c) + 1, c.getTitulo(), c.getArtista(), formatoDuracion(c)} );
 			}
 		});
 	}
