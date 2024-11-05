@@ -10,6 +10,7 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -152,7 +153,9 @@ public class VentanaListaCanciones extends JFrame {
 			}
 
 			@Override
-			public void changedUpdate(DocumentEvent e) {}
+			public void changedUpdate(DocumentEvent e) {
+				// TODO Auto-generated method stub
+			}
         });
         
         panelBusqueda.add(busqueda, BorderLayout.CENTER);
@@ -198,8 +201,19 @@ public class VentanaListaCanciones extends JFrame {
 	            JTable table = (JTable) e.getSource();
 	            table.clearSelection();
 	            table.repaint();
-	        }		});
-		
+	        }
+	    });
+		this.tablaCanciones.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent e) {
+				JTable table = (JTable) e.getSource();
+	            int row = table.rowAtPoint(e.getPoint());
+	            if (row != -1) {
+	                table.setRowSelectionInterval(row, row);
+	                table.repaint();
+	            }
+			}
+		});
 		TableCellRenderer cellRenderer = (table, value, isSelected, hasFocus, row, column) -> {
 			JLabel result = new JLabel(value.toString());
 			result.setForeground(Color.WHITE);
