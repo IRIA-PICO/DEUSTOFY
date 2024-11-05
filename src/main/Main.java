@@ -66,10 +66,7 @@ public class Main {
 		}
 	
 	}
-	public static void main(String[] args) {
-		new Main().cargarCSV();
-        SwingUtilities.invokeLater(() -> new VentanaAlbumArtista(albumes, artistas));
-	}
+	
 	private Artista buscarArtista(int idArtista) {
         for (Artista a : artistas) {
             if (a.getId() == idArtista) {
@@ -88,5 +85,10 @@ public class Main {
         }
         return null;
     }
+    
+	public static void main(String[] args) {
+		new Main().cargarCSV();
+        SwingUtilities.invokeLater(() -> new VentanaAlbumArtista(albumes, artistas));
 	}
+}
 
