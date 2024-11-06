@@ -64,8 +64,9 @@ public class VentanaAlbumArtista extends JFrame {
                 }
             }
         });
+        
+        
         DocumentListener dl = new DocumentListener() {
-
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				if (!busqueda.getText().equals("Buscar artistas, álbumes...")) {
@@ -81,8 +82,9 @@ public class VentanaAlbumArtista extends JFrame {
 				// TODO Auto-generated method stub
 			}
         };
-        
         this.busqueda.getDocument().addDocumentListener(dl);
+        
+        
         
         JPanel Panelbusqueda = new JPanel(new BorderLayout());
         Panelbusqueda.setBorder(new EmptyBorder(15, 20, 15, 20));
@@ -225,6 +227,8 @@ public class VentanaAlbumArtista extends JFrame {
         artistaPanel.add(artistaLabel, BorderLayout.SOUTH);
         return artistaPanel;
     }
+    
+    
     private void buscarAlbumesArtistas() {
     	albumGrid.removeAll();
         artistaGrid.removeAll();

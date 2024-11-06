@@ -46,7 +46,7 @@ public class Main {
                         artistas.add(artista);
                     }
 
-                    // Buscar si el álbum ya existe
+                 // Buscar si el álbum ya existe
                     Album album = buscarAlbum(tituloAlbum, artista);
                     if (album == null) {
                         album = new Album(tituloAlbum, duracionAlbum, Genero.valueOf(generoAlbum), artista, rutaFotoAlbum);
