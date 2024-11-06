@@ -9,6 +9,8 @@ import java.awt.Label;
 import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
@@ -275,6 +277,18 @@ public class VentanaListaCanciones extends JFrame {
 					int id_cancion= (int) tablaCanciones.getValueAt(fila, 0);
 					new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1 );
 				}
+			}
+		});
+	//Si presiona ctrl y luego "e" la ventana vuelve a VentanaAlbumartista
+		this.tablaCanciones.addKeyListener(new KeyAdapter() {
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_E) {
+		            dispose(); 
+		            //new VentanaAlbumArtista(null, null); da error
+		        }
+				
 			}
 		});
 	}
