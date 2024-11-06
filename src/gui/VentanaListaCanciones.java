@@ -12,7 +12,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -26,7 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -36,7 +34,7 @@ import javax.swing.table.TableCellRenderer;
 import domain.Album;
 import domain.Artista;
 import domain.Cancion;
-import domain.Genero;
+
 
 public class VentanaListaCanciones extends JFrame {
 	
@@ -46,7 +44,7 @@ public class VentanaListaCanciones extends JFrame {
 	private DefaultTableModel modeloDatosCanciones;
 	private JTextField busqueda;
 	
-	public VentanaListaCanciones(Album album) {
+	public VentanaListaCanciones(Object albumArtista) {
 		Color colorFondo = new Color(40, 40, 40);
         Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
 		//Configuracion del JFrame
@@ -58,9 +56,13 @@ public class VentanaListaCanciones extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
         setLocationRelativeTo(null);
-     
+        
         // Asignamos la lista de canciones a la variable local canciones
-        this.canciones = album.getListacanciones();
+        if (albumArtista instanceof Album) {
+        	this.canciones = ((Album) albumArtista).getListacanciones();
+        } else if (albumArtista instanceof Artista) {
+        	this.canciones = ((Artista) albumArtista).getCanciones();
+        }
         
         // Inicializar tabla y cargar canciones
         this.initTable();
@@ -69,16 +71,20 @@ public class VentanaListaCanciones extends JFrame {
         JPanel panelCentro = new JPanel(new BorderLayout());
         panelCentro.setBackground(colorFondo);
         
-        JPanel panelNombreAlbum = new JPanel(new BorderLayout());
-        panelNombreAlbum.setBackground(colorFondo);
-        panelNombreAlbum.setForeground(Color.WHITE);
-        panelNombreAlbum.setFont(fuenteTexto);
+        JPanel panelNombre = new JPanel(new BorderLayout());
+        panelNombre.setBackground(colorFondo);
+        panelNombre.setForeground(Color.WHITE);
+        panelNombre.setFont(fuenteTexto);
         
-        ImageIcon imgAlbum;
-        JLabel labelImagen;
+        ImageIcon imgAlbumArtista = null;
+        JLabel labelImagen = null;
         try {
-            imgAlbum = new ImageIcon(album.getRutaFoto());
-            Image img = imgAlbum.getImage();
+        	if (albumArtista instanceof Album) {
+        		imgAlbumArtista = new ImageIcon(((Album) albumArtista).getRutaFoto());
+        	} else if (albumArtista instanceof Artista) {
+        		imgAlbumArtista = new ImageIcon(((Artista) albumArtista).getRutaFoto());
+        	}
+        	Image img = imgAlbumArtista.getImage();
             
             if (img == null) {
                 throw new Exception("La imagen del álbum no se ha podido cargar.");
@@ -87,19 +93,24 @@ public class VentanaListaCanciones extends JFrame {
             labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(140, 140, Image.SCALE_SMOOTH)));            
         } catch (Exception e) {
             System.err.println("Error cargando la imagen del álbum");
-            imgAlbum = new ImageIcon("resources/images/logo.png");
-            Image img = imgAlbum.getImage();
+            imgAlbumArtista = new ImageIcon("resources/images/logo.png");
+            Image img = imgAlbumArtista.getImage();
             labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(140, 140, Image.SCALE_SMOOTH)));
         }
 
         // Agregar el JLabel al panel
-        panelNombreAlbum.add(labelImagen, BorderLayout.WEST);
+        panelNombre.add(labelImagen, BorderLayout.WEST);
+        Label nombre = null;
+        if (albumArtista instanceof Album) {
+        	nombre = new Label(((Album) albumArtista).getTitulo());
+        } else if (albumArtista instanceof Artista) {
+        	nombre = new Label(((Artista) albumArtista).getNombre());
+        }
         
-        Label nombreAlbum = new Label(album.getTitulo());
-        nombreAlbum.setAlignment(Label.CENTER);
-        panelNombreAlbum.add(nombreAlbum, BorderLayout.CENTER);
+        nombre.setAlignment(Label.CENTER);
+        panelNombre.add(nombre, BorderLayout.CENTER);
        
-        panelCentro.add(panelNombreAlbum, BorderLayout.NORTH);
+        panelCentro.add(panelNombre, BorderLayout.NORTH);
         
         JScrollPane panelCanciones = new JScrollPane(this.tablaCanciones);
         this.tablaCanciones.setFillsViewportHeight(true);
@@ -162,8 +173,7 @@ public class VentanaListaCanciones extends JFrame {
         panelBusqueda.add(busqueda, BorderLayout.CENTER);
         add(panelBusqueda, BorderLayout.NORTH);
         
-        
-        
+        setVisible(true);
 	}
 	
 	private void initTable() {
@@ -181,11 +191,7 @@ public class VentanaListaCanciones extends JFrame {
 		this.tablaCanciones.getTableHeader().setReorderingAllowed(false);
 		this.tablaCanciones.getTableHeader().setResizingAllowed(false);
 		this.tablaCanciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-//		this.tablaCanciones.getSelectionModel().addListSelectionListener(e -> {
-//			if (tablaCanciones.getSelectedRow() != -1) {
-//				// Abre la ventana de esa cancion
-//			}
-//		});
+
 		this.tablaCanciones.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -266,7 +272,6 @@ public class VentanaListaCanciones extends JFrame {
 				if(e.getClickCount()==2) {
 					Point p= e.getPoint();
 					int fila= tablaCanciones.rowAtPoint(p);
-					System.out.println(fila);
 					int id_cancion= (int) tablaCanciones.getValueAt(fila, 0);
 					new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1 );
 				}
@@ -290,8 +295,8 @@ public class VentanaListaCanciones extends JFrame {
 	}
 
 	private static String formatoDuracion(Cancion c) {
-		int minutes = (int) (c.getDuracion()/60);
-		int seconds = (int) (c.getDuracion()%60);
+		int minutes = (int) (c.getDuracion());
+		int seconds = (int) ((c.getDuracion() - minutes)*100);
 		String secondsStr = String.valueOf(seconds);
 		if (seconds < 10) {
 			secondsStr = "0" + seconds;
@@ -308,21 +313,5 @@ public class VentanaListaCanciones extends JFrame {
 						new Object[] {posicionCancion(c) + 1, c.getTitulo(), c.getArtista(), formatoDuracion(c)} );
 			}
 		});
-	}
-	
-	
-	public static void main(String[] args) {
-		List<Cancion> cancionesPrueba = new ArrayList<>();
-		Album albumPrueba = new Album("Nadie sabe lo que va a pasar mañana", 2760, Genero.TRAP, null, "resources/images/nadie_sabe.jpg");
-		albumPrueba.setListacanciones(cancionesPrueba);
-		Artista artistaPrueba = new Artista(1, "Bad Bunny", null);
-		for (int i = 1; i <= 30; i++) {
-			albumPrueba.getListacanciones().add(new Cancion("cancion" + i, (Math.random()*4 + 1)*60, albumPrueba, artistaPrueba));
-		}
-		SwingUtilities.invokeLater(() -> {
-			VentanaListaCanciones ventanaListaCanciones = new VentanaListaCanciones(albumPrueba);
-			ventanaListaCanciones.setVisible(true);
-	    });
-		
 	}
 }
