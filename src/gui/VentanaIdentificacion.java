@@ -29,7 +29,7 @@ public class VentanaIdentificacion extends JFrame {
     public VentanaIdentificacion() {
         super();
         setBounds(300, 200, 400, 350);
-        setTitle("Spotify - Inicio de Sesión");
+        setTitle("Deustofy - Inicio de Sesión");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         ImageIcon imagen = new ImageIcon("resources/images/logo.png");
         setIconImage(imagen.getImage());
@@ -103,7 +103,7 @@ public class VentanaIdentificacion extends JFrame {
     
     // Diálogo de error para inicio de sesión fallido
     private void DialogoInicioSesion(String id, String contraseña) {
-        if (id.equals("Ane") && contraseña.equals("contraseña123")) {
+        if (id.equals("Ane") && contraseña.equals("123")) {
             JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         } else {
             JOptionPane.showMessageDialog(this, "ID o contraseña incorrectos, vuelva a intentarlo.", "Error", JOptionPane.ERROR_MESSAGE);
