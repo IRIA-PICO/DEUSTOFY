@@ -108,7 +108,7 @@ public class VentanaAlbumArtista extends JFrame {
         for (Album a:albumes) {
             albumGrid.add(createAlbumPanel(a));
         }
-
+        
         JScrollPane albumScroll = new JScrollPane(albumGrid);
         //Para que sea Horizontal
         albumScroll.setBorder(BorderFactory.createTitledBorder(
@@ -132,6 +132,7 @@ public class VentanaAlbumArtista extends JFrame {
         for (Artista a: artistas) {
             artistaGrid.add(createArtistaPanel(a));
         }
+        
 
         JScrollPane artistaScroll = new JScrollPane(artistaGrid);
         artistaScroll.setBorder(BorderFactory.createTitledBorder(
@@ -182,6 +183,13 @@ public class VentanaAlbumArtista extends JFrame {
             public void mouseExited(MouseEvent e) {
                 albumPanel.setBackground(new Color(24, 24, 24));
             }
+            //Saltar a la clase VentanaListaCanciones
+            @Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==1) {
+					new VentanaListaCanciones(album);
+				}
+			}
         });
 
         JLabel albumLabel = new JLabel(album.getTitulo(), SwingConstants.CENTER);
@@ -217,6 +225,13 @@ public class VentanaAlbumArtista extends JFrame {
             public void mouseExited(MouseEvent e) {
                 artistaPanel.setBackground(new Color(24, 24, 24));  // Volver al color original
             }
+          //Saltar a la clase VentanaListaCanciones
+            @Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==1) {
+					new VentanaListaCanciones(artista);
+				}
+			}
         });
 
         JLabel artistaLabel = new JLabel(artista.getNombre(), SwingConstants.CENTER);

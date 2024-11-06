@@ -57,6 +57,7 @@ public class VentanaCancion extends JFrame {
 		lblImagen.setIcon(imagenConDimensiones);
 		lblTitulo= new JLabel(c.reproducir());
 		lblTitulo.setForeground(Color.WHITE);
+		lblTitulo.setFont(fuenteTexto);
 		pSlider= new JPanel();
 		pSlider.setBackground(new Color(60, 60, 60));
 		
@@ -68,8 +69,10 @@ public class VentanaCancion extends JFrame {
 		
 		lblDur0= new JLabel("0.00");
 		lblDur0.setForeground(Color.WHITE);
+		lblDur0.setFont(fuenteTexto);
 		lblDurTotal= new JLabel(String.valueOf(c.getDuracion()));
 		lblDurTotal.setForeground(Color.WHITE);
+		lblDurTotal.setFont(fuenteTexto);
 	
 		
 		//Añadir al JFrame

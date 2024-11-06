@@ -24,27 +24,7 @@ public class Album {
 	}
 
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(artista, duracion, genero, listacanciones, rutaFoto, titulo);
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Album other = (Album) obj;
-		return Objects.equals(artista, other.artista)
-				&& Double.doubleToLongBits(duracion) == Double.doubleToLongBits(other.duracion)
-				&& genero == other.genero && Objects.equals(listacanciones, other.listacanciones)
-				&& Objects.equals(rutaFoto, other.rutaFoto) && Objects.equals(titulo, other.titulo);
-	}
-
+	
 
 	public String getTitulo() {
 		return titulo;
