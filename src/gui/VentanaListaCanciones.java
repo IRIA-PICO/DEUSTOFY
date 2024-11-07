@@ -42,11 +42,15 @@ public class VentanaListaCanciones extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private List<Cancion> canciones;
+	private List<Album>albumes;
+	private List<Artista> artistas;
 	private JTable tablaCanciones;
 	private DefaultTableModel modeloDatosCanciones;
 	private JTextField busqueda;
 	
-	public VentanaListaCanciones(Object albumArtista) {
+	public VentanaListaCanciones(Object albumArtista, List<Album> albumesAnt, List<Artista> artistasAnt) {
+		albumes= albumesAnt;
+		artistas=artistasAnt;
 		Color colorFondo = new Color(40, 40, 40);
         Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
 		//Configuracion del JFrame
@@ -300,7 +304,7 @@ public class VentanaListaCanciones extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_E) {
 		            dispose(); 
-		            //new VentanaAlbumArtista(null, null); da error
+		            new VentanaAlbumArtista(albumes, artistas);
 		        }
 				
 			}

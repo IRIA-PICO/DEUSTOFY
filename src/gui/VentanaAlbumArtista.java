@@ -193,7 +193,7 @@ public class VentanaAlbumArtista extends JFrame {
             @Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(album);
+					new VentanaListaCanciones(album,albumes, artistas);
 				}
 			}
         });
@@ -235,7 +235,7 @@ public class VentanaAlbumArtista extends JFrame {
             @Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(artista);
+					new VentanaListaCanciones(artista, albumes, artistas);
 				}
 			}
         });
