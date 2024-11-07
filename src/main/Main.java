@@ -58,6 +58,7 @@ public class Main {
                     Cancion cancion = new Cancion(tituloCancion, duracionCancion, album, artista);
                     canciones.add(cancion);
                     album.getListacanciones().add(cancion);
+                    artista.getCanciones().add(cancion);
 				}
 				sc.close();
 			} catch (FileNotFoundException e) {
