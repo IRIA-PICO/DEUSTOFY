@@ -22,9 +22,9 @@ import domain.Cancion;
 public class VentanaCancion extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel pSur, pCentral, pSlider;
+	private JPanel pSur, pCentral, pSlider, pBotones;
 	private JButton btnpausa, btnatras, btnalante;
-	private JLabel lblTitulo, lblImagen, lblDur0, lblDurTotal;
+	private JLabel lblTitulo, lblImagen, lblDur0, lblDurTotal, lblfavorito, lblrepetir;
 	private JSlider slmusica;
 	private boolean enPausa = false;
 	private int pos;
@@ -74,19 +74,40 @@ public class VentanaCancion extends JFrame {
 		lblDurTotal.setForeground(Color.WHITE);
 		lblDurTotal.setFont(fuenteTexto);
 	
-		
 		//Añadir al JFrame
 		pSlider.add(lblDur0);
 		pSlider.add(slmusica);
 		pSlider.add(lblDurTotal);
 		
-		pCentral.add(Box.createRigidArea(new Dimension(0, 80))); 
+		//ultimo panel
+		pBotones=new JPanel();
+		pBotones.setBackground(new Color(60, 60, 60));
 		
+		lblfavorito= new JLabel();
+		lblfavorito.setSize(20, 20);
+		ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
+		ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
+		lblfavorito.setIcon(imagenConDimensiones2);
+		
+		lblrepetir= new JLabel();
+		lblrepetir.setSize(20, 20);
+		ImageIcon im3 = new ImageIcon("resources/images/bucle.jpg");
+		ImageIcon imagenConDimensiones3= new ImageIcon(im3.getImage().getScaledInstance(lblrepetir.getWidth(), lblrepetir.getHeight(), Image.SCALE_DEFAULT));
+		lblrepetir.setIcon(imagenConDimensiones3);
+
+		
+		pBotones.add(lblfavorito);
+		lblfavorito.setHorizontalAlignment(JLabel.LEFT);
+		pBotones.add(lblrepetir);
+		lblrepetir.setHorizontalAlignment(JLabel.RIGHT);
+		//Añadimos al panel central
+		pCentral.add(Box.createRigidArea(new Dimension(0, 80))); 
 		pCentral.add(lblImagen);
 		lblImagen.setHorizontalAlignment(JLabel.CENTER);
 		pCentral.add(Box.createRigidArea(new Dimension(0, 70))); 
 		pCentral.add(lblTitulo);
 		pCentral.add(pSlider);
+		pCentral.add(pBotones);
 		
 		//Creacion de botones
 		btnatras= new JButton("<<");
@@ -145,7 +166,6 @@ public class VentanaCancion extends JFrame {
 	}
 	
 	private void modificarDatos() {
-		lblImagen = new JLabel();
 		lblImagen.setSize(220, 220);
 		ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
 		ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
@@ -154,6 +174,7 @@ public class VentanaCancion extends JFrame {
 		lblTitulo.setText(c.reproducir());
 		lblDurTotal.setText(String.valueOf(c.getDuracion()));
 		slmusica.setValue(0);
+		
 	}
 	
 }
