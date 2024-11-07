@@ -179,7 +179,7 @@ public class VentanaListaCanciones extends JFrame {
 	}
 	
 	private void initTable() {
-		Vector<String> cabeceraCanciones = new Vector<String>(Arrays.asList("#", "TITULO", "ARTISTA", "DURACIÓN"));
+		Vector<String> cabeceraCanciones = new Vector<String>(Arrays.asList("#", "TITULO", "FAVORITOS", "ARTISTA", "DURACIÓN"));
 		this.modeloDatosCanciones = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraCanciones);
 		this.tablaCanciones = new JTable(this.modeloDatosCanciones) {
 			private static final long serialVersionUID = 1L;
@@ -204,7 +204,6 @@ public class VentanaListaCanciones extends JFrame {
 	                table.repaint();
 	            }
 	        }
-
 	        @Override
 	        public void mouseExited(MouseEvent e) {
 	            JTable table = (JTable) e.getSource();
@@ -227,7 +226,7 @@ public class VentanaListaCanciones extends JFrame {
 			JLabel result = new JLabel(value.toString());
 			result.setForeground(Color.WHITE);
 			result.setOpaque(true);
-			
+						
 			if (table.isRowSelected(row)) {
                 result.setBackground(new Color(60, 60, 60));
             } else {
@@ -238,9 +237,22 @@ public class VentanaListaCanciones extends JFrame {
 				result.setHorizontalAlignment(JLabel.CENTER);
 			} else if (value instanceof Artista) {
 				result.setText(((Artista)value).getNombre());
-			} else if (column == 3) {
+			} else if (column == 4) {
 				result.setHorizontalAlignment(JLabel.CENTER);
 				result.setText(value.toString());
+			} else if (value instanceof Boolean) {
+				result.setHorizontalAlignment(JLabel.CENTER);
+				result.setText(null);
+				ImageIcon imgFavorita = null;
+				if ((Boolean) value) {
+					imgFavorita = new ImageIcon("resources/images/logo.png");
+	        	} else {
+	        		imgFavorita = new ImageIcon("resources/images/logo.png");
+	        	}
+	        	Image img = imgFavorita.getImage();
+	            JLabel labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+	            result.setIcon(labelImagen.getIcon());
+				
 			} else {
 				result.setText(value.toString());
 			}
@@ -254,6 +266,8 @@ public class VentanaListaCanciones extends JFrame {
 				case "#":
 					result.setHorizontalAlignment(JLabel.CENTER);
 				case "DURACIÓN":
+					result.setHorizontalAlignment(JLabel.CENTER);
+				case "FAVORITOS":
 					result.setHorizontalAlignment(JLabel.CENTER);
 			}
 			result.setBackground(new Color(40, 40, 40));
@@ -296,7 +310,7 @@ public class VentanaListaCanciones extends JFrame {
 	private void loadCanciones() {
 		this.modeloDatosCanciones.setRowCount(0);
 		this.canciones.forEach(c -> this.modeloDatosCanciones.addRow(new Object[] {
-				posicionCancion(c) + 1, c.getTitulo(), c.getArtista(), formatoDuracion(c)}));
+				posicionCancion(c) + 1, c.getTitulo(), c.isFavorita(), c.getArtista(), formatoDuracion(c)}));
 	}
 	
 	private int posicionCancion(Cancion c) {
@@ -324,7 +338,7 @@ public class VentanaListaCanciones extends JFrame {
 		this.canciones.forEach(c -> {
 			if (c.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
 				this.modeloDatosCanciones.addRow(
-						new Object[] {posicionCancion(c) + 1, c.getTitulo(), c.getArtista(), formatoDuracion(c)} );
+						new Object[] {posicionCancion(c) + 1, c.getTitulo(), c.isFavorita(), c.getArtista(), formatoDuracion(c)} );
 			}
 		});
 	}

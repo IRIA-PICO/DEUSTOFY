@@ -7,6 +7,7 @@ public class Cancion {
 	 private double duracion;
 	 private Album album;
 	 private Artista artista;
+	 private Boolean favorita;
 	 
 	 
 	public Cancion(String titulo, double duracion, Album album, Artista artista) {
@@ -15,6 +16,7 @@ public class Cancion {
         this.duracion = duracion;
         this.album = album;
         this.artista = artista;
+        this.favorita = false;
 	}
 
 	@Override
@@ -75,7 +77,15 @@ public class Cancion {
 	public void setArtista(Artista artista) {
 		this.artista = artista;
 	}
-
+	
+	public void setFavorita(Boolean favorita) {
+		this.favorita = favorita;
+	}
+	
+	public Boolean isFavorita() {
+		return favorita;
+	}
+	
 	@Override
 	public String toString() {
 		return "Cancion [titulo=" + titulo + ", duracion=" + duracion + ", album=" + album + ", artista=" + artista
