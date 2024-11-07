@@ -26,6 +26,7 @@ public class VentanaAlbumArtista extends JFrame {
     private JTextField busqueda;
     private JPanel albumGrid;
     private JPanel artistaGrid;
+    private JPanel sidebar;
     
     public VentanaAlbumArtista(List<Album> albumes1, List<Artista> artistas1) {
     	albumes = albumes1;
@@ -155,6 +156,11 @@ public class VentanaAlbumArtista extends JFrame {
         // Agregar los componentes al JFrame
         add(Panelbusqueda, BorderLayout.NORTH);
         add(panel_artistas_albumes, BorderLayout.CENTER);
+        
+        crearPanelLateral("NombreUsuario", "resources/images/user_icon.png");
+        
+        // Agregar el panel lateral y el panel principal
+        add(sidebar, BorderLayout.WEST);
 
         setVisible(true);
     }
@@ -271,4 +277,121 @@ public class VentanaAlbumArtista extends JFrame {
 	    artistaGrid.revalidate();
 	    artistaGrid.repaint();
 	}
+    private void crearPanelLateral(String nombreUsuario, String rutaFotoUsuario) {
+        // Panel lateral
+        sidebar = new JPanel();
+        sidebar.setLayout(new BorderLayout());
+        sidebar.setPreferredSize(new Dimension(250, getHeight()));
+        sidebar.setBackground(new Color(24, 24, 24));
+        
+        // Panel para la sección del usuario
+        JPanel userPanel = new JPanel(new BorderLayout());
+        userPanel.setBackground(new Color(32, 32, 32));
+        userPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        // Foto del usuario
+        JLabel userIcon = new JLabel();
+        ImageIcon icon = new ImageIcon(new ImageIcon(rutaFotoUsuario).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+        userIcon.setIcon(icon);
+        userIcon.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        // Nombre del usuario
+        JLabel userNameLabel = new JLabel(nombreUsuario, SwingConstants.CENTER);
+        userNameLabel.setForeground(Color.WHITE);
+        userNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        // Agregar componentes al panel de usuario
+        userPanel.add(userIcon, BorderLayout.WEST);
+        userPanel.add(userNameLabel, BorderLayout.CENTER);
+
+        // Panel de navegación
+        JPanel navPanel = new JPanel();
+        navPanel.setBackground(new Color(24, 24, 24));
+        navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
+        
+        // Botones de navegación
+        navPanel.add(crearBotonNavegacion("Inicio", "resources/images/casa.png"));
+        navPanel.add(crearBotonNavegacion("Explorar", "resources/images/explorar.png"));
+        navPanel.add(crearBotonNavegacion("Tus Canciones", "resources/images/estrella.png"));
+        
+        // Añadir secciones al sidebar
+        sidebar.add(userPanel, BorderLayout.NORTH);
+        sidebar.add(navPanel, BorderLayout.CENTER);
+        JPanel premiumAd = new JPanel();
+        premiumAd.setLayout(new BorderLayout());
+        premiumAd.setBackground(Color.BLUE); 
+
+        // Texto del anuncio
+        JLabel adText = new JLabel("<html><center>¡Disfruta sin anuncios!<br>Actualízate a Premium</center></html>");
+        adText.setForeground(Color.WHITE);
+        adText.setFont(new Font("Arial", Font.BOLD, 14));
+        adText.setHorizontalAlignment(SwingConstants.CENTER);
+        premiumAd.add(adText, BorderLayout.CENTER);
+
+        // Botón de actualización
+        JButton upgradeButton = new JButton("Actualizar ahora");
+        upgradeButton.setFont(new Font("Arial", Font.BOLD, 12));
+        upgradeButton.setForeground(Color.WHITE);
+        upgradeButton.setBackground(new Color(24, 24, 24));
+        upgradeButton.setFocusPainted(false);
+        upgradeButton.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
+
+        upgradeButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                upgradeButton.setBackground(new Color(40, 40, 40)); // Gris oscuro al hacer hover
+            }
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	int confirm = JOptionPane.showConfirmDialog(
+                        null,
+                        "¿Estás seguro de que deseas actualizar a Premium?",
+                        "Confirmación de actualización",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE
+                    );
+                if (confirm ==JOptionPane.OK_OPTION) {
+                	String cuenta = JOptionPane.showInputDialog(null, "INTRODUCIR NUMERO DE CUENTA", "IBAN:", JOptionPane.PLAIN_MESSAGE);
+                	if (cuenta != null) {
+                		JOptionPane.showMessageDialog(null, "Cuenta registrada: " + cuenta + "\n¡Actualización a premium exitosa!");
+                	}
+                }
+            }
+            @Override
+            public void mouseExited(MouseEvent e) {
+                upgradeButton.setBackground(new Color(24, 24, 24)); // Volver al color original
+            }
+        });
+
+        premiumAd.add(upgradeButton, BorderLayout.SOUTH);
+
+        // Añadir el anuncio premium al sur del sidebar
+        sidebar.add(premiumAd, BorderLayout.SOUTH);
+    }
+
+    private JButton crearBotonNavegacion(String texto, String iconoRuta) {
+        JButton button = new JButton(texto);
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.setPreferredSize(new Dimension(200, 40));
+        button.setMaximumSize(new Dimension(200, 40));
+        button.setForeground(Color.WHITE);
+        button.setFont(new Font("Arial", Font.BOLD, 16));
+        button.setBackground(new Color(50,50,50));
+        button.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
+
+        ImageIcon icon = new ImageIcon(new ImageIcon(iconoRuta).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+        button.setIcon(icon);
+        button.setHorizontalAlignment(SwingConstants.LEFT);
+        
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(45, 45, 45));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(50, 50, 50));
+            }
+        });
+
+        return button;
+    }
 }
