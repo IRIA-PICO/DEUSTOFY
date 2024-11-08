@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -22,7 +24,8 @@ import domain.Cancion;
 public class VentanaCancion extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	private JPanel pSur, pCentral, pSlider, pBotones;
+	private JLayeredPane pCentral;
+	private JPanel pNorte, pSur, pSlider, pBotones;
 	private JButton btnpausa, btnatras, btnalante;
 	private JLabel lblTitulo, lblImagen, lblDur0, lblDurTotal, lblfavorito, lblrepetir;
 	private JSlider slmusica;
@@ -43,18 +46,30 @@ public class VentanaCancion extends JFrame {
         //Cargamos la cancion que vamos a estar usando
 		c= lcan.get(pos);
 		
-		pCentral = new JPanel();
-		pCentral.setLayout(new BoxLayout(pCentral, BoxLayout.Y_AXIS));
+		pCentral = new JLayeredPane();
+		pCentral.setPreferredSize(new Dimension(400, 400));
 		pCentral.setBackground(new Color(60, 60, 60)); 
-		pSur= new JPanel();
+		pSur= new JPanel(new GridLayout(3,1));
 		pSur.setBackground(new Color(60, 60, 60)); 
+		pNorte= new JPanel();
+		pNorte.setBackground(new Color(60, 60, 60)); 
 		
-		//Cargamos Foto del album, nombre del artista y nombre de la cancion
+		//Cargamos Foto del album
 		lblImagen = new JLabel();
-		lblImagen.setSize(220, 220);
+		lblImagen.setSize(300, 300);
+		lblImagen.setLocation(50, 50);
 		ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
 		ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
 		lblImagen.setIcon(imagenConDimensiones);
+		
+		//Cargar estrella
+		lblfavorito= new JLabel();
+		lblfavorito.setSize(20, 20);
+		lblfavorito.setLocation(lblImagen.getX() + lblImagen.getWidth() - lblfavorito.getWidth(), lblImagen.getY());
+		ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
+		ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
+		lblfavorito.setIcon(imagenConDimensiones2);
+		//CArgamos nombre del artista y nombre de la cancion
 		lblTitulo= new JLabel(c.reproducir());
 		lblTitulo.setForeground(Color.WHITE);
 		lblTitulo.setFont(fuenteTexto);
@@ -74,42 +89,14 @@ public class VentanaCancion extends JFrame {
 		lblDurTotal.setForeground(Color.WHITE);
 		lblDurTotal.setFont(fuenteTexto);
 	
-		//Añadir al JFrame
+		//Añadir al panelSlider
 		pSlider.add(lblDur0);
 		pSlider.add(slmusica);
 		pSlider.add(lblDurTotal);
 		
-		//ultimo panel
-		pBotones=new JPanel();
-		pBotones.setBackground(new Color(60, 60, 60));
-		
-		lblfavorito= new JLabel();
-		lblfavorito.setSize(20, 20);
-		ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
-		ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
-		lblfavorito.setIcon(imagenConDimensiones2);
-		
-		lblrepetir= new JLabel();
-		lblrepetir.setSize(20, 20);
-		ImageIcon im3 = new ImageIcon("resources/images/bucle.jpg");
-		ImageIcon imagenConDimensiones3= new ImageIcon(im3.getImage().getScaledInstance(lblrepetir.getWidth(), lblrepetir.getHeight(), Image.SCALE_DEFAULT));
-		lblrepetir.setIcon(imagenConDimensiones3);
-
-		
-		pBotones.add(lblfavorito);
-		lblfavorito.setHorizontalAlignment(JLabel.LEFT);
-		pBotones.add(lblrepetir);
-		lblrepetir.setHorizontalAlignment(JLabel.RIGHT);
-		//Añadimos al panel central
-		pCentral.add(Box.createRigidArea(new Dimension(0, 80))); 
-		pCentral.add(lblImagen);
-		lblImagen.setHorizontalAlignment(JLabel.CENTER);
-		pCentral.add(Box.createRigidArea(new Dimension(0, 70))); 
-		pCentral.add(lblTitulo);
-		pCentral.add(pSlider);
-		pCentral.add(pBotones);
-		
 		//Creacion de botones
+		pBotones= new JPanel();
+		pBotones.setBackground(new Color(60, 60, 60));
 		btnatras= new JButton("<<");
 		ImageIcon imgOriginal=new ImageIcon("resources/images/ButonPlay.png");
 		btnpausa= new JButton(new ImageIcon(imgOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
@@ -121,11 +108,27 @@ public class VentanaCancion extends JFrame {
         btnpausa.setBackground(botonColor);
         btnalante.setBackground(botonColor);
         btnalante.setForeground(Color.WHITE);
-        
-		pSur.add(btnatras);
-		pSur.add(btnpausa);
-		pSur.add(btnalante);
+		pBotones.add(btnatras);
+		pBotones.add(btnpausa);
+		pBotones.add(btnalante);
 		
+		//Para repetir la cancion		
+		lblrepetir= new JLabel();
+		lblrepetir.setSize(20, 20);
+		ImageIcon im3 = new ImageIcon("resources/images/bucle.jpg");
+		ImageIcon imagenConDimensiones3= new ImageIcon(im3.getImage().getScaledInstance(lblrepetir.getWidth(), lblrepetir.getHeight(), Image.SCALE_DEFAULT));
+		lblrepetir.setIcon(imagenConDimensiones3);
+		
+		//Añadimos a los paneles;
+		pCentral.add(lblImagen, Integer.valueOf(1)); 
+		pCentral.add(lblfavorito, Integer.valueOf(2));
+		pSur.add(lblTitulo);
+		lblTitulo.setAlignmentX(JLabel.CENTER);
+		pSur.add(pSlider);
+		pSur.add(pBotones);
+		
+	
+		getContentPane().add(pNorte, BorderLayout.NORTH);
 		getContentPane().add(pCentral, BorderLayout.CENTER);
 		getContentPane().add(pSur, BorderLayout.SOUTH);
 		
@@ -166,7 +169,7 @@ public class VentanaCancion extends JFrame {
 	}
 	
 	private void modificarDatos() {
-		lblImagen.setSize(220, 220);
+		lblImagen.setSize(300, 300);
 		ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
 		ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
 		
