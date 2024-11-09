@@ -165,7 +165,8 @@ public class VentanaAlbumArtista extends JFrame {
         setVisible(true);
     }
 
-    private JPanel createAlbumPanel(Album album) {
+
+	private JPanel createAlbumPanel(Album album) {
         JPanel albumPanel = new JPanel(new BorderLayout());
         albumPanel.setBackground(new Color(24, 24, 24));
         albumPanel.setBorder(BorderFactory.createCompoundBorder(
@@ -394,4 +395,5 @@ public class VentanaAlbumArtista extends JFrame {
 
         return button;
     }
+    
 }

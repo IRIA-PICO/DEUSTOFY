@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -16,6 +17,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import domain.Album;
+import domain.Artista;
+
 import javax.swing.JPasswordField;
 import javax.swing.JDialog;
 
@@ -103,8 +108,13 @@ public class VentanaIdentificacion extends JFrame {
     
     // Diálogo de error para inicio de sesión fallido
     private void DialogoInicioSesion(String id, String contraseña) {
-        if (id.equals("Ane") && contraseña.equals("123")) {
+        if (id.equals("") && contraseña.equals("")) {
             JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose(); //Cierro la ventana actual
+            
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(null, null);
+            vAlbumArtista.setVisible(true);
+            
         } else {
             JOptionPane.showMessageDialog(this, "ID o contraseña incorrectos, vuelva a intentarlo.", "Error", JOptionPane.ERROR_MESSAGE);
         }
