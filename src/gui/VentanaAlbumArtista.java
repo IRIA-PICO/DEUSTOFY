@@ -95,6 +95,7 @@ public class VentanaAlbumArtista extends JFrame {
         lupa.setBorder(BorderFactory.createEmptyBorder());
         lupa.setContentAreaFilled(false);
         lupa.setFocusPainted(false);
+        lupa.setToolTipText("Haz clic para buscar");
         Panelbusqueda.add(lupa, BorderLayout.WEST);
         Panelbusqueda.add(busqueda, BorderLayout.CENTER);
         
@@ -293,12 +294,12 @@ public class VentanaAlbumArtista extends JFrame {
         
         // Foto del usuario
         JLabel userIcon = new JLabel();
-        ImageIcon icon = new ImageIcon(new ImageIcon(rutaFotoUsuario).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+        ImageIcon icon = new ImageIcon(new ImageIcon("resources/images/user.png").getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
         userIcon.setIcon(icon);
         userIcon.setHorizontalAlignment(SwingConstants.CENTER);
         
         // Nombre del usuario
-        JLabel userNameLabel = new JLabel(nombreUsuario, SwingConstants.CENTER);
+        JLabel userNameLabel = new JLabel(user.getNombre(), SwingConstants.CENTER);
         userNameLabel.setForeground(Color.WHITE);
         userNameLabel.setFont(new Font("Arial", Font.BOLD, 14));
         
@@ -314,7 +315,15 @@ public class VentanaAlbumArtista extends JFrame {
         // Botones de navegación
         navPanel.add(crearBotonNavegacion("Inicio", "resources/images/casa.png"));
         navPanel.add(crearBotonNavegacion("Explorar", "resources/images/explorar.png"));
-        navPanel.add(crearBotonNavegacion("Tus Canciones", "resources/images/estrella.png"));
+        navPanel.add(crearBotonNavegacion("Tu Biblioteca", "resources/images/libro.png"));
+        
+        JLabel playlistsLabel = new JLabel("Listas de Reproducción");
+        playlistsLabel.setForeground(Color.GRAY);
+        playlistsLabel.setBorder(new EmptyBorder(10, 0, 5, 0));
+        navPanel.add(playlistsLabel);
+        
+        navPanel.add(crearBotonNavegacion("Mis Favoritas", "resources/images/estrella.png"));
+        navPanel.add(crearBotonNavegacion("Para Relajarse", "resources/images/reloj.png"));
         
         // Añadir secciones al sidebar
         sidebar.add(userPanel, BorderLayout.NORTH);
@@ -337,6 +346,7 @@ public class VentanaAlbumArtista extends JFrame {
         upgradeButton.setBackground(new Color(24, 24, 24));
         upgradeButton.setFocusPainted(false);
         upgradeButton.setBorder(BorderFactory.createEmptyBorder(8, 0, 8, 0));
+        upgradeButton.setToolTipText("Haz clic para actualizar a Premium");
 
         upgradeButton.addMouseListener(new MouseAdapter() {
             @Override

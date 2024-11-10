@@ -49,7 +49,6 @@ public class VentanaIdentificacion extends JFrame {
     	albumes = albumesr;
     	artistas = artistasr;
 
-    	
         setBounds(300, 200, 400, 350);
         setTitle("Deustofy - Inicio de Sesión");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
