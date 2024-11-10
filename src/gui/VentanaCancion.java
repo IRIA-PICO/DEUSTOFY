@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JSlider;
 
 import domain.Cancion;
+import domain.Usuario;
 
 public class VentanaCancion extends JFrame {
 
@@ -29,13 +30,16 @@ public class VentanaCancion extends JFrame {
 	private JButton btnpausa, btnatras, btnalante;
 	private JLabel lblTitulo, lblImagen, lblDur0, lblDurTotal, lblfavorito, lblrepetir;
 	private JSlider slmusica;
+	private Usuario user;
 	private boolean enPausa = false;
 	private int pos;
 	private Cancion c;
-	public VentanaCancion(List<Cancion> lcan, int posicion) {
+	public VentanaCancion(List<Cancion> lcan, int posicion, Usuario userAnt) {
+		
 		//propiedades JFrame
 		setBounds(1000, 100, 400, 600);
 		pos = posicion;
+		user= userAnt;
 		setTitle("DEUSTOFY - Cancion");
 		ImageIcon imagen = new ImageIcon("resources/images/logo.png");
 		Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
@@ -66,9 +70,16 @@ public class VentanaCancion extends JFrame {
 		lblfavorito= new JLabel();
 		lblfavorito.setSize(20, 20);
 		lblfavorito.setLocation(lblImagen.getX() + lblImagen.getWidth() - lblfavorito.getWidth(), lblImagen.getY());
+		if(user.getCancionesFavoritas().contains(c)) {
 		ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
 		ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
 		lblfavorito.setIcon(imagenConDimensiones2);
+		}else {
+			ImageIcon im2 = new ImageIcon("resources/images/estrellaFavorita.png");
+			ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
+			lblfavorito.setIcon(imagenConDimensiones2);
+		}
+		
 		//CArgamos nombre del artista y nombre de la cancion
 		lblTitulo= new JLabel(c.reproducir());
 		lblTitulo.setForeground(Color.WHITE);

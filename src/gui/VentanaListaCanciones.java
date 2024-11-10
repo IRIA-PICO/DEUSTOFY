@@ -36,6 +36,7 @@ import javax.swing.table.TableCellRenderer;
 import domain.Album;
 import domain.Artista;
 import domain.Cancion;
+import domain.Usuario;
 
 
 public class VentanaListaCanciones extends JFrame {
@@ -44,13 +45,15 @@ public class VentanaListaCanciones extends JFrame {
 	private List<Cancion> canciones;
 	private List<Album>albumes;
 	private List<Artista> artistas;
+	private Usuario user;
 	private JTable tablaCanciones;
 	private DefaultTableModel modeloDatosCanciones;
 	private JTextField busqueda;
 	
-	public VentanaListaCanciones(Object albumArtista, List<Album> albumesAnt, List<Artista> artistasAnt) {
+	public VentanaListaCanciones(Object albumArtista, List<Album> albumesAnt, List<Artista> artistasAnt, Usuario userAnt) {
 		albumes= albumesAnt;
 		artistas=artistasAnt;
+		user= userAnt;
 		Color colorFondo = new Color(40, 40, 40);
         Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
 		//Configuracion del JFrame
@@ -312,7 +315,7 @@ public class VentanaListaCanciones extends JFrame {
 					Point p= e.getPoint();
 					int fila= tablaCanciones.rowAtPoint(p);
 					int id_cancion= (int) tablaCanciones.getValueAt(fila, 0);
-					new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1 );
+					new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1, user );
 				}
 			}
 		});
@@ -323,7 +326,7 @@ public class VentanaListaCanciones extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_E) {
 		            dispose(); 
-		            new VentanaAlbumArtista(albumes, artistas);
+		            new VentanaAlbumArtista(albumes, artistas, user);
 		        }
 				
 			}

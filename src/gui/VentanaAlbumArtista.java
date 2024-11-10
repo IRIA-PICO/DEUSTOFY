@@ -7,6 +7,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import domain.Artista;
+import domain.Usuario;
 import domain.Album;
 
 import java.awt.*;
@@ -23,15 +24,16 @@ public class VentanaAlbumArtista extends JFrame {
     private JPanel panel_artistas_albumes;
     private List<Album> albumes;
     private List<Artista> artistas;
+    private Usuario user;
     private JTextField busqueda;
     private JPanel albumGrid;
     private JPanel artistaGrid;
     private JPanel sidebar;
     
-    public VentanaAlbumArtista(List<Album> albumes1, List<Artista> artistas1) {
+    public VentanaAlbumArtista(List<Album> albumes1, List<Artista> artistas1, Usuario user1) {
     	albumes = albumes1;
     	artistas = artistas1;
-    	
+    	user= user1;
         setTitle("DEUSTOFY");
         ImageIcon imagen = new ImageIcon("resources/images/logo.png");
         setIconImage(imagen.getImage());
@@ -194,7 +196,7 @@ public class VentanaAlbumArtista extends JFrame {
             @Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(album,albumes, artistas);
+					new VentanaListaCanciones(album,albumes, artistas, user);
 				}
 			}
         });
@@ -236,7 +238,7 @@ public class VentanaAlbumArtista extends JFrame {
             @Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(artista, albumes, artistas);
+					new VentanaListaCanciones(artista, albumes, artistas, user);
 				}
 			}
         });
