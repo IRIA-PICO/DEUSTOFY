@@ -49,11 +49,13 @@ public class VentanaListaCanciones extends JFrame {
 	private JTable tablaCanciones;
 	private DefaultTableModel modeloDatosCanciones;
 	private JTextField busqueda;
+	private VentanaCancion ventanaCancion;
 	
 	public VentanaListaCanciones(Object albumArtista, List<Album> albumesAnt, List<Artista> artistasAnt, Usuario userAnt) {
 		albumes = albumesAnt;
 		artistas =artistasAnt;
 		user = userAnt;
+		ventanaCancion = null;
 		Color colorFondo = new Color(40, 40, 40);
         Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
 		//Configuracion del JFrame
@@ -75,6 +77,7 @@ public class VentanaListaCanciones extends JFrame {
         
         // Inicializar tabla y cargar canciones
         this.initTable();
+        // Listener para añadir la cancion a favoritos y actualizar la imagen
         this.tablaCanciones.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -84,6 +87,9 @@ public class VentanaListaCanciones extends JFrame {
                     Cancion cancion = canciones.get(fila);
                     user.updateCancionFavorita(cancion); 
                     actualizarIconoFavorito(fila);
+                    if (ventanaCancion != null && ventanaCancion.getCancion().equals(cancion)) {
+            	        ventanaCancion.modificarDatos();
+            	    }
                 }
             }
         });
@@ -158,6 +164,7 @@ public class VentanaListaCanciones extends JFrame {
                 BorderFactory.createEmptyBorder(5, 10, 5, 10)
         ));
         
+        // Listener para la barra de buscar
         this.busqueda.addFocusListener(new FocusAdapter() {
             public void focusGained(FocusEvent e) {
                 if (busqueda.getText().equals("Buscar canciones")) {
@@ -197,6 +204,7 @@ public class VentanaListaCanciones extends JFrame {
         setVisible(true);
 	}
 	
+	// Inicializar tabla
 	private void initTable() {
 		Vector<String> cabeceraCanciones = new Vector<String>(Arrays.asList("#", "TITULO", "FAVORITOS", "ARTISTA", "DURACIÓN"));
 		this.modeloDatosCanciones = new DefaultTableModel(new Vector<Vector<Object>>(), cabeceraCanciones);
@@ -213,6 +221,8 @@ public class VentanaListaCanciones extends JFrame {
 		this.tablaCanciones.getTableHeader().setResizingAllowed(false);
 		this.tablaCanciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		this.tablaCanciones.setBackground(new Color(40, 40, 40));
+		
+		// Para que cambie de color al pasar el raton por encima
 		this.tablaCanciones.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -262,24 +272,17 @@ public class VentanaListaCanciones extends JFrame {
 			} else if (value instanceof Boolean) {
 				result.setHorizontalAlignment(JLabel.CENTER);
 				result.setText(null);
-				JLabel labelImagen = null;
 				if ((Boolean) value) {
 					ImageIcon imgFavorita = new ImageIcon("resources/images/estrella.png");
 					Image img = imgFavorita.getImage();
-		            labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
-
+					JLabel labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+		            result.setIcon(labelImagen.getIcon());
 				} else {
-	        		ImageIcon imgFavorita = new ImageIcon("resources/images/estrellaFavorita.png");
-	        		Image img = imgFavorita.getImage();
-		            labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
-
+	        		result.setText("");
 				}
-	            result.setIcon(labelImagen.getIcon());
-				
 			} else {
 				result.setText(value.toString());
 			}
-			
 			return result;
 		};
 				
@@ -312,7 +315,7 @@ public class VentanaListaCanciones extends JFrame {
 					Point p= e.getPoint();
 					int fila= tablaCanciones.rowAtPoint(p);
 					int id_cancion= (int) tablaCanciones.getValueAt(fila, 0);
-					new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1, user );
+					ventanaCancion = new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1, user );
 				}
 			}
 		});
@@ -330,12 +333,14 @@ public class VentanaListaCanciones extends JFrame {
 		});
 	}
 	
+	// Carga las canciones
 	private void loadCanciones() {
 		this.modeloDatosCanciones.setRowCount(0);
 		this.canciones.forEach(c -> this.modeloDatosCanciones.addRow(new Object[] {
 				posicionCancion(c) + 1, c.getTitulo(), user.getCancionesFavoritas().contains(c), c.getArtista(), formatoDuracion(c)}));
 	}
 	
+	// Para conseguir la posicion de la cancion el el array
 	private int posicionCancion(Cancion c) {
 		for (int i=0; i<canciones.size(); i++) {
 			if(canciones.get(i).equals(c)) {
@@ -344,7 +349,8 @@ public class VentanaListaCanciones extends JFrame {
 		}
 		return 0;
 	}
-
+	
+	// Formato minutos:segundos
 	private static String formatoDuracion(Cancion c) {
 		int minutes = (int) (c.getDuracion());
 		int seconds = (int) ((c.getDuracion() - minutes)*100);
@@ -355,11 +361,13 @@ public class VentanaListaCanciones extends JFrame {
 		return (minutes + ":" + secondsStr);
 	}
 	
+	// Actualiza la imagen de la tabla segun lo que recibe de value y el cell renderer
 	private void actualizarIconoFavorito(int fila) {
 	    Cancion cancion = canciones.get(fila);
 	    modeloDatosCanciones.setValueAt(user.getCancionesFavoritas().contains(cancion), fila, 2);
 	}
 	
+	// Quita todo lo que hay en la tabla y añade solo lo que coincide con la busqueda
 	private void buscarCanciones() {
 		this.modeloDatosCanciones.setRowCount(0);
 		

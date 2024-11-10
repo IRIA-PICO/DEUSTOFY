@@ -71,10 +71,6 @@ public class VentanaCancion extends JFrame {
 		ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
 		ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
 		lblfavorito.setIcon(imagenConDimensiones2);
-		}else {
-			ImageIcon im2 = new ImageIcon("resources/images/estrellaFavorita.png");
-			ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
-			lblfavorito.setIcon(imagenConDimensiones2);
 		}
 		
 		//CArgamos nombre del artista y nombre de la cancion
@@ -176,7 +172,7 @@ public class VentanaCancion extends JFrame {
 		setVisible(true);
 	}
 	
-	private void modificarDatos() {
+	public void modificarDatos() {
 		lblImagen.setSize(300, 300);
 		ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
 		ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
@@ -185,17 +181,19 @@ public class VentanaCancion extends JFrame {
 			ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
 			ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
 			lblfavorito.setIcon(imagenConDimensiones2);
-			}else {
-				ImageIcon im2 = new ImageIcon("resources/images/estrellaFavorita.png");
-				ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
-				lblfavorito.setIcon(imagenConDimensiones2);
-			}
+		} else {
+			lblfavorito.setIcon(null);
+		}
 		
 		lblImagen.setIcon(imagenConDimensiones);
 		lblTitulo.setText(c.reproducir());
 		lblDurTotal.setText(String.valueOf(c.getDuracion()));
 		slmusica.setValue(0);
 		
+	}
+	
+	public Cancion getCancion() {
+		return c;
 	}
 	
 }
