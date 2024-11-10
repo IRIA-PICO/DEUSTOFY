@@ -13,6 +13,7 @@ import domain.Artista;
 import domain.Cancion;
 import domain.Genero;
 import gui.VentanaAlbumArtista;
+import gui.VentanaIdentificacion;
 
 public class Main {
 	
@@ -89,7 +90,7 @@ public class Main {
     
 	public static void main(String[] args) {
 		new Main().cargarCSV();
-        SwingUtilities.invokeLater(() -> new VentanaAlbumArtista(albumes, artistas));
+        SwingUtilities.invokeLater(() -> new VentanaIdentificacion(albumes, artistas));
 	}
 }
 

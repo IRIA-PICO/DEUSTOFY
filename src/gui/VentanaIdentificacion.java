@@ -28,11 +28,17 @@ public class VentanaIdentificacion extends JFrame {
     private static final long serialVersionUID = 1L;
     private JButton btnRegistrarme, btnInicioSesion;
     private JLabel lblTitulo;
+    private List<Album> albumes;
+    private List<Artista> artistas;
+
 
     private JPanel pCentro, pNorte, pEste, pOeste, pSur;
 
-    public VentanaIdentificacion() {
-        super();
+    public VentanaIdentificacion(List<Album> albumesr, List<Artista> artistasr) {
+    	albumes = albumesr;
+    	artistas = artistasr;
+
+    	
         setBounds(300, 200, 400, 350);
         setTitle("Deustofy - Inicio de Sesión");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -112,7 +118,7 @@ public class VentanaIdentificacion extends JFrame {
             JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose(); //Cierro la ventana actual
             
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(null, null);
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
         } else {
@@ -198,12 +204,5 @@ public class VentanaIdentificacion extends JFrame {
         dialogo.setVisible(true);
     }
 
-
-// ------------------------------------------------------------------------------------------------------------------
-    
-    public static void main(String[] args) {
-        VentanaIdentificacion v = new VentanaIdentificacion();
-        v.setVisible(true);
-    }
 }
 
