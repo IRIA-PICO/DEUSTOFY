@@ -28,8 +28,13 @@ public class VentanaIdentificacion extends JFrame {
     private static final long serialVersionUID = 1L;
     private JButton btnRegistrarme, btnInicioSesion;
     private JLabel lblTitulo;
+    
     private List<Album> albumes;
     private List<Artista> artistas;
+    
+    private static String nombreGuardado;
+    private static String contraseñaGuardada;
+
 
 
     private JPanel pCentro, pNorte, pEste, pOeste, pSur;
@@ -112,16 +117,23 @@ public class VentanaIdentificacion extends JFrame {
         return boton;
     }
     
-    // Diálogo de error para inicio de sesión fallido
+    // Diálogo de error para INICIO DE SESIÓN fallido
     private void DialogoInicioSesion(String id, String contraseña) {
-        if (id.equals("") && contraseña.equals("")) {
-            JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.dispose(); //Cierro la ventana actual
+        if (id.equals(nombreGuardado) && contraseña.equals(contraseñaGuardada)) { // HABIÉNDOME REGISTRADO
+        	JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
             
             VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
-        } else {
+        } else if (id.equals("") && contraseña.equals("")) { // PREDETERMINADO
+            JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            this.dispose();
+            
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
+            vAlbumArtista.setVisible(true);
+            
+        } else { // INCORRECTO
             JOptionPane.showMessageDialog(this, "ID o contraseña incorrectos, vuelva a intentarlo.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -188,7 +200,11 @@ public class VentanaIdentificacion extends JFrame {
             if (!contraseña.equals(confirmarContraseña)) {
                 JOptionPane.showMessageDialog(dialogo, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(dialogo, "¡Registro exitoso!", "Registro", JOptionPane.INFORMATION_MESSAGE);
+            	nombreGuardado = txtID.getText();          // Guardamos el ID de usuario
+                contraseñaGuardada = contraseña;           // Guardamos la contraseña
+
+            	
+            	JOptionPane.showMessageDialog(dialogo, "¡Registro exitoso!", "Registro", JOptionPane.INFORMATION_MESSAGE);
                 dialogo.dispose();
             }
         });
