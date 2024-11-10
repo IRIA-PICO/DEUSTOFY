@@ -30,10 +30,9 @@ public class VentanaAlbumArtista extends JFrame {
     private JPanel artistaGrid;
     private JPanel sidebar;
     
-    public VentanaAlbumArtista(List<Album> albumes1, List<Artista> artistas1, Usuario user1) {
+    public VentanaAlbumArtista(List<Album> albumes1, List<Artista> artistas1) {
     	albumes = albumes1;
     	artistas = artistas1;
-    	user= user1;
         setTitle("DEUSTOFY");
         ImageIcon imagen = new ImageIcon("resources/images/logo.png");
         setIconImage(imagen.getImage());
@@ -82,7 +81,6 @@ public class VentanaAlbumArtista extends JFrame {
 			}
 			@Override
 			public void changedUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
 			}
         };
         this.busqueda.getDocument().addDocumentListener(dl);

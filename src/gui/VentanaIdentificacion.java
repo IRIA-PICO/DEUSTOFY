@@ -12,6 +12,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,7 +21,6 @@ import javax.swing.JTextField;
 
 import domain.Album;
 import domain.Artista;
-import domain.Usuario;
 
 import javax.swing.JPasswordField;
 import javax.swing.JDialog;
@@ -56,7 +56,7 @@ public class VentanaIdentificacion extends JFrame {
         setLayout(null);
         
         // DISEÑO TITULO:
-        lblTitulo = new JLabel("Inicia sesión en Spotify");
+        lblTitulo = new JLabel("Inicia sesión en Deustofy");
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
         lblTitulo.setBounds(120, 30, 200, 30);
@@ -123,15 +123,13 @@ public class VentanaIdentificacion extends JFrame {
         if (id.equals(nombreGuardado) && contraseña.equals(contraseñaGuardada)) { // HABIÉNDOME REGISTRADO
         	JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
-            Usuario user= new Usuario("", "Mujer", 18, nombreGuardado, contraseñaGuardada);
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
         } else if (id.equals("") && contraseña.equals("")) { // PREDETERMINADO
             JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
-            Usuario user= new Usuario("", "", 0, " ", "");
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
         } else { // INCORRECTO
@@ -201,12 +199,10 @@ public class VentanaIdentificacion extends JFrame {
             if (!contraseña.equals(confirmarContraseña)) {
                 JOptionPane.showMessageDialog(dialogo, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-            	nombreGuardado = txtID.getText();          // Guardamos el ID de usuario
-                contraseñaGuardada = contraseña;           // Guardamos la contraseña
-
-            	
-            	JOptionPane.showMessageDialog(dialogo, "¡Registro exitoso!", "Registro", JOptionPane.INFORMATION_MESSAGE);
+            	nombreGuardado = txtID.getText(); // Guardamos el ID de usuario
+                contraseñaGuardada = contraseña;  // Guardamos la contraseña
                 dialogo.dispose();
+                DialogoDatosExtra(); // ABRIR DIALOGO DE Nombre, Edad, Sexo
             }
         });
         
@@ -220,6 +216,70 @@ public class VentanaIdentificacion extends JFrame {
 
         dialogo.setVisible(true);
     }
+    
+    
+    private void DialogoDatosExtra() { // DIALOGO DE Nombre, Edad, Sexo
+        JDialog dialogoDatos = new JDialog(this, "Datos Adicionales", true);
+        dialogoDatos.setSize(350, 250);
+        dialogoDatos.setLayout(new BorderLayout());
+        dialogoDatos.setLocationRelativeTo(this);
+        dialogoDatos.getContentPane().setBackground(Color.BLACK);
+
+        JPanel panelCentral = new JPanel(new GridLayout(3, 2, 10, 10));
+        panelCentral.setBackground(Color.BLACK);
+
+        JLabel lblNombre = new JLabel("Nombre:");
+        lblNombre.setForeground(Color.WHITE);
+        JTextField txtNombre = new JTextField();
+        txtNombre.setBackground(Color.DARK_GRAY);
+        txtNombre.setForeground(Color.WHITE);
+
+        JLabel lblEdad = new JLabel("Edad:");
+        lblEdad.setForeground(Color.WHITE);
+        JComboBox<String> comboEdad = new JComboBox<>(new String[]{"-18", "18-30", "31-45", "46-65", "+65"});
+        comboEdad.setBackground(Color.DARK_GRAY);
+        comboEdad.setForeground(Color.WHITE);
+
+        JLabel lblSexo = new JLabel("Sexo:");
+        lblSexo.setForeground(Color.WHITE);
+        JComboBox<String> comboSexo = new JComboBox<>(new String[]{"Hombre", "Mujer"});
+        comboSexo.setBackground(Color.DARK_GRAY);
+        comboSexo.setForeground(Color.WHITE);
+
+        panelCentral.add(lblNombre);
+        panelCentral.add(txtNombre);
+        panelCentral.add(lblEdad);
+        panelCentral.add(comboEdad);
+        panelCentral.add(lblSexo);
+        panelCentral.add(comboSexo);
+
+        dialogoDatos.add(panelCentral, BorderLayout.CENTER);
+
+        // Panel de botones para confirmar
+        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelBotones.setBackground(Color.BLACK);
+        JButton btnConfirmar = crearBoton("Confirmar", 0, 0, 100, 30);
+
+        panelBotones.add(btnConfirmar);
+        dialogoDatos.add(panelBotones, BorderLayout.SOUTH);
+
+        // Listener
+        btnConfirmar.addActionListener(e -> {
+            String nombre = txtNombre.getText();
+            String edad = (String) comboEdad.getSelectedItem();
+            String sexo = (String) comboSexo.getSelectedItem();
+
+            if (nombre.isEmpty() || edad.isEmpty() || sexo.isEmpty()) {
+                JOptionPane.showMessageDialog(dialogoDatos, "Por favor, complete todos los campos", "Error", JOptionPane.WARNING_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(dialogoDatos, "¡Registro completo!", "Registro", JOptionPane.INFORMATION_MESSAGE);
+                dialogoDatos.dispose();
+            }
+        });
+
+        dialogoDatos.setVisible(true);
+    }
+
 
 }
 
