@@ -72,7 +72,21 @@ public class VentanaListaCanciones extends JFrame {
         
         // Inicializar tabla y cargar canciones
         this.initTable();
+        this.tablaCanciones.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int columna = tablaCanciones.columnAtPoint(e.getPoint());
+                int fila = tablaCanciones.rowAtPoint(e.getPoint());
+                if (columna == 2) {
+                    Cancion cancion = canciones.get(fila);
+                    cancion.setFavorita(!cancion.isFavorita());
+                    // usuario.updateCancionFavorita(cancion); 
+                    actualizarIconoFavorito(fila);
+                }
+            }
+        });
         this.loadCanciones();
+        
         // BorderLayout para poner la lista de canciones y el album
         JPanel panelCentro = new JPanel(new BorderLayout());
         panelCentro.setBackground(colorFondo);
@@ -121,6 +135,7 @@ public class VentanaListaCanciones extends JFrame {
         JScrollPane panelCanciones = new JScrollPane(this.tablaCanciones);
         this.tablaCanciones.setFillsViewportHeight(true);
         panelCanciones.setBackground(colorFondo);
+        panelCanciones.getViewport().setBackground(colorFondo);
         panelCentro.add(panelCanciones, BorderLayout.CENTER);
         
         add(panelCentro, BorderLayout.CENTER);
@@ -197,7 +212,7 @@ public class VentanaListaCanciones extends JFrame {
 		this.tablaCanciones.getTableHeader().setReorderingAllowed(false);
 		this.tablaCanciones.getTableHeader().setResizingAllowed(false);
 		this.tablaCanciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		this.tablaCanciones.setBackground(new Color(40, 40, 40));
 		this.tablaCanciones.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseEntered(MouseEvent e) {
@@ -247,14 +262,18 @@ public class VentanaListaCanciones extends JFrame {
 			} else if (value instanceof Boolean) {
 				result.setHorizontalAlignment(JLabel.CENTER);
 				result.setText(null);
-				ImageIcon imgFavorita = null;
+				JLabel labelImagen = null;
 				if ((Boolean) value) {
-					imgFavorita = new ImageIcon("resources/images/logo.png");
-	        	} else {
-	        		imgFavorita = new ImageIcon("resources/images/logo.png");
-	        	}
-	        	Image img = imgFavorita.getImage();
-	            JLabel labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+					ImageIcon imgFavorita = new ImageIcon("resources/images/estrellaFavorita.png");
+					Image img = imgFavorita.getImage();
+		            labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+
+				} else {
+	        		ImageIcon imgFavorita = new ImageIcon("resources/images/estrella.png");
+	        		Image img = imgFavorita.getImage();
+		            labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+
+				}
 	            result.setIcon(labelImagen.getIcon());
 				
 			} else {
@@ -334,6 +353,11 @@ public class VentanaListaCanciones extends JFrame {
 			secondsStr = "0" + seconds;
 		}
 		return (minutes + ":" + secondsStr);
+	}
+	
+	private void actualizarIconoFavorito(int fila) {
+	    Cancion cancion = canciones.get(fila);
+	    modeloDatosCanciones.setValueAt(cancion.isFavorita(), fila, 2);
 	}
 	
 	private void buscarCanciones() {

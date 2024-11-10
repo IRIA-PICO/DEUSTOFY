@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Usuario {
@@ -8,6 +9,7 @@ public class Usuario {
 	private int edad;
 	private String correo; // correo
 	private String contr; // contraseña
+	private List<Cancion> cancionesFavoritas;
 	
 	
 	public Usuario(String nombre, String sexo, int edad, String correo, String contr) {
@@ -50,7 +52,19 @@ public class Usuario {
 	public void setContr(String contr) {
 		this.contr = contr;
 	}
-	
+	public List<Cancion> getCancionesFavoritas() {
+		return cancionesFavoritas;
+	}
+	public void updateCancionFavorita(Cancion cancion) {
+		if (cancion.isFavorita()) {
+			this.cancionesFavoritas.add(cancion);
+		} else {
+			if (cancionesFavoritas.contains(cancion)) {
+				cancionesFavoritas.remove(cancion);
+			}
+		}
+		
+	}
 	@Override
 	public String toString() {
 		return "Usuario [nombre=" + nombre + ", sexo=" + sexo + ", edad=" + edad + ", correo=" + correo + ", contr="
