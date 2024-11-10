@@ -36,10 +36,14 @@ public class VentanaIdentificacion extends JFrame {
     
     private static String nombreGuardado;
     private static String contraseñaGuardada;
-
+    private String nombreUsuario;
+    private int edadUsuario;
+    private String sexoUsuario;
 
 
     private JPanel pCentro, pNorte, pEste, pOeste, pSur;
+    
+    
 
     public VentanaIdentificacion(List<Album> albumesr, List<Artista> artistasr) {
     	albumes = albumesr;
@@ -124,7 +128,7 @@ public class VentanaIdentificacion extends JFrame {
         if (id.equals(nombreGuardado) && contraseña.equals(contraseñaGuardada)) { // HABIÉNDOME REGISTRADO
         	JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
-            Usuario user= new Usuario("", "Mujer", 18, nombreGuardado, contraseñaGuardada);
+            Usuario user = new Usuario(nombreUsuario, sexoUsuario, edadUsuario, nombreGuardado, contraseñaGuardada);
             VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
@@ -269,14 +273,25 @@ public class VentanaIdentificacion extends JFrame {
         // Listener
         btnConfirmar.addActionListener(e -> {
             String nombre = txtNombre.getText();
-            String edad = (String) txtEdad.getText();
+            String edadStr = (String) txtEdad.getText();
             String sexo = (String) comboSexo.getSelectedItem();
 
-            if (nombre.isEmpty() || edad.isEmpty() || sexo.isEmpty()) {
+            if (nombre.isEmpty() || edadStr.isEmpty() || sexo.isEmpty()) {
                 JOptionPane.showMessageDialog(dialogoDatos, "Por favor, complete todos los campos", "Error", JOptionPane.WARNING_MESSAGE);
             } else {
-                JOptionPane.showMessageDialog(dialogoDatos, "¡Registro completo!", "Registro", JOptionPane.INFORMATION_MESSAGE);
-                dialogoDatos.dispose();
+            	try {
+                    int edad = Integer.parseInt(edadStr); // Intentamos convertir a int
+                    nombreUsuario = nombre;
+                    edadUsuario = edad;
+                    sexoUsuario = sexo;
+
+                    // Si la conversión es exitosa, procedemos con el registro
+                    JOptionPane.showMessageDialog(dialogoDatos, "¡Registro completo!", "Registro", JOptionPane.INFORMATION_MESSAGE);
+                    dialogoDatos.dispose();
+                } catch (NumberFormatException ex) {
+                    // Si ocurre un error en la conversión, mostramos un mensaje de error
+                    JOptionPane.showMessageDialog(dialogoDatos, "Por favor, ingrese una edad valida (número entero)", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
