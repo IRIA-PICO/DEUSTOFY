@@ -1,5 +1,6 @@
 package domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +20,7 @@ public class Usuario {
 		this.edad = edad;
 		this.correo = correo;
 		this.contr = contr;
+		this.cancionesFavoritas = new ArrayList<>();
 	}
 	
 	// Getters and setters
@@ -56,14 +58,11 @@ public class Usuario {
 		return cancionesFavoritas;
 	}
 	public void updateCancionFavorita(Cancion cancion) {
-		if (cancion.isFavorita()) {
-			this.cancionesFavoritas.add(cancion);
+		if (cancionesFavoritas.contains(cancion)) {
+			cancionesFavoritas.remove(cancion);
 		} else {
-			if (cancionesFavoritas.contains(cancion)) {
-				cancionesFavoritas.remove(cancion);
-			}
+			cancionesFavoritas.add(cancion);
 		}
-		
 	}
 	@Override
 	public String toString() {

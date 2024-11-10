@@ -51,9 +51,9 @@ public class VentanaListaCanciones extends JFrame {
 	private JTextField busqueda;
 	
 	public VentanaListaCanciones(Object albumArtista, List<Album> albumesAnt, List<Artista> artistasAnt, Usuario userAnt) {
-		albumes= albumesAnt;
-		artistas=artistasAnt;
-		user= userAnt;
+		albumes = albumesAnt;
+		artistas =artistasAnt;
+		user = userAnt;
 		Color colorFondo = new Color(40, 40, 40);
         Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
 		//Configuracion del JFrame
@@ -82,8 +82,7 @@ public class VentanaListaCanciones extends JFrame {
                 int fila = tablaCanciones.rowAtPoint(e.getPoint());
                 if (columna == 2) {
                     Cancion cancion = canciones.get(fila);
-                    cancion.setFavorita(!cancion.isFavorita());
-                    // usuario.updateCancionFavorita(cancion); 
+                    user.updateCancionFavorita(cancion); 
                     actualizarIconoFavorito(fila);
                 }
             }
@@ -189,9 +188,7 @@ public class VentanaListaCanciones extends JFrame {
 			}
 
 			@Override
-			public void changedUpdate(DocumentEvent e) {
-				// TODO Auto-generated method stub
-			}
+			public void changedUpdate(DocumentEvent e) {}
         });
         
         panelBusqueda.add(busqueda, BorderLayout.CENTER);
@@ -267,14 +264,14 @@ public class VentanaListaCanciones extends JFrame {
 				result.setText(null);
 				JLabel labelImagen = null;
 				if ((Boolean) value) {
-					ImageIcon imgFavorita = new ImageIcon("resources/images/estrellaFavorita.png");
+					ImageIcon imgFavorita = new ImageIcon("resources/images/estrella.png");
 					Image img = imgFavorita.getImage();
-		            labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+		            labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
 
 				} else {
-	        		ImageIcon imgFavorita = new ImageIcon("resources/images/estrella.png");
+	        		ImageIcon imgFavorita = new ImageIcon("resources/images/estrellaFavorita.png");
 	        		Image img = imgFavorita.getImage();
-		            labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+		            labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
 
 				}
 	            result.setIcon(labelImagen.getIcon());
@@ -336,7 +333,7 @@ public class VentanaListaCanciones extends JFrame {
 	private void loadCanciones() {
 		this.modeloDatosCanciones.setRowCount(0);
 		this.canciones.forEach(c -> this.modeloDatosCanciones.addRow(new Object[] {
-				posicionCancion(c) + 1, c.getTitulo(), c.isFavorita(), c.getArtista(), formatoDuracion(c)}));
+				posicionCancion(c) + 1, c.getTitulo(), user.getCancionesFavoritas().contains(c), c.getArtista(), formatoDuracion(c)}));
 	}
 	
 	private int posicionCancion(Cancion c) {
@@ -360,7 +357,7 @@ public class VentanaListaCanciones extends JFrame {
 	
 	private void actualizarIconoFavorito(int fila) {
 	    Cancion cancion = canciones.get(fila);
-	    modeloDatosCanciones.setValueAt(cancion.isFavorita(), fila, 2);
+	    modeloDatosCanciones.setValueAt(user.getCancionesFavoritas().contains(cancion), fila, 2);
 	}
 	
 	private void buscarCanciones() {
@@ -369,7 +366,7 @@ public class VentanaListaCanciones extends JFrame {
 		this.canciones.forEach(c -> {
 			if (c.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
 				this.modeloDatosCanciones.addRow(
-						new Object[] {posicionCancion(c) + 1, c.getTitulo(), c.isFavorita(), c.getArtista(), formatoDuracion(c)} );
+						new Object[] {posicionCancion(c) + 1, c.getTitulo(), user.getCancionesFavoritas().contains(c), c.getArtista(), formatoDuracion(c)} );
 			}
 		});
 	}

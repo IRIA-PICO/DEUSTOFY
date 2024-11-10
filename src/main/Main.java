@@ -5,14 +5,11 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
 import javax.swing.SwingUtilities;
-
 import domain.Album;
 import domain.Artista;
 import domain.Cancion;
 import domain.Genero;
-import gui.VentanaAlbumArtista;
 import gui.VentanaIdentificacion;
 
 public class Main {

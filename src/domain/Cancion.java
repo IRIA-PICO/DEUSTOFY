@@ -6,9 +6,7 @@ public class Cancion {
 	 private String titulo;
 	 private double duracion;
 	 private Album album;
-	 private Artista artista;
-	 private Boolean favorita;
-	 
+	 private Artista artista;	 
 	 
 	public Cancion(String titulo, double duracion, Album album, Artista artista) {
 		super();
@@ -16,7 +14,6 @@ public class Cancion {
         this.duracion = duracion;
         this.album = album;
         this.artista = artista;
-        this.favorita = false;
 	}
 
 	@Override
@@ -76,14 +73,6 @@ public class Cancion {
 
 	public void setArtista(Artista artista) {
 		this.artista = artista;
-	}
-	
-	public void setFavorita(Boolean favorita) {
-		this.favorita = favorita;
-	}
-	
-	public Boolean isFavorita() {
-		return favorita;
 	}
 	
 	@Override
