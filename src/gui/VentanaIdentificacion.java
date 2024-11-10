@@ -125,14 +125,14 @@ public class VentanaIdentificacion extends JFrame {
         	JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
             Usuario user= new Usuario("", "Mujer", 18, nombreGuardado, contraseñaGuardada);
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
         } else if (id.equals("") && contraseña.equals("")) { // PREDETERMINADO
             JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
             Usuario user= new Usuario("", "", 0, " ", "");
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
         } else { // INCORRECTO

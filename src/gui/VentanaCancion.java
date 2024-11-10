@@ -65,7 +65,7 @@ public class VentanaCancion extends JFrame {
 		
 		//Cargar estrella
 		lblfavorito= new JLabel();
-		lblfavorito.setSize(20, 20);
+		lblfavorito.setSize(40, 40);
 		lblfavorito.setLocation(lblImagen.getX() + lblImagen.getWidth() - lblfavorito.getWidth(), lblImagen.getY());
 		if(user.getCancionesFavoritas().contains(c)) {
 		ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
@@ -180,6 +180,16 @@ public class VentanaCancion extends JFrame {
 		lblImagen.setSize(300, 300);
 		ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
 		ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
+		
+		if(user.getCancionesFavoritas().contains(c)) {
+			ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
+			ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
+			lblfavorito.setIcon(imagenConDimensiones2);
+			}else {
+				ImageIcon im2 = new ImageIcon("resources/images/estrellaFavorita.png");
+				ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
+				lblfavorito.setIcon(imagenConDimensiones2);
+			}
 		
 		lblImagen.setIcon(imagenConDimensiones);
 		lblTitulo.setText(c.reproducir());
