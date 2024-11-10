@@ -29,6 +29,8 @@ public class VentanaAlbumArtista extends JFrame {
     private JPanel albumGrid;
     private JPanel artistaGrid;
     private JPanel sidebar;
+    private boolean isPremiumUser = false;
+    private JLabel premiumLabel;
     
     public VentanaAlbumArtista(List<Album> albumes1, List<Artista> artistas1, Usuario user1) {
     	albumes = albumes1;
@@ -163,6 +165,7 @@ public class VentanaAlbumArtista extends JFrame {
         
         // Agregar el panel lateral y el panel principal
         add(sidebar, BorderLayout.WEST);
+
 
         setVisible(true);
     }
@@ -324,6 +327,8 @@ public class VentanaAlbumArtista extends JFrame {
         
         navPanel.add(crearBotonNavegacion("Mis Favoritas", "resources/images/estrella.png"));
         navPanel.add(crearBotonNavegacion("Para Relajarse", "resources/images/reloj.png"));
+        initializePremiumLabel();
+        navPanel.add(premiumLabel);
         
         // Añadir secciones al sidebar
         sidebar.add(userPanel, BorderLayout.NORTH);
@@ -351,24 +356,32 @@ public class VentanaAlbumArtista extends JFrame {
         upgradeButton.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                upgradeButton.setBackground(new Color(40, 40, 40)); // Gris oscuro al hacer hover
+                upgradeButton.setBackground(new Color(40, 40, 40)); 
             }
+            
             @Override
             public void mousePressed(MouseEvent e) {
-            	int confirm = JOptionPane.showConfirmDialog(
-                        null,
-                        "¿Estás seguro de que deseas actualizar a Premium?",
-                        "Confirmación de actualización",
-                        JOptionPane.YES_NO_OPTION,
-                        JOptionPane.QUESTION_MESSAGE
-                    );
-                if (confirm ==JOptionPane.OK_OPTION) {
-                	String cuenta = JOptionPane.showInputDialog(null, "INTRODUCIR NUMERO DE CUENTA", "IBAN:", JOptionPane.PLAIN_MESSAGE);
-                	if (cuenta != null) {
-                		JOptionPane.showMessageDialog(null, "Cuenta registrada: " + cuenta + "\n¡Actualización a premium exitosa!");
-                	}
+                int confirm = JOptionPane.showConfirmDialog(
+                    null,
+                    "¿Estás seguro de que deseas actualizar a Premium?",
+                    "Confirmación de actualización",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE
+                );
+
+                if (confirm == JOptionPane.OK_OPTION) {
+                    String cuenta = JOptionPane.showInputDialog(null, "INTRODUCIR NUMERO DE CUENTA", "IBAN:", JOptionPane.PLAIN_MESSAGE);
+                    if (cuenta != null) {
+                        JOptionPane.showMessageDialog(null, "Cuenta registrada: " + cuenta + "\n¡Actualización a premium exitosa!");
+                        
+                        // Marca al usuario como premium y cambia el borde
+                        isPremiumUser = true;
+                        setPremiumBorder();
+                        premiumLabel.setVisible(true);
+                    }
                 }
             }
+
             @Override
             public void mouseExited(MouseEvent e) {
                 upgradeButton.setBackground(new Color(24, 24, 24)); // Volver al color original
@@ -405,6 +418,21 @@ public class VentanaAlbumArtista extends JFrame {
         });
 
         return button;
+    }
+    private void setPremiumBorder() {
+        if (isPremiumUser) {
+            getRootPane().setBorder(BorderFactory.createLineBorder(new Color(0, 122, 255), 5)); // Borde azul de 5 px para premium
+        }
+        
+    }
+    private void initializePremiumLabel() {
+        premiumLabel = new JLabel("PREMIUM", SwingConstants.CENTER);
+        premiumLabel.setOpaque(true);
+        premiumLabel.setBackground(new Color(0, 122, 255)); // Azul distintivo
+        premiumLabel.setForeground(Color.WHITE);             // Texto en blanco
+        premiumLabel.setFont(new Font("Arial", Font.BOLD, 12));
+        premiumLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        premiumLabel.setVisible(false); // Solo se mostrará si el usuario es premium
     }
     
 }
