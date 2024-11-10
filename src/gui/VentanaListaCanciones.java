@@ -323,7 +323,7 @@ public class VentanaListaCanciones extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_E) {
 		            dispose(); 
-		            new VentanaAlbumArtista(albumes, artistas);
+		            new VentanaAlbumArtista(albumes, artistas, user);
 		        }
 				
 			}

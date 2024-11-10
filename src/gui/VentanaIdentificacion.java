@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 
 import domain.Album;
 import domain.Artista;
+import domain.Usuario;
 
 import javax.swing.JPasswordField;
 import javax.swing.JDialog;
@@ -123,12 +124,14 @@ public class VentanaIdentificacion extends JFrame {
         if (id.equals(nombreGuardado) && contraseña.equals(contraseñaGuardada)) { // HABIÉNDOME REGISTRADO
         	JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
+            Usuario user= new Usuario("", "Mujer", 18, nombreGuardado, contraseñaGuardada);
             VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
         } else if (id.equals("") && contraseña.equals("")) { // PREDETERMINADO
             JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
+            Usuario user= new Usuario("", "", 0, " ", "");
             VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
@@ -236,9 +239,9 @@ public class VentanaIdentificacion extends JFrame {
 
         JLabel lblEdad = new JLabel("Edad:");
         lblEdad.setForeground(Color.WHITE);
-        JComboBox<String> comboEdad = new JComboBox<>(new String[]{"-18", "18-30", "31-45", "46-65", "+65"});
-        comboEdad.setBackground(Color.DARK_GRAY);
-        comboEdad.setForeground(Color.WHITE);
+        JTextField txtEdad = new JTextField();
+        txtEdad.setBackground(Color.DARK_GRAY);
+        txtEdad.setForeground(Color.WHITE);
 
         JLabel lblSexo = new JLabel("Sexo:");
         lblSexo.setForeground(Color.WHITE);
@@ -249,7 +252,7 @@ public class VentanaIdentificacion extends JFrame {
         panelCentral.add(lblNombre);
         panelCentral.add(txtNombre);
         panelCentral.add(lblEdad);
-        panelCentral.add(comboEdad);
+        panelCentral.add(txtEdad);
         panelCentral.add(lblSexo);
         panelCentral.add(comboSexo);
 
@@ -266,7 +269,7 @@ public class VentanaIdentificacion extends JFrame {
         // Listener
         btnConfirmar.addActionListener(e -> {
             String nombre = txtNombre.getText();
-            String edad = (String) comboEdad.getSelectedItem();
+            String edad = (String) txtEdad.getText();
             String sexo = (String) comboSexo.getSelectedItem();
 
             if (nombre.isEmpty() || edad.isEmpty() || sexo.isEmpty()) {
@@ -282,4 +285,3 @@ public class VentanaIdentificacion extends JFrame {
 
 
 }
-
