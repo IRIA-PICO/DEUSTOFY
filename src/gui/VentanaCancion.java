@@ -29,8 +29,9 @@ public class VentanaCancion extends JFrame {
 	private JSlider slmusica;
 	private Usuario user;
 	private boolean enPausa = false;
-	private int pos;
+	private int pos,durcancion, posicionsl=0;
 	private Cancion c;
+	private HiloSlider hilo;
 	public VentanaCancion(List<Cancion> lcan, int posicion, Usuario userAnt) {
 		
 		//propiedades JFrame
@@ -81,7 +82,11 @@ public class VentanaCancion extends JFrame {
 		pSlider.setBackground(new Color(60, 60, 60));
 		
 		//Cargamos Slider y duracion de la cancion
-		slmusica = new JSlider(0, 1000, 0);
+		int minutos = (int) c.getDuracion();
+		int sec= (int)(c.getDuracion() % 1 *100);
+		durcancion= minutos*60+sec;
+		
+		slmusica = new JSlider(0, durcancion, 0);
 		slmusica.setPaintLabels(true);
 		slmusica.setMinorTickSpacing(1);
 		slmusica.setBackground(new Color(60, 60, 60));
@@ -137,17 +142,29 @@ public class VentanaCancion extends JFrame {
 		getContentPane().add(pSur, BorderLayout.SOUTH);
 		
 		//LISTENERS
-		btnpausa.addActionListener((e) -> {		
-			if (enPausa) {
-		        ImageIcon imgPlay = new ImageIcon("resources/images/ButonPlay.png");
-		        btnpausa.setIcon(new ImageIcon(imgPlay.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
-		    } else {
-		        // Cambia a imagen de "pause"
-		        ImageIcon imgPause = new ImageIcon("resources/images/ButtonPause.png");
-		        btnpausa.setIcon(new ImageIcon(imgPause.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
-		    }
+		slmusica.addChangeListener((e)->{
+			if(slmusica.getValueIsAdjusting()) {
+				posicionsl=slmusica.getValue();
+			}
+		});
+		hilo = new HiloSlider();
+        hilo.start();
+        
+        
+		btnpausa.addActionListener((e) -> {	
+			synchronized (hilo) {
+				enPausa = !enPausa;
+				if (enPausa) {
+			        ImageIcon imgPlay = new ImageIcon("resources/images/ButonPause.png");
+			        btnpausa.setIcon(new ImageIcon(imgPlay.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+			    } else {
+			        // Cambia a imagen de "pause"
+			        ImageIcon imgPause = new ImageIcon("resources/images/ButtonPlay.png");
+			        btnpausa.setIcon(new ImageIcon(imgPause.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
+			        hilo.notifyAll();
+			    }
 		    
-		    enPausa = !enPausa;
+			}  
 		});
 		
 		btnalante.addActionListener((e) -> {		
@@ -173,6 +190,13 @@ public class VentanaCancion extends JFrame {
 	}
 	
 	public void modificarDatos() {
+		 hilo.interrupt();
+	        try {
+	            hilo.join();  // Asegurarse de que el hilo ha terminado
+	        } catch (InterruptedException e) {
+	            
+	        }
+	        
 		lblImagen.setSize(300, 300);
 		ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
 		ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
@@ -190,11 +214,42 @@ public class VentanaCancion extends JFrame {
 		lblDurTotal.setText(String.valueOf(c.getDuracion()));
 		slmusica.setValue(0);
 		
+		//cambiar datos duracion cancion y reiniciar hilo
+		int minutos = (int) c.getDuracion();
+		int sec = (int) (c.getDuracion() % 1 * 100);
+		durcancion = minutos * 60 + sec;
+		slmusica.setMaximum(durcancion);
+		posicionsl=0;
+
+		hilo = new HiloSlider();
+		hilo.start();
 	}
 	
 	public Cancion getCancion() {
 		return c;
 	}
 	
+	private class HiloSlider extends Thread{
+		@Override
+        public void run() {
+			try {	
+				while (posicionsl <= durcancion) {
+					synchronized (this) {
+						while(enPausa) {
+							wait();
+						}
+		                slmusica.setValue(posicionsl);  
+		                Thread.sleep(100);    // Espera 0.1s entre cada cambio
+		                posicionsl++;
+		             }
+				}
+					
+				
+			}catch (InterruptedException e) {
+                
+            }
+		}
+		
+	}
 }
 
