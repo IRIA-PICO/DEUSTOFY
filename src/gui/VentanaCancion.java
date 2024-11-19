@@ -24,7 +24,7 @@ public class VentanaCancion extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JLayeredPane pCentral;
 	private JPanel pNorte, pSur, pSlider, pBotones;
-	private JButton btnpausa, btnatras, btnalante;
+	private JButton btnpausa, btnatras, btnalante, btnVelocidad, btnBucle;
 	private JLabel lblTitulo, lblImagen, lblDur0, lblDurTotal, lblfavorito, lblrepetir;
 	private JSlider slmusica;
 	private Usuario user;
@@ -32,8 +32,11 @@ public class VentanaCancion extends JFrame {
 	private int pos,durcancion, posicionsl=0;
 	private Cancion c;
 	private HiloSlider hilo;
-	public VentanaCancion(List<Cancion> lcan, int posicion, Usuario userAnt) {
-		
+	private boolean enBucle = false;
+    private double multiplicadorVelocidad = 1; 
+    private List<Cancion> lcan;
+	public VentanaCancion(List<Cancion> listcan, int posicion, Usuario userAnt) {
+		lcan = listcan;
 		//propiedades JFrame
 		setBounds(1000, 100, 400, 600);
 		pos = posicion;
@@ -51,7 +54,7 @@ public class VentanaCancion extends JFrame {
 		pCentral = new JLayeredPane();
 		pCentral.setPreferredSize(new Dimension(400, 400));
 		pCentral.setBackground(new Color(60, 60, 60)); 
-		pSur= new JPanel(new GridLayout(3,1));
+		pSur= new JPanel(new GridLayout(5,1));
 		pSur.setBackground(new Color(60, 60, 60)); 
 		pNorte= new JPanel();
 		pNorte.setBackground(new Color(60, 60, 60)); 
@@ -74,7 +77,7 @@ public class VentanaCancion extends JFrame {
 		lblfavorito.setIcon(imagenConDimensiones2);
 		}
 		
-		//CArgamos nombre del artista y nombre de la cancion
+		//Cargamos nombre del artista y nombre de la cancion
 		lblTitulo= new JLabel(c.reproducir());
 		lblTitulo.setForeground(Color.WHITE);
 		lblTitulo.setFont(fuenteTexto);
@@ -110,6 +113,8 @@ public class VentanaCancion extends JFrame {
 		ImageIcon imgOriginal=new ImageIcon("resources/images/ButonPlay.png");
 		btnpausa= new JButton(new ImageIcon(imgOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 		btnalante= new JButton(">>");	
+		btnVelocidad = new JButton("x1");
+		btnBucle = new JButton("Act Bucle");
 		
 		Color botonColor = new Color(90, 90, 90);
 		btnatras.setBackground(botonColor);
@@ -117,9 +122,16 @@ public class VentanaCancion extends JFrame {
         btnpausa.setBackground(botonColor);
         btnalante.setBackground(botonColor);
         btnalante.setForeground(Color.WHITE);
-		pBotones.add(btnatras);
+        btnVelocidad.setBackground(botonColor);
+        btnVelocidad.setForeground(Color.WHITE);
+        btnBucle.setBackground(botonColor);
+        btnBucle.setForeground(Color.WHITE);
+        
+        pBotones.add(btnVelocidad);
+        pBotones.add(btnatras);
 		pBotones.add(btnpausa);
-		pBotones.add(btnalante);
+		pBotones.add(btnalante);		
+		pBotones.add(btnBucle);
 		
 		//Para repetir la cancion		
 		lblrepetir= new JLabel();
@@ -155,11 +167,11 @@ public class VentanaCancion extends JFrame {
 			synchronized (hilo) {
 				enPausa = !enPausa;
 				if (enPausa) {
-			        ImageIcon imgPlay = new ImageIcon("resources/images/ButonPause.png");
+			        ImageIcon imgPlay = new ImageIcon("resources/images/ButtonPause.png");
 			        btnpausa.setIcon(new ImageIcon(imgPlay.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 			    } else {
 			        // Cambia a imagen de "pause"
-			        ImageIcon imgPause = new ImageIcon("resources/images/ButtonPlay.png");
+			        ImageIcon imgPause = new ImageIcon("resources/images/ButonPlay.png");
 			        btnpausa.setIcon(new ImageIcon(imgPause.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 			        hilo.notifyAll();
 			    }
@@ -169,16 +181,9 @@ public class VentanaCancion extends JFrame {
 		
 		btnalante.addActionListener((e) -> {		
 			if(pos<lcan.size()-1) {
-				pos++;
-				c = lcan.get(pos);
-				modificarDatos();
-			}else {
-				JOptionPane.showMessageDialog(null, "La lista de reproducciones ha finalizado");
-			}
-		});
-		btnatras.addActionListener((e) -> {		
-			if(pos>0) {
-				pos--;
+				if (!enBucle) {
+					pos++;
+					}
 				c = lcan.get(pos);
 				modificarDatos();
 			} else {
@@ -186,40 +191,75 @@ public class VentanaCancion extends JFrame {
 			}
 		});
 		
+		btnatras.addActionListener((e) -> {		
+			if(pos>0) {
+				if (!enBucle) {
+					pos--;
+					}
+				c = lcan.get(pos);
+				modificarDatos();
+			} else {
+				JOptionPane.showMessageDialog(null, "La lista de reproducciones ha finalizado");
+			}
+		});
+		
+		btnVelocidad.addActionListener(e -> {
+			if (multiplicadorVelocidad == 1) {
+	    		multiplicadorVelocidad = 2;
+	    	} else if (multiplicadorVelocidad == 2) {
+	    		multiplicadorVelocidad = 0.5;
+	    	} else {
+	    		multiplicadorVelocidad = 1;
+	    	}
+	    	btnVelocidad.setText("x" + multiplicadorVelocidad);
+		});
+		
+        btnBucle.addActionListener(e -> {
+        	enBucle = !enBucle;
+        	if (enBucle) {
+        		btnBucle.setText("Des Bucle");
+        	} else {
+        		btnBucle.setText("Act Bucle");
+        	}
+        });
 		setVisible(true);
 	}
 	
 	public void modificarDatos() {
-		 hilo.interrupt();
+		if (hilo != null && hilo.isAlive()) {
+	        hilo.interrupt();
 	        try {
-	            hilo.join();  // Asegurarse de que el hilo ha terminado
+	            hilo.join(); // Asegurarte de que el hilo actual finalice
 	        } catch (InterruptedException e) {
-	            
+	            // Manejo de la excepción
 	        }
-	        
-		lblImagen.setSize(300, 300);
-		ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
-		ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
+	    }
 		
-		if(user.getCancionesFavoritas().contains(c)) {
-			ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
-			ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
-			lblfavorito.setIcon(imagenConDimensiones2);
-		} else {
-			lblfavorito.setIcon(null);
-		}
-		
-		lblImagen.setIcon(imagenConDimensiones);
-		lblTitulo.setText(c.reproducir());
-		lblDurTotal.setText(String.valueOf(c.getDuracion()));
-		slmusica.setValue(0);
-		
-		//cambiar datos duracion cancion y reiniciar hilo
-		int minutos = (int) c.getDuracion();
-		int sec = (int) (c.getDuracion() % 1 * 100);
-		durcancion = minutos * 60 + sec;
-		slmusica.setMaximum(durcancion);
-		posicionsl=0;
+	    if (!enBucle) {    
+			lblImagen.setSize(300, 300);
+			ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
+			ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
+			
+			if(user.getCancionesFavoritas().contains(c)) {
+				ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
+				ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
+				lblfavorito.setIcon(imagenConDimensiones2);
+			} else {
+				lblfavorito.setIcon(null);
+			}
+			
+			lblImagen.setIcon(imagenConDimensiones);
+			lblTitulo.setText(c.reproducir());
+			lblDurTotal.setText(String.valueOf(c.getDuracion()));
+			slmusica.setValue(0);
+			
+			//cambiar datos duracion cancion y reiniciar hilo
+			int minutos = (int) c.getDuracion();
+			int sec = (int) (c.getDuracion() % 1 * 100);
+			durcancion = minutos * 60 + sec;
+			slmusica.setMaximum(durcancion);			
+	    }
+	    posicionsl=0;
 
 		hilo = new HiloSlider();
 		hilo.start();
@@ -233,23 +273,35 @@ public class VentanaCancion extends JFrame {
 		@Override
         public void run() {
 			try {	
-				while (posicionsl <= durcancion) {
+				while (!this.isInterrupted()) {
 					synchronized (this) {
 						while(enPausa) {
 							wait();
 						}
-		                slmusica.setValue(posicionsl);  
-		                Thread.sleep(100);    // Espera 0.1s entre cada cambio
+		            }
+					if (posicionsl >= durcancion) {
+		                if (enBucle) {
+		                    posicionsl = 0; // Reinicia la canción
+		                } else {
+		                	if(pos<lcan.size()-1) {
+		        				pos++;
+		        				c = lcan.get(pos);
+		        				modificarDatos();
+		        			} else {
+		        				JOptionPane.showMessageDialog(null, "La lista de reproducciones ha finalizado");
+		        				break;
+		        			}
+		                }
+					} else {
+						slmusica.setValue(posicionsl);  
+		                Thread.sleep((int)(100/multiplicadorVelocidad));     // Espera 0.1s entre cada cambio si la velocidad esta en x1
 		                posicionsl++;
-		             }
-				}
-					
-				
-			}catch (InterruptedException e) {
+					}
+				}	
+			} catch (InterruptedException e) {
                 
             }
-		}
-		
+		}		
 	}
 }
 
