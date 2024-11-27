@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import javax.swing.SwingUtilities;
 
+import db.GestorBD;
 import domain.Album;
 import domain.Artista;
 import domain.Cancion;
@@ -89,7 +90,9 @@ public class Main {
     
 	public static void main(String[] args) {
 		new Main().cargarCSV();
-        SwingUtilities.invokeLater(() -> new VentanaIdentificacion(albumes, artistas));
+		SwingUtilities.invokeLater(() -> new VentanaIdentificacion(albumes, artistas));
+//		GestorBD gestorBD = new GestorBD();
+//		gestorBD.crearBBDD();
 	}
 }
 
