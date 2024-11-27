@@ -1,6 +1,7 @@
 package db;
 
 
+import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.nio.file.Files;
@@ -8,15 +9,22 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-
+import domain.Album;
+import domain.Artista;
+import domain.Cancion;
+import domain.Genero;
 
 public class GestorBD {
 	private final String PROPERTIES_FILE = "resources/config/app.properties";
+	private final String CSV_CANCIONES = "resources/data/cancion.csv";
+	private final String CSV_ALBUMES = "resources/data/album.csv";
+	private final String CSV_ARTISTAS = "resources/data/artista.csv";
 	
 	private Properties properties;
 	private String driverName;
@@ -140,4 +148,218 @@ public class GestorBD {
 			}
 		}
 	}
+	
+	//Inicializa la BBDD leyendo los datos de los ficheros CSV 
+	public void initilizeFromCSV() {
+		//Sólo se inicializa la BBDD si la propiedad initBBDD es true.
+		if (properties.get("loadCSV").equals("true")) {
+			//Se borran los datos, si existía alguno
+			//this.borrarDatos();
+			
+			// Se leen las canciones del CSV
+			List<Cancion> canciones = this.loadCSVCancion();
+			//Se insertan las canciones en la BBDD
+			this.insertarCancion(canciones.toArray(new Cancion[canciones.size()]));
+			
+			// Se leen los albumes del CSV
+			List<Album> albumes = this.loadCVSAlbum();
+			//lambda expression: enlaza las canciones con los albumes porque al leer los
+			//albumes sólo se recuperan los nombres de la canciones y faltan el resto de
+			//datos.
+			albumes.forEach(a -> updateCancion(a, canciones));
+			//Se insertan los albumes en la BBDD
+			this.insertarAlbum(albumes.toArray(new Album[albumes.size()]));
+			
+			// Se leen los artistas del CSV
+			List<Artista> artistas = this.loadCVSArtista();
+			//lambda expression: enlaza las canciones con los albumes porque al leer los
+			//albumes sólo se recuperan los nombres de la canciones y faltan el resto de
+			//datos.
+			artistas.forEach(a -> updateAlbumes(a, albumes));
+			//Se insertan los artistas en la BBDD
+			this.insertarArtista(artistas.toArray(new Artista[artistas.size()]));				
+		}
+	}
+	
+	private List<Cancion> loadCSVCancion() {
+		List<Cancion> canciones = new ArrayList<>();
+		
+		try (BufferedReader in = new BufferedReader(new FileReader(CSV_CANCIONES))) {
+			String linea = null;
+			Cancion c = null;
+			//Omitir la cabecera
+			in.readLine();		
+			
+			while ((linea = in.readLine()) != null) {								
+				String[] fragmentos = linea.split(";");					
+				c = new Cancion(fragmentos[0], Integer.valueOf(fragmentos[1]));
+								
+				if (c != null) {
+					canciones.add(c);
+				}
+			}			
+			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error leyendo canciones del CSV: %s", ex.getMessage()));
+
+		}
+		
+		return canciones;
+	}
+	
+	private List<Album> loadCVSAlbum() {
+		List<Album> albumes = new ArrayList<>();
+		
+		try (BufferedReader in = new BufferedReader(new FileReader(CSV_ALBUMES))) {
+			String linea = null;
+			Album a = null;
+			
+			//Omitir la cabecera
+			in.readLine();		
+			
+			while ((linea = in.readLine()) != null) {				
+				String[] fragmentos = linea.split(";");					
+				a = new Album(fragmentos[0], Double.valueOf(fragmentos[1]), Genero.valueOf(fragmentos[2]), fragmentos[5]);
+				
+				if (a != null) {
+					albumes.add(a);
+				}
+			}			
+			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error leyendo albumes del CSV: %s", ex.getMessage()));
+		}
+		
+		return albumes;
+	}
+	
+	private List<Artista> loadCVSArtista() {
+		List<Artista> artistas = new ArrayList<>();
+		
+		try (BufferedReader in = new BufferedReader(new FileReader(CSV_ARTISTAS))) {
+			String linea = null;
+			Artista a = null;
+			
+			//Omitir la cabecera
+			in.readLine();		
+			
+			while ((linea = in.readLine()) != null) {				
+				String[] fragmentos = linea.split(";");					
+				a = new Artista(Integer.valueOf(fragmentos[0]), fragmentos[1],fragmentos[2]);
+				
+				if (a != null) {
+					artistas.add(a);
+				}
+			}			
+			
+		} catch (Exception ex) {
+			logger.warning(String.format("Error leyendo artistas del CSV: %s", ex.getMessage()));
+		}
+		
+		return artistas;
+	}
+
+	// Inserta canciones en la BBDD
+	public void insertarCancion(Cancion... canciones) {
+		// Falta hacer que controle el ID
+		
+		//Se define la plantilla de la sentencia SQL
+		String sql = "INSERT INTO Cancion (titulo, duracion) VALUES (?, ?);";
+		
+		//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+		try (Connection con = DriverManager.getConnection(connectionString);
+			 PreparedStatement pStmt = con.prepareStatement(sql)) {
+									
+			//Se recorren las canciones y se insertan una a una
+			for (Cancion c : canciones) {
+				//Se añaden los parámetros al PreparedStatement
+				pStmt.setString(1, c.getTitulo());
+				pStmt.setDouble(2, c.getDuracion());
+				
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado la Cancion: %s", c));
+				} else {
+										
+					logger.info(String.format("Se ha insertado la Cancion: %s", c));
+				}
+			}
+			
+			logger.info(String.format("%d canciones insertados en la BBDD", canciones.length));
+		} catch (Exception ex) {
+			logger.warning(String.format("Error al insertar canciones: %s", ex.getMessage()));
+		}			
+	}
+	
+	// Inserta albumes en la BBDD
+		public void insertarAlbum(Album... albumes) {
+			// Falta hacer que controle el ID
+			
+			//Se define la plantilla de la sentencia SQL
+			String sql = "INSERT INTO Album (titulo, duracion, genero, rutaFoto) VALUES (?, ?, ?, ?);";
+			
+			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+			try (Connection con = DriverManager.getConnection(connectionString);
+				 PreparedStatement pStmt = con.prepareStatement(sql)) {
+										
+				//Se recorren los albumes y se insertan uno a uno
+				for (Album a : albumes) {
+					//Se añaden los parámetros al PreparedStatement
+					pStmt.setString(1, a.getTitulo());
+					pStmt.setDouble(2, a.getDuracion());
+					pStmt.setString(3, a.getGenero().toString());
+					pStmt.setString(3, a.getRutaFoto());
+					
+					if (pStmt.executeUpdate() != 1) {					
+						logger.warning(String.format("No se ha insertado el Album: %s", a));
+					} else {
+											
+						logger.info(String.format("Se ha insertado el Album: %s", a));
+					}
+				}
+				
+				logger.info(String.format("%d albumes insertados en la BBDD", albumes.length));
+			} catch (Exception ex) {
+				logger.warning(String.format("Error al insertar albumes: %s", ex.getMessage()));
+			}			
+		}
+		
+		// Inserta albumes en la BBDD
+		public void insertarArtista(Artista... artistas) {
+			// Falta hacer que controle el ID
+			
+			//Se define la plantilla de la sentencia SQL
+			String sql = "INSERT INTO Artista (nombre, rutaFoto) VALUES (?, ?);";
+			
+			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+			try (Connection con = DriverManager.getConnection(connectionString);
+				 PreparedStatement pStmt = con.prepareStatement(sql)) {
+										
+				//Se recorren los artistas y se insertan uno a uno
+				for (Artista a : artistas) {
+					//Se añaden los parámetros al PreparedStatement
+					pStmt.setString(1, a.getNombre());
+					pStmt.setString(2, a.getRutaFoto());
+					
+					if (pStmt.executeUpdate() != 1) {					
+						logger.warning(String.format("No se ha insertado el Artista: %s", a));
+					} else {
+											
+						logger.info(String.format("Se ha insertado el Artista: %s", a));
+					}
+				}
+				
+				logger.info(String.format("%d artistas insertados en la BBDD", artistas.length));
+			} catch (Exception ex) {
+				logger.warning(String.format("Error al insertar artistas: %s", ex.getMessage()));
+			}			
+		}
+		
+		private void updateCancion(Album a, List<Cancion> canciones) {		
+			// Relacionar las canciones con los albumes
+		}
+		
+		private void updateAlbumes(Artista a, List<Album> albumes) {		
+			// Relacionar albumes y sus canciones con los artistas
+		}
+		
 }

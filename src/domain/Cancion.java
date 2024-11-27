@@ -15,6 +15,12 @@ public class Cancion {
         this.album = album;
         this.artista = artista;
 	}
+	
+	public Cancion(String titulo, double duracion) {
+		super();
+		this.titulo = titulo;
+        this.duracion = duracion;        
+	}
 
 	@Override
 	public int hashCode() {

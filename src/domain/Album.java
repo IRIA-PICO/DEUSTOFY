@@ -21,7 +21,15 @@ public class Album {
 		this.listacanciones = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
 	}
-
+	
+	public Album(String titulo, double duracion, Genero genero, String rutaFoto) {
+		super();
+		this.titulo = titulo;
+		this.duracion = duracion;
+		this.genero = genero;
+		this.listacanciones = new ArrayList<>();
+		this.rutaFoto = rutaFoto;
+	}
 
 	
 
