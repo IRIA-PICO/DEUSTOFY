@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Album {
+	private int id;
 	private String titulo;
 	private double duracion;
 	private Genero genero;
@@ -22,8 +23,9 @@ public class Album {
 		this.rutaFoto = rutaFoto;
 	}
 	
-	public Album(String titulo, double duracion, Genero genero, String rutaFoto) {
+	public Album(int id, String titulo, double duracion, Genero genero, String rutaFoto) {
 		super();
+		this.id = id;
 		this.titulo = titulo;
 		this.duracion = duracion;
 		this.genero = genero;

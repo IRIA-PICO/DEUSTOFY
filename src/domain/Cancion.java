@@ -3,6 +3,7 @@ package domain;
 import java.util.Objects;
 
 public class Cancion {
+	private int id;
 	 private String titulo;
 	 private double duracion;
 	 private Album album;
@@ -16,8 +17,9 @@ public class Cancion {
         this.artista = artista;
 	}
 	
-	public Cancion(String titulo, double duracion) {
+	public Cancion(int id, String titulo, double duracion) {
 		super();
+		this.id = id;
 		this.titulo = titulo;
         this.duracion = duracion;        
 	}

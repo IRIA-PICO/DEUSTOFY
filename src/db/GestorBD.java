@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -19,6 +20,7 @@ import domain.Album;
 import domain.Artista;
 import domain.Cancion;
 import domain.Genero;
+import domain.Usuario;
 
 public class GestorBD {
 	private final String PROPERTIES_FILE = "resources/config/app.properties";
@@ -94,18 +96,37 @@ public class GestorBD {
 	                + " FOREIGN KEY (artista_id) REFERENCES Artista(id) ON DELETE CASCADE\n"
 	                + " FOREIGN KEY (album_id) REFERENCES Album(id) ON DELETE CASCADE\n"
 	                + ");";
-			
+			String sql6 = "CREATE TABLE IF NOT EXISTS Usuario (\n"
+	                  + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+	                  + " nombre TEXT NOT NULL,\n"
+	                  + " sexo TEXT NOT NULL,\n"
+	                  + " edad INTEGER NOT NULL,\n"
+	                  + " correo TEXT UNIQUE NOT NULL,\n"
+	                  + " contr TEXT NOT NULL\n"
+	                  + ");";
+			String sql7= "CREATE TABLE IF NOT EXISTS Playlist (\n"
+					+ " nomList TEXT UNIQUE NOT NULL,\n"
+                    + " usuario_id INTEGER NOT NULL,\n"
+                    + " cancion_id INTEGER NOT NULL,\n"
+                    + " PRIMARY KEY (nomList),\n"
+                    + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id),\n"
+                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id)\n"
+                    + ");";
+
+
 	        //Se abre la conexión y se crea un PreparedStatement para crer cada tabla
 			//Al abrir la conexión, si no existía el fichero por defecto, se crea.
 			try (Connection con = DriverManager.getConnection(connectionString);
-			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
-				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
-				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
+			    PreparedStatement pStmt1 = con.prepareStatement(sql1);
+				PreparedStatement pStmt2 = con.prepareStatement(sql2);
+				PreparedStatement pStmt3 = con.prepareStatement(sql3);
 				PreparedStatement pStmt4 = con.prepareStatement(sql4);
-					PreparedStatement pStmt5 = con.prepareStatement(sql5))	{
+				PreparedStatement pStmt5 = con.prepareStatement(sql5);
+				PreparedStatement pStmt6 = con.prepareStatement(sql6);
+				PreparedStatement pStmt7 = con.prepareStatement(sql7))	{
 				
 				//Se ejecutan las sentencias de creación de las tablas
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()  && !pStmt6.execute() && !pStmt7.execute()) {
 		        	logger.info("Se han creado las tablas");
 		        }
 			} catch (Exception ex) {
@@ -191,8 +212,9 @@ public class GestorBD {
 			in.readLine();		
 			
 			while ((linea = in.readLine()) != null) {								
-				String[] fragmentos = linea.split(";");					
-				c = new Cancion(fragmentos[0], Integer.valueOf(fragmentos[1]));
+				String[] fragmentos = linea.split(";");	
+				//El ID es -1 por defecto
+				c = new Cancion(-1,fragmentos[0], Integer.valueOf(fragmentos[1]));
 								
 				if (c != null) {
 					canciones.add(c);
@@ -219,7 +241,7 @@ public class GestorBD {
 			
 			while ((linea = in.readLine()) != null) {				
 				String[] fragmentos = linea.split(";");					
-				a = new Album(fragmentos[0], Double.valueOf(fragmentos[1]), Genero.valueOf(fragmentos[2]), fragmentos[5]);
+				a = new Album(-1,fragmentos[0], Double.valueOf(fragmentos[1]), Genero.valueOf(fragmentos[2]), fragmentos[5]);
 				
 				if (a != null) {
 					albumes.add(a);
@@ -323,7 +345,7 @@ public class GestorBD {
 			}			
 		}
 		
-		// Inserta albumes en la BBDD
+		// Inserta artista en la BBDD
 		public void insertarArtista(Artista... artistas) {
 			// Falta hacer que controle el ID
 			
@@ -362,4 +384,118 @@ public class GestorBD {
 			// Relacionar albumes y sus canciones con los artistas
 		}
 		
+		//Recupera Las CAnciones de la BBDD
+		public List<Cancion> getCanciones() {
+			List<Cancion> canciones = new ArrayList<>();
+			String sql = "SELECT * FROM Cancion";
+			
+			try (Connection con = DriverManager.getConnection(connectionString);
+			     PreparedStatement pStmt = con.prepareStatement(sql)) {			
+				
+				ResultSet rs = pStmt.executeQuery();			
+				Cancion cancion;
+				
+				while (rs.next()) {
+					cancion = new Cancion(rs.getInt("id"), 
+						rs.getString("titulo"), 
+						rs.getDouble("duracion"));
+					 					 
+					canciones.add(cancion);
+				}
+				
+				rs.close();
+				
+				logger.info(String.format("Se han recuperado %d canciones.", canciones.size()));			
+			} catch (Exception ex) {
+				logger.warning(String.format("Error recuperar las canciones: %s", ex.getMessage()));						
+			}		
+			
+			return canciones;
+		}
+		//Recupera Los Albumes de la BBDD
+		public List<Album> getAlbum(){
+			List<Album> albumes = new ArrayList<>();
+			String sql = "SELECT * FROM Album";
+			
+			try (Connection con = DriverManager.getConnection(connectionString);
+			     PreparedStatement pStmt = con.prepareStatement(sql)) {			
+				
+				ResultSet rs = pStmt.executeQuery();			
+				Album cancion;
+				
+				while (rs.next()) {
+					cancion = new Album(rs.getInt("id"), 
+							rs.getString("titulo"), 
+							rs.getDouble("duracion"), 
+							Genero.valueOf(rs.getString("genero")), 
+							rs.getString("rutafoto"));
+				
+					albumes.add(cancion);
+				}
+				
+				rs.close();
+				
+				logger.info(String.format("Se han recuperado %d albumes.", albumes.size()));			
+			} catch (Exception ex) {
+				logger.warning(String.format("Error recuperar las albumes: %s", ex.getMessage()));						
+			}		
+			
+			return albumes;
+		}
+		//Recupera los Artistas de la BBDD
+		public List<Artista> getArtistas() {
+		    List<Artista> artistas = new ArrayList<>();
+		    String sql = "SELECT * FROM Artista";
+		    
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		         
+		        ResultSet rs = pStmt.executeQuery();
+		        Artista artista;
+		        
+		        while (rs.next()) {
+		            artista = new Artista(rs.getInt("id"), 
+		                                  rs.getString("nombre"), 
+		                                  rs.getString("rutafoto"));
+		            artistas.add(artista);
+		        }
+		        
+		        rs.close();
+		        logger.info(String.format("Se han recuperado %d artistas.", artistas.size()));
+		    } catch (Exception ex) {
+		        logger.warning(String.format("Error al recuperar los artistas: %s", ex.getMessage()));
+		    }
+		    
+		    return artistas;
+		}
+		//Recupera Usuarios
+		public List<Usuario> getUsuarios() {
+		    List<Usuario> usuarios = new ArrayList<>();
+		    String sql = "SELECT * FROM Usuario";
+		    
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		         
+		        ResultSet rs = pStmt.executeQuery();
+		        Usuario usuario;
+		        
+		        while (rs.next()) {
+		            usuario = new Usuario(rs.getString("nombre"), 
+		                                  rs.getString("sexo"), 
+		                                  rs.getInt("edad"), 
+		                                  rs.getString("correo"), 
+		                                  rs.getString("contr"));
+		            usuarios.add(usuario);
+		        }
+		        
+		        rs.close();
+		        logger.info(String.format("Se han recuperado %d usuarios.", usuarios.size()));
+		    } catch (Exception ex) {
+		        logger.warning(String.format("Error al recuperar los usuarios: %s", ex.getMessage()));
+		    }
+		    
+		    return usuarios;
+		}
+
+				
 }

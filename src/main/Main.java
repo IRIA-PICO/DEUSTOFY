@@ -8,7 +8,6 @@ import java.util.Scanner;
 
 import javax.swing.SwingUtilities;
 
-import db.GestorBD;
 import domain.Album;
 import domain.Artista;
 import domain.Cancion;
