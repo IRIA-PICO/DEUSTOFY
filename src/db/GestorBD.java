@@ -64,23 +64,23 @@ public class GestorBD {
 	                + " titulo TEXT NOT NULL,\n"
 	                + " duracion TEXT NOT NULL,\n"
 	                + " genero TEXT NOT NULL,\n"
-	                + " rutafoto TEXT NOT NULL,\n"
-	                + " UNIQUE(titulo, rutafoto));";
+	                + " rutafoto TEXT,\n"
+	                + " UNIQUE(titulo));";
 	
 			String sql2 = "CREATE TABLE IF NOT EXISTS Artista (\n"
 	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 	                + " nombre TEXT NOT NULL,\n"
-	                + " rutafoto TEXT UNIQUE NOT NULL\n"
+	                + " rutafoto TEXT NOT NULL\n"
 	                + ");";
 			
 			String sql3 = "CREATE TABLE IF NOT EXISTS Cancion (\n"
 	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 	                + " titulo TEXT NOT NULL,\n"
-	                + " duracion TEXT UNIQUE NOT NULL\n"
+	                + " duracion TEXT NOT NULL\n"
 	                + ");";
 	
 			String sql4 = "CREATE TABLE IF NOT EXISTS AlbumCancion (\n"
-	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+	                + " id INTEGER,\n"
 	                + " album_id INTEGER NOT NULL,\n"
 	                + " cancion_id INTEGER NOT NULL,\n"
 	                + " PRIMARY KEY(album_id, cancion_id),\n"
@@ -89,7 +89,7 @@ public class GestorBD {
 	                + ");";
 			
 			String sql5 = "CREATE TABLE IF NOT EXISTS ArtistaAlbum (\n"
-	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+	                + " id INTEGER,\n"
 	                + " artista_id INTEGER NOT NULL,\n"
 	                + " album_id INTEGER NOT NULL, \n"
 	                + " PRIMARY KEY(album_id, artista_id)\n"
@@ -101,7 +101,7 @@ public class GestorBD {
 	                  + " nombre TEXT NOT NULL,\n"
 	                  + " sexo TEXT NOT NULL,\n"
 	                  + " edad INTEGER NOT NULL,\n"
-	                  + " correo TEXT UNIQUE NOT NULL,\n"
+	                  + " correo TEXT NOT NULL,\n"
 	                  + " contr TEXT NOT NULL\n"
 	                  + ");";
 			String sql7= "CREATE TABLE IF NOT EXISTS Playlist (\n"
@@ -242,14 +242,12 @@ public class GestorBD {
 		
 		try (BufferedReader in = new BufferedReader(new FileReader(CSV_CANCIONES))) {
 			String linea = null;
-			Cancion c = null;
-			//Omitir la cabecera
-			in.readLine();		
+			Cancion c = null;		
 			
 			while ((linea = in.readLine()) != null) {								
 				String[] fragmentos = linea.split(";");	
 				//El ID es -1 por defecto
-				c = new Cancion(-1,fragmentos[0], Integer.valueOf(fragmentos[1]));
+				c = new Cancion(-1,fragmentos[0], Double.parseDouble(fragmentos[1]));
 								
 				if (c != null) {
 					canciones.add(c);
@@ -265,40 +263,48 @@ public class GestorBD {
 	}
 	
 	private List<Album> loadCVSAlbum() {
-		List<Album> albumes = new ArrayList<>();
-		
-		try (BufferedReader in = new BufferedReader(new FileReader(CSV_ALBUMES))) {
-			String linea = null;
-			Album a = null;
-			
-			//Omitir la cabecera
-			in.readLine();		
-			
-			while ((linea = in.readLine()) != null) {				
-				String[] fragmentos = linea.split(";");					
-				a = new Album(-1,fragmentos[0], Double.valueOf(fragmentos[1]), Genero.valueOf(fragmentos[2]), fragmentos[5]);
-				
-				if (a != null) {
-					albumes.add(a);
-				}
-			}			
-			
-		} catch (Exception ex) {
-			logger.warning(String.format("Error leyendo albumes del CSV: %s", ex.getMessage()));
-		}
-		
-		return albumes;
+	    List<Album> albumes = new ArrayList<>();
+	    
+	    try (BufferedReader in = new BufferedReader(new FileReader(CSV_ALBUMES))) {
+	        String linea = null;
+	        Album a = null;     
+	        
+	        while ((linea = in.readLine()) != null) {                
+	            String[] fragmentos = linea.split(";");
+	            
+	            // Validar si el campo rutafoto está presente
+	            if (fragmentos.length > 3 && fragmentos[3] != null && !fragmentos[3].isEmpty()) {
+	            	Genero genero=  Genero.valueOf(fragmentos[2]);
+	                a = new Album(
+	                    -1, // ID generado automáticamente
+	                    fragmentos[0], // Título
+	                    Double.parseDouble(fragmentos[1]), // Duración
+	                    genero, // Género
+	                    fragmentos[3] // Ruta de la foto
+	                );
+
+	                if (a != null) {
+	                    albumes.add(a);
+	                }
+	            } else {
+	                logger.warning("La ruta de la foto es nula o está vacía: " + linea);
+	            }
+	        }
+	        
+	    } catch (Exception ex) {
+	        logger.warning(String.format("Error leyendo albumes del CSV: %s", ex.getMessage()));
+	    }
+	    
+	    return albumes;
 	}
+
 	
 	private List<Artista> loadCVSArtista() {
 		List<Artista> artistas = new ArrayList<>();
 		
 		try (BufferedReader in = new BufferedReader(new FileReader(CSV_ARTISTAS))) {
 			String linea = null;
-			Artista a = null;
-			
-			//Omitir la cabecera
-			in.readLine();		
+			Artista a = null;	
 			
 			while ((linea = in.readLine()) != null) {				
 				String[] fragmentos = linea.split(";");					

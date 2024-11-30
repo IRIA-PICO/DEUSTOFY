@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import db.GestorBD;
 import domain.Album;
 import domain.Artista;
 import domain.Usuario;
@@ -39,15 +40,17 @@ public class VentanaIdentificacion extends JFrame {
     private String nombreUsuario;
     private int edadUsuario;
     private String sexoUsuario;
-
+    private GestorBD gestorBD;
 
     private JPanel pCentro, pNorte, pEste, pOeste, pSur;
     
     
 
-    public VentanaIdentificacion(List<Album> albumesr, List<Artista> artistasr) {
-    	albumes = albumesr;
-    	artistas = artistasr;
+    public VentanaIdentificacion(GestorBD gestorBD) {
+    	this.gestorBD = gestorBD;		
+		//Se recupera la lista de comics de la BBDD
+		this.albumes = this.gestorBD.getAlbum();
+		this.artistas = this.gestorBD.getArtistas();
 
         setBounds(300, 200, 400, 350);
         setTitle("Deustofy - Inicio de Sesión");
