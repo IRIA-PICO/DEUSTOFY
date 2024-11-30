@@ -143,6 +143,8 @@ public class GestorBD {
 			String sql3 = "DROP TABLE IF EXISTS Cancion;";
 			String sql4 = "DROP TABLE IF EXISTS AlbumCancion;";
 			String sql5 = "DROP TABLE IF EXISTS ArtistaAlbum;";
+			String sql6 = "DROP TABLE IF EXISTS Usuario;";
+			String sql7 = "DROP TABLE IF EXISTS Playlist;";
 			
 	        //Se abre la conexión y se crea un PreparedStatement para borrar cada tabla
 			try (Connection con = DriverManager.getConnection(connectionString);
@@ -150,10 +152,12 @@ public class GestorBD {
 				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
 				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
 					PreparedStatement pStmt4 = con.prepareStatement(sql4);
-					 PreparedStatement pStmt5 = con.prepareStatement(sql5)){
+					 PreparedStatement pStmt5 = con.prepareStatement(sql5);
+					PreparedStatement pStmt6 = con.prepareStatement(sql6);
+					 PreparedStatement pStmt7 = con.prepareStatement(sql7)){
 				
 				//Se ejecutan las sentencias de borrado de las tablas
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute()) {
 		        	logger.info("Se han borrado las tablas");
 		        }
 			} catch (Exception ex) {
@@ -199,6 +203,37 @@ public class GestorBD {
 			artistas.forEach(a -> updateAlbumes(a, albumes));
 			//Se insertan los artistas en la BBDD
 			this.insertarArtista(artistas.toArray(new Artista[artistas.size()]));				
+		}
+	}
+	
+	public void borrarDatos() {
+		//Sólo se borran los datos si la propiedad cleanBBDD es true
+		if (properties.get("cleanBBDD").equals("true")) {	
+			String sql1 = "DELETE FROM Album;";
+			String sql2 = "DELETE FROM Artista;";
+			String sql3 = "DELETE FROM Cancion;";
+			String sql4 = "DELETE FROM AlbumCancion;";
+			String sql5 = "DELETE FROM ArtistaAlbum;";
+			String sql6 = "DELETE FROM Usuario;";
+			String sql7 = "DELETE FROM Playlist;";
+			
+	        //Se abre la conexión y se crea un PreparedStatement para borrar los datos de cada tabla
+			try (Connection con = DriverManager.getConnection(connectionString);
+			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
+				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
+				PreparedStatement pStmt3 = con.prepareStatement(sql3);
+					PreparedStatement pStmt4 = con.prepareStatement(sql4);
+					 PreparedStatement pStmt5 = con.prepareStatement(sql5);
+					PreparedStatement pStmt6 = con.prepareStatement(sql6);
+					 PreparedStatement pStmt7 = con.prepareStatement(sql7)){
+				
+				//Se ejecutan las sentencias de borrado de las tablas
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute()) {
+		        	logger.info("Se han borrado los datos");
+		        }
+			} catch (Exception ex) {
+				logger.warning(String.format("Error al borrar los datos: %s", ex.getMessage()));
+			}
 		}
 	}
 	
@@ -376,14 +411,32 @@ public class GestorBD {
 			}			
 		}
 		
-		private void updateCancion(Album a, List<Cancion> canciones) {		
-			// Relacionar las canciones con los albumes
+//		private void updateCancion(Album album, List<Cancion> canciones) {
+//		    String sql = "INSERT INTO AlbumCancion (album_id, cancion_id) VALUES (?, ?);";
+//
+//		    try (Connection con = DriverManager.getConnection(connectionString);
+//		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+//		         
+//		        for (Cancion cancion : canciones) {
+//		            if (album.getListacanciones().contains(cancion.getTitulo())) {
+//		                //pStmt.setInt(1, album.getId());
+//		                //pStmt.setInt(2, cancion.getId());
+//		                pStmt.executeUpdate();
+//		            }
+//		        }
+//		    } catch (Exception ex) {
+//		        logger.warning(String.format("Error al actualizar relación Canción-Álbum: %s", ex.getMessage()));
+//		    }
+//		}
+		
+		private void updateCancion(Album album, List<Cancion> canciones) {		
+			// Relacionar albumes y sus canciones con los artistas
 		}
 		
 		private void updateAlbumes(Artista a, List<Album> albumes) {		
 			// Relacionar albumes y sus canciones con los artistas
 		}
-		
+
 		//Recupera Las CAnciones de la BBDD
 		public List<Cancion> getCanciones() {
 			List<Cancion> canciones = new ArrayList<>();
