@@ -370,7 +370,7 @@ public class GestorBD {
 					pStmt.setString(1, a.getTitulo());
 					pStmt.setDouble(2, a.getDuracion());
 					pStmt.setString(3, a.getGenero().toString());
-					pStmt.setString(3, a.getRutaFoto());
+					pStmt.setString(4, a.getRutaFoto());
 					
 					if (pStmt.executeUpdate() != 1) {					
 						logger.warning(String.format("No se ha insertado el Album: %s", a));
