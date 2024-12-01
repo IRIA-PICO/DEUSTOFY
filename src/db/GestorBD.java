@@ -417,6 +417,27 @@ public class GestorBD {
 			}			
 		}
 		
+//		public void insertarUsuario(Usuario... usuario) {
+//			//Se define la plantilla de la sentencia SQL			
+//			String sqlInsert = "INSERT INTO Usuario (nombre, sexo, edad, correo, contr) VALUES (?, ?, ?, ?, ?);";
+//
+//			// Prepare the statement
+//			try (Connection con = DriverManager.getConnection(connectionString);
+//					PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
+//			    // Set the parameters for the statement
+//			    stmt.setString(1, nombre);    // Set nombre
+//			    stmt.setString(2, sexo);      // Set sexo
+//			    stmt.setInt(3, edad);         // Set edad
+//			    stmt.setString(4, correo);    // Set correo
+//			    stmt.setString(5, contr);     // Set contr
+//
+//			    // Execute the statement
+//			    stmt.executeUpdate();
+//			} catch (SQLException e) {
+//			    e.printStackTrace();  // Handle exceptions properly
+//			}			
+//		}
+		
 //		private void updateCancion(Album album, List<Cancion> canciones) {
 //		    String sql = "INSERT INTO AlbumCancion (album_id, cancion_id) VALUES (?, ?);";
 //
