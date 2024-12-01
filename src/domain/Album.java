@@ -3,6 +3,7 @@ package domain;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class Album {
 	private int id;
 	private String titulo;
@@ -12,7 +13,7 @@ public class Album {
 	private List<Cancion> listacanciones;
 	private String rutaFoto;
 	
-	
+
 	public Album(String titulo, double duracion, Genero genero, Artista artista,String rutaFoto) {
 		super();
 		this.titulo = titulo;
@@ -34,7 +35,15 @@ public class Album {
 	}
 
 	
+	
+	public int getId() {
+		return id;
+	}
 
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	public String getTitulo() {
 		return titulo;
 	}
@@ -93,5 +102,9 @@ public class Album {
 	public void setRutaFoto(String rutaFoto) {
 		this.rutaFoto = rutaFoto;
 	}
-	
+	public void addCancion(Cancion cancion) {
+		if (cancion != null && !this.listacanciones.contains(cancion)) {
+			listacanciones.add(cancion);
+		}
+	}
 }

@@ -22,6 +22,7 @@ import domain.Cancion;
 import domain.Genero;
 import domain.Usuario;
 
+
 public class GestorBD {
 	private final String PROPERTIES_FILE = "resources/config/app.properties";
 	private final String CSV_CANCIONES = "resources/data/cancion.csv";
@@ -458,10 +459,24 @@ public class GestorBD {
 		
 		private void updateCancion(Album album, List<Cancion> canciones) {		
 			// Relacionar albumes y sus canciones con los artistas
+			for (int i = 0; i < album.getListacanciones().size(); i++) {
+				for(Cancion c: canciones) {
+					if( album.getListacanciones().get(i).getTitulo().equals(c.getTitulo())) {
+						album.getListacanciones().set(i, c);
+					}
+				}
+			}
 		}
 		
-		private void updateAlbumes(Artista a, List<Album> albumes) {		
+		private void updateAlbumes(Artista artista, List<Album> albumes) {		
 			// Relacionar albumes y sus canciones con los artistas
+			for (int i = 0; i < artista.getAlbumes().size(); i++) {
+				for(Album a: albumes) {
+					if( artista.getAlbumes().get(i).getTitulo().equals(a.getTitulo())) {
+						artista.getAlbumes().set(i, a);
+					}
+				}
+			}
 		}
 
 		//Recupera Las CAnciones de la BBDD
@@ -501,16 +516,19 @@ public class GestorBD {
 			     PreparedStatement pStmt = con.prepareStatement(sql)) {			
 				
 				ResultSet rs = pStmt.executeQuery();			
-				Album cancion;
+				Album album;
 				
 				while (rs.next()) {
-					cancion = new Album(rs.getInt("id"), 
+					album = new Album(rs.getInt("id"), 
 							rs.getString("titulo"), 
 							rs.getDouble("duracion"), 
 							Genero.valueOf(rs.getString("genero")), 
 							rs.getString("rutafoto"));
-				
-					albumes.add(cancion);
+				List<Integer> idsCanciones= this.getIDsCancionesdelAlbum(album);
+				for(int id: idsCanciones) {
+					album.addCancion(this.getCancionByID(id));
+				}
+					albumes.add(album);
 				}
 				
 				rs.close();
@@ -577,5 +595,55 @@ public class GestorBD {
 		    return usuarios;
 		}
 
+		//Recupera un ArrayList<Cancion> del Object que recibe
+		public Cancion getCancionByID(int id) {
+			Cancion cancion=null;
+			String sql = "SELECT * FROM Cancion WHERE id = ? LIMIT 1";
+			
+			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+			try (Connection con = DriverManager.getConnection(connectionString);
+			     PreparedStatement pStmt = con.prepareStatement(sql)) {			
 				
+				pStmt.setInt(1, id);
+				ResultSet rs = pStmt.executeQuery();			
+
+				if (rs.next()) {
+					cancion = new Cancion(rs.getInt("id"), 
+							rs.getString("titulo"), 
+							rs.getDouble("duracion"));
+				}
+				
+				rs.close();
+				
+				logger.info(String.format("Se ha recuperado el personaje %s", cancion));			
+			} catch (Exception ex) {
+				logger.warning(String.format("Error recuperar los personajes con id %d: %s", id, ex.getMessage()));						
+			}		
+			return cancion;
+		}
+		public List<Integer> getIDsCancionesdelAlbum(Album album){
+			List<Integer> idsCancion = new ArrayList<>();		
+			String sql = "SELECT cancion_id FROM AlbumCancion WHERE album_id = ?";
+			
+			try (Connection con = DriverManager.getConnection(connectionString);
+			     PreparedStatement pStmt = con.prepareStatement(sql)) {			
+				
+				pStmt.setInt(1, album.getId());
+				ResultSet rs = pStmt.executeQuery();			
+
+				while (rs.next()) {
+					idsCancion.add(rs.getInt("cancion_id"));
+				}
+				
+				rs.close();
+				
+				logger.info(String.format("Se han recuperado %d ids de los personajes del comic %s", 
+						idsCancion.size(), album.getTitulo()));			
+			} catch (Exception ex) {
+				logger.warning(String.format("Error recuperar los ids de los personajes del comic %d: %s",
+						album.getTitulo(), ex.getMessage()));						
+			}		
+			
+			return idsCancion;
+		}
 }

@@ -73,6 +73,7 @@ public class VentanaListaCanciones extends JFrame {
         	this.canciones = ((Album) albumArtista).getListacanciones();
         } else if (albumArtista instanceof Artista) {
         	this.canciones = ((Artista) albumArtista).getCanciones();
+        	
         }
         
         // Inicializar tabla y cargar canciones
