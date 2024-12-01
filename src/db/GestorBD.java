@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -65,8 +66,8 @@ public class GestorBD {
 	                + " titulo TEXT NOT NULL,\n"
 	                + " duracion TEXT NOT NULL,\n"
 	                + " genero TEXT NOT NULL,\n"
-	                + " rutafoto TEXT,\n"
-	                + " UNIQUE(titulo));";
+	                + " rutafoto TEXT\n"
+	                + ");";
 	
 			String sql2 = "CREATE TABLE IF NOT EXISTS Artista (\n"
 	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
@@ -85,7 +86,7 @@ public class GestorBD {
 	                + " album_id INTEGER NOT NULL,\n"
 	                + " cancion_id INTEGER NOT NULL,\n"
 	                + " PRIMARY KEY(album_id, cancion_id),\n"
-	                + " FOREIGN KEY (album_id) REFERENCES Album(id) ON DELETE CASCADE\n"
+	                + " FOREIGN KEY (album_id) REFERENCES Album(id) ON DELETE CASCADE,\n"
 	                + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id) ON DELETE CASCADE\n"
 	                + ");";
 			
@@ -513,26 +514,26 @@ public class GestorBD {
 			}				
 		}
 
-//		public void insertarUsuario(Usuario... usuario) {
-//			//Se define la plantilla de la sentencia SQL			
-//			String sqlInsert = "INSERT INTO Usuario (nombre, sexo, edad, correo, contr) VALUES (?, ?, ?, ?, ?);";
-//
-//			// Prepare the statement
-//			try (Connection con = DriverManager.getConnection(connectionString);
-//					PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
-//			    // Set the parameters for the statement
-//			    stmt.setString(1, nombre);    // Set nombre
-//			    stmt.setString(2, sexo);      // Set sexo
-//			    stmt.setInt(3, edad);         // Set edad
-//			    stmt.setString(4, correo);    // Set correo
-//			    stmt.setString(5, contr);     // Set contr
-//
-//			    // Execute the statement
-//			    stmt.executeUpdate();
-//			} catch (SQLException e) {
-//			    e.printStackTrace();  // Handle exceptions properly
-//			}			
-//		}
+		public void insertarUsuario(Usuario usuario) {
+			//Se define la plantilla de la sentencia SQL			
+			String sqlInsert = "INSERT INTO Usuario (nombre, sexo, edad, correo, contr) VALUES (?, ?, ?, ?, ?);";
+
+			// Prepare the statement
+			try (Connection con = DriverManager.getConnection(connectionString);
+					PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
+			    // Set the parameters for the statement
+			    stmt.setString(1, usuario.getNombre());   
+			    stmt.setString(2, usuario.getSexo());      
+			    stmt.setInt(3, usuario.getEdad());         
+			    stmt.setString(4, usuario.getCorreo());  
+			    stmt.setString(5, usuario.getContr());   
+
+			    // Execute the statement
+			    stmt.executeUpdate();
+			} catch (SQLException e) {
+			    e.printStackTrace(); 
+			}			
+		}
 		
 //		private void updateCancion(Album album, List<Cancion> canciones) {
 //		    String sql = "INSERT INTO AlbumCancion (album_id, cancion_id) VALUES (?, ?);";
