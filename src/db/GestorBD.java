@@ -98,20 +98,24 @@ public class GestorBD {
 	                + " FOREIGN KEY (album_id) REFERENCES Album(id) ON DELETE CASCADE\n"
 	                + ");";
 			String sql6 = "CREATE TABLE IF NOT EXISTS Usuario (\n"
-	                  + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-	                  + " nombre TEXT NOT NULL,\n"
-	                  + " sexo TEXT NOT NULL,\n"
-	                  + " edad INTEGER NOT NULL,\n"
-	                  + " correo TEXT NOT NULL,\n"
-	                  + " contr TEXT NOT NULL\n"
-	                  + ");";
-			String sql7= "CREATE TABLE IF NOT EXISTS Playlist (\n"
+	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
+	                + " nombre TEXT NOT NULL,\n"
+	                + " sexo TEXT NOT NULL,\n"
+	                + " edad INTEGER NOT NULL,\n"
+	                + " correo TEXT NOT NULL,\n"
+	                + " contr TEXT NOT NULL\n"
+	                + ");";
+			String sql7= "CREATE TABLE IF NOT EXISTS UsuarioPlaylist (\n"
+					+ " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ " nomList TEXT UNIQUE NOT NULL,\n"
                     + " usuario_id INTEGER NOT NULL,\n"
-                    + " cancion_id INTEGER NOT NULL,\n"
-                    + " PRIMARY KEY (nomList),\n"
                     + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id),\n"
-                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id)\n"
+                    + ");";
+			String sql8= "CREATE TABLE IF NOT EXISTS PlaylistCancion (\n"
+                    + " playlist_id INTEGER NOT NULL,\n"
+                    + " cancion_id INTEGER NOT NULL,\n"
+                    + " FOREIGN KEY (playlist_id) REFERENCES Pleylist(id),\n"                   
+                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id),\n"
                     + ");";
 
 
@@ -124,10 +128,11 @@ public class GestorBD {
 				PreparedStatement pStmt4 = con.prepareStatement(sql4);
 				PreparedStatement pStmt5 = con.prepareStatement(sql5);
 				PreparedStatement pStmt6 = con.prepareStatement(sql6);
-				PreparedStatement pStmt7 = con.prepareStatement(sql7))	{
+				PreparedStatement pStmt7 = con.prepareStatement(sql7);
+				PreparedStatement pStmt8 = con.prepareStatement(sql8)) {
 				
 				//Se ejecutan las sentencias de creación de las tablas
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()  && !pStmt6.execute() && !pStmt7.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()  && !pStmt6.execute() && !pStmt7.execute() && !pStmt8.execute()) {
 		        	logger.info("Se han creado las tablas");
 		        }
 			} catch (Exception ex) {
@@ -145,20 +150,22 @@ public class GestorBD {
 			String sql4 = "DROP TABLE IF EXISTS AlbumCancion;";
 			String sql5 = "DROP TABLE IF EXISTS ArtistaAlbum;";
 			String sql6 = "DROP TABLE IF EXISTS Usuario;";
-			String sql7 = "DROP TABLE IF EXISTS Playlist;";
+			String sql7 = "DROP TABLE IF EXISTS UsuarioPlaylist;";
+			String sql8 = "DROP TABLE IF EXISTS PlaylistCancion;";
 			
 	        //Se abre la conexión y se crea un PreparedStatement para borrar cada tabla
 			try (Connection con = DriverManager.getConnection(connectionString);
-			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
-				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
-				 PreparedStatement pStmt3 = con.prepareStatement(sql3);
+					PreparedStatement pStmt1 = con.prepareStatement(sql1);
+					PreparedStatement pStmt2 = con.prepareStatement(sql2);
+					PreparedStatement pStmt3 = con.prepareStatement(sql3);
 					PreparedStatement pStmt4 = con.prepareStatement(sql4);
-					 PreparedStatement pStmt5 = con.prepareStatement(sql5);
+					PreparedStatement pStmt5 = con.prepareStatement(sql5);
 					PreparedStatement pStmt6 = con.prepareStatement(sql6);
-					 PreparedStatement pStmt7 = con.prepareStatement(sql7)){
+					PreparedStatement pStmt7 = con.prepareStatement(sql7);
+					PreparedStatement pStmt8 = con.prepareStatement(sql8)) {
 				
 				//Se ejecutan las sentencias de borrado de las tablas
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute() && !pStmt8.execute()) {
 		        	logger.info("Se han borrado las tablas");
 		        }
 			} catch (Exception ex) {
@@ -216,20 +223,22 @@ public class GestorBD {
 			String sql4 = "DELETE FROM AlbumCancion;";
 			String sql5 = "DELETE FROM ArtistaAlbum;";
 			String sql6 = "DELETE FROM Usuario;";
-			String sql7 = "DELETE FROM Playlist;";
+			String sql7 = "DELETE FROM UsuarioPlaylist;";
+			String sql8 = "DELETE FROM PlaylistCancion;";
 			
 	        //Se abre la conexión y se crea un PreparedStatement para borrar los datos de cada tabla
 			try (Connection con = DriverManager.getConnection(connectionString);
-			     PreparedStatement pStmt1 = con.prepareStatement(sql1);
-				 PreparedStatement pStmt2 = con.prepareStatement(sql2);
-				PreparedStatement pStmt3 = con.prepareStatement(sql3);
+					PreparedStatement pStmt1 = con.prepareStatement(sql1);
+					PreparedStatement pStmt2 = con.prepareStatement(sql2);
+					PreparedStatement pStmt3 = con.prepareStatement(sql3);
 					PreparedStatement pStmt4 = con.prepareStatement(sql4);
-					 PreparedStatement pStmt5 = con.prepareStatement(sql5);
+					PreparedStatement pStmt5 = con.prepareStatement(sql5);
 					PreparedStatement pStmt6 = con.prepareStatement(sql6);
-					 PreparedStatement pStmt7 = con.prepareStatement(sql7)){
-				
+					PreparedStatement pStmt7 = con.prepareStatement(sql7);
+					PreparedStatement pStmt8 = con.prepareStatement(sql8)) {
+					
 				//Se ejecutan las sentencias de borrado de las tablas
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute() && !pStmt8.execute()) {
 		        	logger.info("Se han borrado los datos");
 		        }
 			} catch (Exception ex) {
@@ -418,6 +427,90 @@ public class GestorBD {
 			}			
 		}
 		
+		public void insertarAlbumCancion(int idAlbum, int idCancion) {
+			String sql = "INSERT INTO AlbumCancion (album_id, cancion_id) VALUES (?, ?);";
+			
+			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+			try (Connection con = DriverManager.getConnection(connectionString);
+				 PreparedStatement pStmt = con.prepareStatement(sql)) {
+					
+				//Se añaden los parámetros al PreparedStatement
+				pStmt.setInt(1, idAlbum);
+				pStmt.setInt(2, idCancion);
+					
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado la cancion %d del album %d.", idAlbum, idCancion));
+				} else {
+					logger.info(String.format("Se ha insertado la cancion %d del album %d.", idAlbum, idCancion));
+				}
+			} catch (Exception ex) {
+				logger.warning(String.format("Error al insertar la cancion del album: %s", ex.getMessage()));
+			}				
+		}
+		
+		public void insertarArtistaAlbum(int idArtista, int idAlbum) {
+			String sql = "INSERT INTO ArtistaAlbum (artista_id, album_id) VALUES (?, ?);";
+			
+			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+			try (Connection con = DriverManager.getConnection(connectionString);
+				 PreparedStatement pStmt = con.prepareStatement(sql)) {
+					
+				//Se añaden los parámetros al PreparedStatement
+				pStmt.setInt(1, idArtista);
+				pStmt.setInt(2, idAlbum);
+					
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado el album %d del artista %d.", idArtista, idAlbum));
+				} else {
+					logger.info(String.format("Se ha insertado el album %d del artista %d.", idArtista, idAlbum));
+				}
+			} catch (Exception ex) {
+				logger.warning(String.format("Error al insertar el album del artista: %s", ex.getMessage()));
+			}				
+		}
+		
+		public void insertarUsuarioPlaylist(int idPlaylist, int idUsuario) {
+			String sql = "INSERT INTO UsuarioPlaylist (id, usuario_id) VALUES (?, ?);";
+			
+			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+			try (Connection con = DriverManager.getConnection(connectionString);
+				 PreparedStatement pStmt = con.prepareStatement(sql)) {
+					
+				//Se añaden los parámetros al PreparedStatement
+				pStmt.setInt(1, idPlaylist);
+				pStmt.setInt(2, idUsuario);
+					
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado la playlist %d del usuario %d.", idPlaylist, idUsuario));
+				} else {
+					logger.info(String.format("Se ha insertado la playlist %d del usuario %d.", idPlaylist, idUsuario));
+				}
+			} catch (Exception ex) {
+				logger.warning(String.format("Error al insertar la playlist del usuario: %s", ex.getMessage()));
+			}				
+		}
+		
+		public void insertarPlaylistCancion(int idPlaylist, int idCancion) {
+			String sql = "INSERT INTO PlaylistCancion (playlist_id, cancion_id) VALUES (?, ?);";
+			
+			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+			try (Connection con = DriverManager.getConnection(connectionString);
+				 PreparedStatement pStmt = con.prepareStatement(sql)) {
+					
+				//Se añaden los parámetros al PreparedStatement
+				pStmt.setInt(1, idPlaylist);
+				pStmt.setInt(2, idCancion);
+					
+				if (pStmt.executeUpdate() != 1) {					
+					logger.warning(String.format("No se ha insertado la cancion %d de la playlist %d.", idPlaylist, idCancion));
+				} else {
+					logger.info(String.format("Se ha insertado la cancion %d de la playlist %d.", idPlaylist, idCancion));
+				}
+			} catch (Exception ex) {
+				logger.warning(String.format("Error al insertar la cancion de la playlist: %s", ex.getMessage()));
+			}				
+		}
+
 //		public void insertarUsuario(Usuario... usuario) {
 //			//Se define la plantilla de la sentencia SQL			
 //			String sqlInsert = "INSERT INTO Usuario (nombre, sexo, edad, correo, contr) VALUES (?, ?, ?, ?, ?);";
