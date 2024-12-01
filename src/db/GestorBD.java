@@ -109,13 +109,13 @@ public class GestorBD {
 					+ " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ " nomList TEXT UNIQUE NOT NULL,\n"
                     + " usuario_id INTEGER NOT NULL,\n"
-                    + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id),\n"
+                    + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id)\n"
                     + ");";
 			String sql8= "CREATE TABLE IF NOT EXISTS PlaylistCancion (\n"
                     + " playlist_id INTEGER NOT NULL,\n"
                     + " cancion_id INTEGER NOT NULL,\n"
-                    + " FOREIGN KEY (playlist_id) REFERENCES Pleylist(id),\n"                   
-                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id),\n"
+                    + " FOREIGN KEY (playlist_id) REFERENCES Playlist(id),\n"                   
+                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id)\n"
                     + ");";
 
 
@@ -341,8 +341,7 @@ public class GestorBD {
 		
 		//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
 		try (Connection con = DriverManager.getConnection(connectionString);
-			 PreparedStatement pStmt = con.prepareStatement(sql)) {
-									
+			 PreparedStatement pStmt = con.prepareStatement(sql)) {					
 			//Se recorren las canciones y se insertan una a una
 			for (Cancion c : canciones) {
 				//Se añaden los parámetros al PreparedStatement
@@ -352,7 +351,7 @@ public class GestorBD {
 				if (pStmt.executeUpdate() != 1) {					
 					logger.warning(String.format("No se ha insertado la Cancion: %s", c));
 				} else {
-										
+					//TODO el ID
 					logger.info(String.format("Se ha insertado la Cancion: %s", c));
 				}
 			}
@@ -385,7 +384,10 @@ public class GestorBD {
 					if (pStmt.executeUpdate() != 1) {					
 						logger.warning(String.format("No se ha insertado el Album: %s", a));
 					} else {
-											
+						//TODO el ID
+							for(Cancion c: a.getListacanciones()) {
+								this.insertarAlbumCancion(a.getId(), c.getId());
+							}
 						logger.info(String.format("Se ha insertado el Album: %s", a));
 					}
 				}

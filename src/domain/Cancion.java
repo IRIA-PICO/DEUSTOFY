@@ -4,7 +4,7 @@ import java.util.Objects;
 
 public class Cancion {
 	private int id;
-	 private String titulo;
+	private String titulo;
 	 private double duracion;
 	 private Album album;
 	 private Artista artista;	 
@@ -23,7 +23,13 @@ public class Cancion {
 		this.titulo = titulo;
         this.duracion = duracion;        
 	}
+	 public int getId() {
+			return id;
+	}
 
+	public void setId(int id) {
+			this.id = id;
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(album, artista, duracion, titulo);
