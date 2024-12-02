@@ -8,7 +8,7 @@ public class Cancion {
 	 private double duracion;
 	 private Album album;
 	 private Artista artista;	 
-	 private String nombreArtista;
+	 private int ArtistaID;
 	 
 	public Cancion(String titulo, double duracion, Album album, Artista artista) {
 		super();
@@ -18,19 +18,21 @@ public class Cancion {
         this.artista = artista;
 	}
 	
-	public Cancion(int id, String titulo, double duracion, String nombreArtista) {
+	public Cancion(int id, String titulo, double duracion, int ArtistaID) {
 		this.id = id;
 		this.titulo = titulo;
         this.duracion = duracion; 
-        this.nombreArtista = nombreArtista;
+        this.ArtistaID = ArtistaID;
 	}
 
-	public String getNombreArtista() {
-		return nombreArtista;
+	
+
+	public int getArtistaID() {
+		return ArtistaID;
 	}
 
-	public void setNombreArtista(String nombreArtista) {
-		this.nombreArtista = nombreArtista;
+	public void setArtistaID(int artistaID) {
+		ArtistaID = artistaID;
 	}
 
 	public void setDuracion(double duracion) {

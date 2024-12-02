@@ -181,29 +181,15 @@ public class GestorBD {
 		if (properties.get("loadCSV").equals("true")) {
 			//Se borran los datos, si existía alguno
 			//this.borrarDatos();
-			
-			// Se leen las canciones del CSV
-			List<Cancion> canciones = this.loadCSVCancion();
-			//Se insertan las canciones en la BBDD
+			List<Artista> artistas =  this.loadCVSArtista();
+			this.insertarArtista(artistas.toArray(new Artista[artistas.size()]));	
+	        
+	        List<Album> albumes = this.loadCVSAlbum();
+	        this.insertarAlbum(albumes.toArray(new Album[albumes.size()]));
+	        
+	        List<Cancion> canciones = this.loadCSVCancion();
 			this.insertarCancion(canciones.toArray(new Cancion[canciones.size()]));
-			
-			// Se leen los albumes del CSV
-			List<Album> albumes = this.loadCVSAlbum();
-			//lambda expression: enlaza las canciones con los albumes porque al leer los
-			//albumes sólo se recuperan los nombres de la canciones y faltan el resto de
-			//datos.
-			albumes.forEach(a -> updateCancion(a, canciones));
-			//Se insertan los albumes en la BBDD
-			this.insertarAlbum(albumes.toArray(new Album[albumes.size()]));
-			
-			// Se leen los artistas del CSV
-			List<Artista> artistas = this.loadCVSArtista();
-			//lambda expression: enlaza las canciones con los albumes porque al leer los
-			//albumes sólo se recuperan los nombres de la canciones y faltan el resto de
-			//datos.
-			artistas.forEach(a -> updateAlbumes(a, albumes));
-			//Se insertan los artistas en la BBDD
-			this.insertarArtista(artistas.toArray(new Artista[artistas.size()]));				
+						
 		}
 	}
 	
@@ -242,17 +228,18 @@ public class GestorBD {
 		List<Cancion> canciones = new ArrayList<>();
 		
 		try (BufferedReader in = new BufferedReader(new FileReader(CSV_CANCIONES))) {
-			String linea = null;
-			Cancion c = null;		
+			String linea = null;		
 			
 			while ((linea = in.readLine()) != null) {								
 				String[] fragmentos = linea.split(";");	
 				//El ID es -1 por defecto
-				c = new Cancion(-1,fragmentos[0], Double.parseDouble(fragmentos[1]), fragmentos[2]);
+				String artistaNombre= fragmentos[2];
+                int artistaId = getIdArtistaByNombre(artistaNombre);
+                if (artistaId != -1) {
+                    Cancion cancion = new Cancion(-1, fragmentos[0], Double.parseDouble(fragmentos[1]), artistaId);
+                    canciones.add(cancion);
+                }
 								
-				if (c != null) {
-					canciones.add(c);
-				}
 			}			
 			
 		} catch (Exception ex) {
@@ -261,6 +248,30 @@ public class GestorBD {
 		}
 		
 		return canciones;
+	}
+	public List<Artista> loadCVSArtista() {
+	    List<Artista> artistas = new ArrayList<>();
+
+	    try (BufferedReader in = new BufferedReader(new FileReader(CSV_ARTISTAS))) {
+	        String linea;
+
+	        while ((linea = in.readLine()) != null) {
+	            String[] fragmentos = linea.split(";");
+	            // Asegúrate de que el ID y nombre estén correctamente leídos
+	            try {
+	                String nombre = fragmentos[0];
+	                String rutaFoto = fragmentos[1];
+	                artistas.add(new Artista(-1, nombre, rutaFoto)); // ID will be auto-generated
+	            } catch (NumberFormatException ex) {
+	                logger.warning("Formato de datos incorrecto en el archivo CSV para el artista: " + linea);
+	            }
+	        }
+
+	    } catch (Exception ex) {
+	        logger.warning("Error leyendo artistas del CSV: " + ex.getMessage());
+	    }
+
+	    return artistas;
 	}
 	
 	private List<Album> loadCVSAlbum() {
@@ -283,23 +294,21 @@ public class GestorBD {
 	                Genero genero = Genero.valueOf(fragmentos[1].toUpperCase()); // Convertimos a Enum
 	                String rutaFoto = fragmentos[2];
 	                int anio = Integer.parseInt(fragmentos[3]);
-	                String artista = fragmentos[4];
+	                String artista_nom = fragmentos[4];
 	                
-	                // Creamos el objeto Album
-	                Album album = new Album(
-	                    -1, // ID generado automáticamente
-	                    titulo,
-	                    genero,
-	                    rutaFoto,
-	                    artista,
-	                    anio
-	                );
-	                String[] cancionesFragmentos = fragmentos[5].split(";");
-	                for (String cancionTitulo : cancionesFragmentos) {
-	                    album.getListacancionestitulos().add(cancionTitulo); // Creamos objetos Cancion
+	                // Creamos el objeto Album con su artista correspondiente
+	                int artistaId = getIdArtistaByNombre(artista_nom);
+	                if (artistaId != -1) {
+	                    Album album = new Album(-1, titulo, genero, rutaFoto, artistaId, anio);
+	                    albumes.add(album);
+	                    
+	                    //Añadimos las canciones a los albumes escogidos
+	                    String[] cancionesFragmentos = fragmentos[5].split(";");
+		                for (String cancionTitulo : cancionesFragmentos) {
+		                    album.getListacanciones().add(new Cancion(-1, cancionTitulo, -1, artistaId)); // Creamos objetos Cancion
+		                }
 	                }
-	                // Añadimos el álbum a la lista
-	                albumes.add(album);
+	                
 
 	            } catch (Exception ex) {
 	                logger.warning("Error procesando la línea: " + linea + " - " + ex.getMessage());
@@ -313,32 +322,6 @@ public class GestorBD {
 	    return albumes;
 	}
 	
-	public List<Artista> loadCVSArtista() {
-	    List<Artista> artistas = new ArrayList<>();
-
-	    try (BufferedReader in = new BufferedReader(new FileReader(CSV_ARTISTAS))) {
-	        String linea;
-
-	        while ((linea = in.readLine()) != null) {
-	            String[] fragmentos = linea.split(";");
-	            // Asegúrate de que el ID y nombre estén correctamente leídos
-	            try {
-	                int id = Integer.parseInt(fragmentos[0].trim());  // ID es un número
-	                String nombre = fragmentos[1].trim(); // El nombre es una cadena
-	                String rutaFoto = fragmentos[2].trim();
-	                Artista artista = new Artista(id, nombre, rutaFoto);
-	                artistas.add(artista);
-	            } catch (NumberFormatException ex) {
-	                logger.warning("Formato de datos incorrecto en el archivo CSV para el artista: " + linea);
-	            }
-	        }
-
-	    } catch (Exception ex) {
-	        logger.warning("Error leyendo artistas del CSV: " + ex.getMessage());
-	    }
-
-	    return artistas;
-	}
 
 
 		public void insertarArtista(Artista... artistas) {
@@ -386,7 +369,7 @@ public class GestorBD {
 		            pStmt.setString(1, a.getTitulo());
 		            pStmt.setString(2, a.getGenero().toString());
 		            pStmt.setString(3, a.getRutaFoto());
-		            pStmt.setInt(4, getIdArtistaByNombre(a.getArtista().getNombre()));
+		            pStmt.setInt(4, a.getArtistaID());
 		            pStmt.setInt(5, a.getAnyo());
 
 		            if (pStmt.executeUpdate() != 1) {
@@ -516,7 +499,7 @@ public class GestorBD {
 //		        logger.warning(String.format("Error al actualizar relación Canción-Álbum: %s", ex.getMessage()));
 //		    }
 //		}
-		
+/*		
 		private void updateCancion(Album album, List<Cancion> canciones) {		
 			// Relacionar albumes y sus canciones con los artistas
 			for (int i = 0; i < album.getListacanciones().size(); i++) {
@@ -538,7 +521,7 @@ public class GestorBD {
 				}
 			}
 		}
-
+*/
 		//Recupera Las CAnciones de la BBDD
 		public List<Cancion> getCanciones() {
 			List<Cancion> canciones = new ArrayList<>();
@@ -554,7 +537,7 @@ public class GestorBD {
 					cancion = new Cancion(rs.getInt("id"), 
 						rs.getString("titulo"), 
 						rs.getDouble("duracion"),
-						getArtistaByID(rs.getInt("id_artista")).getNombre());
+						rs.getInt("id_artista"));
 					 					 
 					canciones.add(cancion);
 				}
@@ -585,7 +568,7 @@ public class GestorBD {
 							rs.getString("titulo"), 
 							Genero.valueOf(rs.getString("genero")), 
 							rs.getString("rutafoto"),
-							getArtistaByID(rs.getInt("id_artista")).getNombre(),
+							rs.getInt("id_artista"),
 							rs.getInt("fecha"));
 
 					albumes.add(album);
@@ -676,7 +659,7 @@ public class GestorBD {
 		                    rs.getString("titulo"),     // Título del álbum
 		                    Genero.valueOf(rs.getString("genero")),
 		                    rs.getString("rutaFoto"),
-		                    getArtistaByID(rs.getInt("id_artista")).getNombre(),
+		                    rs.getInt("id_artista"),
 		                    rs.getInt("fecha")
 		                );
 		            }
@@ -729,7 +712,7 @@ public class GestorBD {
 		
 		public int getIdAlbumByTitulo(String titulo) {
 		    int id = 0; // Variable para almacenar el ID del álbum
-		    String sql = "SELECT id_album FROM Album WHERE titulo = ? LIMIT 1";
+		    String sql = "SELECT * FROM Album WHERE titulo = ? LIMIT 1";
 
 		    // Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
 		    try (Connection con = DriverManager.getConnection(connectionString);
@@ -741,7 +724,7 @@ public class GestorBD {
 		        // Se ejecuta la sentencia y se obtiene el ResultSet con los resultados
 		        try (ResultSet rs = pStmt.executeQuery()) {
 		            if (rs.next()) {
-		                id = rs.getInt("id_album"); // Se obtiene el ID de la columna
+		                id = rs.getInt("id"); // Se obtiene el ID de la columna
 		            } else {
 		                logger.warning(String.format("No se encontró un álbum con el título: %s", titulo));
 		            }
@@ -757,8 +740,8 @@ public class GestorBD {
 		}
 		
 		public int getIdArtistaByNombre(String nombre) {
-		    int id = 0; // Variable para almacenar el ID del artista
-		    String sql = "SELECT id_artista FROM Artista WHERE nombre = ? LIMIT 1"; // Cambié 'titulo' a 'nombre' para que coincida con la columna correcta
+		    int id = -1; // Variable para almacenar el ID del artista
+		    String sql = "SELECT * FROM Artista WHERE nombre = ? LIMIT 1"; // Cambié 'titulo' a 'nombre' para que coincida con la columna correcta
 
 		    // Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
 		    try (Connection con = DriverManager.getConnection(connectionString);
@@ -770,7 +753,7 @@ public class GestorBD {
 		        // Se ejecuta la sentencia y se obtiene el ResultSet con los resultados
 		        try (ResultSet rs = pStmt.executeQuery()) {
 		            if (rs.next()) {
-		                id = rs.getInt("id_artista"); // Se obtiene el ID de la columna 'id_artista'
+		                id = rs.getInt("id"); // Se obtiene el ID de la columna 'id_artista'
 		            } else {
 		                logger.warning(String.format("No se encontró un artista con el nombre: %s", nombre)); 
 		            }

@@ -11,9 +11,8 @@ public class Album {
 	private Artista artista;
 	private List<Cancion> listacanciones;
 	private String rutaFoto;
-	private String nombreArtista;
+	private int artistaID;
 	private int anyo;
-	private List<String> listacancionestitulos;
 	
 
 	public int getAnyo() {
@@ -33,34 +32,27 @@ public class Album {
 		this.rutaFoto = rutaFoto;
 	}
 	
-	public Album(int id, String titulo, Genero genero, String rutaFoto, String nombreArtista, int anyo) {
+	public Album(int id, String titulo, Genero genero, String rutaFoto, int artistaID, int anyo) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
 		this.genero = genero;
 		this.listacanciones = new ArrayList<>();
-		this.listacancionestitulos = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
-		this.nombreArtista = nombreArtista;
+		this.artistaID = artistaID;
 		this.anyo = anyo;
 	}
 
 	
+
 	
-	public List<String> getListacancionestitulos() {
-		return listacancionestitulos;
+
+	public int getArtistaID() {
+		return artistaID;
 	}
 
-	public void setListacancionestitulos(List<String> listacancionestitulos) {
-		this.listacancionestitulos = listacancionestitulos;
-	}
-
-	public String getNombreArtista() {
-		return nombreArtista;
-	}
-
-	public void setNombreArtista(String nombreArtista) {
-		this.nombreArtista = nombreArtista;
+	public void setArtistaID(int artistaID) {
+		this.artistaID = artistaID;
 	}
 
 	public int getId() {
