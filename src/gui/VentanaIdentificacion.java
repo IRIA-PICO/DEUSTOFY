@@ -161,7 +161,7 @@ public class VentanaIdentificacion extends JFrame {
         JPanel panelCentral = new JPanel(new GridLayout(3, 2, 10, 10));
         panelCentral.setBackground(Color.BLACK);
         
-        JLabel lblID = new JLabel("CORREO:");
+        JLabel lblID = new JLabel("Correo:");
         lblID.setForeground(Color.WHITE);
         JTextField txtID = new JTextField();
         txtID.setBackground(Color.DARK_GRAY);

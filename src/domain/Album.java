@@ -7,35 +7,62 @@ import java.util.List;
 public class Album {
 	private int id;
 	private String titulo;
-	private double duracion;
 	private Genero genero;
 	private Artista artista;
 	private List<Cancion> listacanciones;
 	private String rutaFoto;
+	private String nombreArtista;
+	private int anyo;
+	private List<String> listacancionestitulos;
 	
 
-	public Album(String titulo, double duracion, Genero genero, Artista artista,String rutaFoto) {
+	public int getAnyo() {
+		return anyo;
+	}
+
+	public void setAnyo(int anyo) {
+		this.anyo = anyo;
+	}
+
+	public Album(String titulo, Genero genero, Artista artista,String rutaFoto) {
 		super();
 		this.titulo = titulo;
-		this.duracion = duracion;
 		this.genero = genero;
 		this.artista = artista;
 		this.listacanciones = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
 	}
 	
-	public Album(int id, String titulo, double duracion, Genero genero, String rutaFoto) {
+	public Album(int id, String titulo, Genero genero, String rutaFoto, String nombreArtista, int anyo) {
 		super();
 		this.id = id;
 		this.titulo = titulo;
-		this.duracion = duracion;
 		this.genero = genero;
 		this.listacanciones = new ArrayList<>();
+		this.listacancionestitulos = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
+		this.nombreArtista = nombreArtista;
+		this.anyo = anyo;
 	}
 
 	
 	
+	public List<String> getListacancionestitulos() {
+		return listacancionestitulos;
+	}
+
+	public void setListacancionestitulos(List<String> listacancionestitulos) {
+		this.listacancionestitulos = listacancionestitulos;
+	}
+
+	public String getNombreArtista() {
+		return nombreArtista;
+	}
+
+	public void setNombreArtista(String nombreArtista) {
+		this.nombreArtista = nombreArtista;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -52,17 +79,6 @@ public class Album {
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
-
-
-	public double getDuracion() {
-		return duracion;
-	}
-
-
-	public void setDuracion(double duracion) {
-		this.duracion = duracion;
-	}
-
 
 	public Genero getGenero() {
 		return genero;
