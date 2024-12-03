@@ -13,6 +13,7 @@ public class Album {
 	private String rutaFoto;
 	private int artistaID;
 	private int anyo;
+	private ArrayList<String> titulos;
 	
 
 	public int getAnyo() {
@@ -41,6 +42,7 @@ public class Album {
 		this.rutaFoto = rutaFoto;
 		this.artistaID = artistaID;
 		this.anyo = anyo;
+		this.setTitulos(new ArrayList<>());
 	}
 
 	
@@ -114,5 +116,13 @@ public class Album {
 		if (cancion != null && !this.listacanciones.contains(cancion)) {
 			listacanciones.add(cancion);
 		}
+	}
+
+	public ArrayList<String> getTitulos() {
+		return titulos;
+	}
+
+	public void setTitulos(ArrayList<String> titulos) {
+		this.titulos = titulos;
 	}
 }

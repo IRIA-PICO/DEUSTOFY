@@ -86,23 +86,25 @@ public class GestorBD {
 			String sql4 = "CREATE TABLE IF NOT EXISTS AlbumCancion (\n"
 	                + " album_id INTEGER NOT NULL,\n"
 	                + " cancion_id INTEGER NOT NULL,\n"
+	                + " posicion INTEGER NOT NULL,\n"
 	                + " PRIMARY KEY(album_id, cancion_id),\n"
 	                + " FOREIGN KEY (album_id) REFERENCES Album(id) ON DELETE CASCADE,\n"
 	                + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id) ON DELETE CASCADE"
 	                + ");";
 			
-			String sql5= "CREATE TABLE IF NOT EXISTS UsuarioPlaylist (\n"
-					+ " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-					+ " nomList TEXT UNIQUE NOT NULL,\n"
+			String sql5= "CREATE TABLE IF NOT EXISTS PlayList (\n"
+					+ " nomPlayList TEXT UNIQUE NOT NULL,\n"
+					+ " cancion_id INTEGER NOT NULL,\n"
                     + " usuario_id INTEGER NOT NULL,\n"
-                    + "FOREIGN KEY (usuario_id) REFERENCES Usuario(id) ON DELETE CASCADE"
+                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id)"
+                    + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id)"
                     + ");";
 			
-			String sql6= "CREATE TABLE IF NOT EXISTS PlaylistCancion (\n"
-                    + " playlist_id INTEGER NOT NULL,\n"
-                    + " cancion_id INTEGER NOT NULL,\n"
-                    + " FOREIGN KEY (playlist_id) REFERENCES UsuarioPlaylist(id),\n"                   
+			String sql6= "CREATE TABLE IF NOT EXISTS Favoritos (\n"
+					+ " cancion_id INTEGER NOT NULL,\n"
+                    + " usuario_id INTEGER NOT NULL,\n"
                     + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id)"
+                    + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id)"
                     + ");";
 			
 			String sql7 = "CREATE TABLE IF NOT EXISTS Usuario (\n"
@@ -118,13 +120,13 @@ public class GestorBD {
 	        //Se abre la conexión y se crea un PreparedStatement para crer cada tabla
 			//Al abrir la conexión, si no existía el fichero por defecto, se crea.
 			try (Connection con = DriverManager.getConnection(connectionString);
-			    PreparedStatement pStmt1 = con.prepareStatement(sql1);
+			    PreparedStatement pStmt1 = con.prepareStatement(sql7);
 				PreparedStatement pStmt2 = con.prepareStatement(sql2);
-				PreparedStatement pStmt3 = con.prepareStatement(sql3);
-				PreparedStatement pStmt4 = con.prepareStatement(sql4);
-				PreparedStatement pStmt5 = con.prepareStatement(sql5);
-				PreparedStatement pStmt6 = con.prepareStatement(sql6);
-				PreparedStatement pStmt7 = con.prepareStatement(sql7);) {
+				PreparedStatement pStmt3 = con.prepareStatement(sql1);
+				PreparedStatement pStmt4 = con.prepareStatement(sql3);
+				PreparedStatement pStmt5 = con.prepareStatement(sql4);
+				PreparedStatement pStmt6 = con.prepareStatement(sql5);
+				PreparedStatement pStmt7 = con.prepareStatement(sql6);) {
 				
 				//Se ejecutan las sentencias de creación de las tablas
 		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()  && !pStmt6.execute() && !pStmt7.execute()) {
@@ -183,13 +185,11 @@ public class GestorBD {
 			//this.borrarDatos();
 			List<Artista> artistas =  this.loadCVSArtista();
 			this.insertarArtista(artistas.toArray(new Artista[artistas.size()]));	
-	        
-	        List<Album> albumes = this.loadCVSAlbum();
-	        this.insertarAlbum(albumes.toArray(new Album[albumes.size()]));
-	        
-	        List<Cancion> canciones = this.loadCSVCancion();
+			List<Cancion> canciones = this.loadCSVCancion();
 			this.insertarCancion(canciones.toArray(new Cancion[canciones.size()]));
-						
+			
+	        List<Album> albumes = this.loadCVSAlbum();
+	        this.insertarAlbum(albumes.toArray(new Album[albumes.size()]));			
 		}
 	}
 	
@@ -283,7 +283,7 @@ public class GestorBD {
 	        while ((linea = in.readLine()) != null) {
 	            try {
 	                // Dividimos la línea por punto y coma, respetando las columnas definidas
-	                String[] fragmentos = linea.split(";", 6);
+	                String[] fragmentos = linea.split(";");
 	                if (fragmentos.length < 6) {
 	                    logger.warning("Línea con formato incorrecto: " + linea);
 	                    continue;
@@ -303,10 +303,10 @@ public class GestorBD {
 	                    albumes.add(album);
 	                    
 	                    //Añadimos las canciones a los albumes escogidos
-	                    String[] cancionesFragmentos = fragmentos[5].split(";");
-		                for (String cancionTitulo : cancionesFragmentos) {
-		                    album.getListacanciones().add(new Cancion(-1, cancionTitulo, -1, artistaId)); // Creamos objetos Cancion
-		                }
+	                    for (int i=5; i<fragmentos.length; i++) {
+	                    	System.out.println(fragmentos[i]);
+	                    	album.getTitulos().add(fragmentos[i]);
+	                    }
 	                }
 	                
 
@@ -361,7 +361,7 @@ public class GestorBD {
 		         PreparedStatement pStmt = con.prepareStatement(sql)) {
 
 		        for (Album a : albumes) {
-		            if (a.getArtista() == null) {
+		            if (a.getArtistaID() == -1) {
 		                logger.warning("El álbum '" + a.getTitulo() + "' no tiene un artista asignado.");
 		                continue;  // Salta este álbum si no tiene artista
 		            }
@@ -376,6 +376,14 @@ public class GestorBD {
 		                logger.warning("No se ha insertado el álbum: " + a.getTitulo());
 		            } else {
 		                logger.info("Se ha insertado el álbum: " + a.getTitulo());
+		                int posicion = 0;
+		         
+		                for (String titulo : a.getTitulos()) {
+			                // aqui es donde empiezo a hacer cambio en album cancion
+		                	insertarAlbumCancion(getIdCancionByTitulo(titulo), getIdAlbumByTitulo(a.getTitulo()), posicion);
+			                posicion ++;
+
+		                }
 		            }
 		        }
 
@@ -395,14 +403,13 @@ public class GestorBD {
 		         PreparedStatement pStmt = con.prepareStatement(sql)) {
 
 		        for (Cancion c : canciones) {
-		            if (c.getArtista() == null) {
+		            if (c.getId() != -1) {
 		                logger.warning("La canción '" + c.getTitulo() + "' no tiene un artista asignado.");
 		                continue;  // Salta esta canción si no tiene artista
 		            }
-
 		            pStmt.setString(1, c.getTitulo());
 		            pStmt.setDouble(2, c.getDuracion());
-		            pStmt.setInt(3, getIdArtistaByNombre(c.getArtista().getNombre()));
+		            pStmt.setInt(3, c.getArtistaID());
 
 		            if (pStmt.executeUpdate() != 1) {
 		                logger.warning("No se ha insertado la canción: " + c.getTitulo());
@@ -417,7 +424,21 @@ public class GestorBD {
 		        logger.warning("Error al insertar canciones: " + ex.getMessage());
 		    }
 		}
+		
+		public void insertarAlbumCancion(int idCancion, int idAlbum, int posicion) {
+		    String sql = "INSERT INTO AlbumCancion (album_id, cancion_id, posicion) VALUES (?, ?, ?);";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		            pStmt.setInt(1, idCancion);
+		            pStmt.setInt(2, idAlbum);
+		            pStmt.setInt(3, posicion);
 
+		        logger.info(String.format("Se ha insertado la relacion albumCancion"));
+
+		    } catch (Exception ex) {
+		        logger.warning("Error al insertar la relacion albumCancion: " + ex.getMessage());
+		    }
+		}
 		
 		public void insertarUsuarioPlaylist(int idPlaylist, int idUsuario) {
 			String sql = "INSERT INTO UsuarioPlaylist (id, usuario_id) VALUES (?, ?);";
@@ -708,7 +729,34 @@ public class GestorBD {
 		    }
 			return artista;
 }
-		
+		public int getIdCancionByTitulo(String titulo) {
+		    int id = 0; // Variable para almacenar el ID del álbum
+		    String sql = "SELECT * FROM Cancion WHERE titulo = ? LIMIT 1";
+
+		    // Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		         
+		        // Se define el parámetro de la sentencia SQL
+		        pStmt.setString(1, titulo);
+
+		        // Se ejecuta la sentencia y se obtiene el ResultSet con los resultados
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            if (rs.next()) {
+		                id = rs.getInt("id"); // Se obtiene el ID de la columna
+		            } else {
+		                logger.warning(String.format("No se encontró un álbum con el título: %s", titulo));
+		            }
+		        }
+
+		        logger.info(String.format("Se ha recuperado el álbum con título %s y ID %d", titulo, id));
+
+		    } catch (Exception ex) {
+		        logger.warning(String.format("Error al recuperar el álbum con título %s: %s", titulo, ex.getMessage()));
+		    }
+
+		    return id; // Retorna el ID del álbum, será 0 si no se encontró
+		}
 		
 		public int getIdAlbumByTitulo(String titulo) {
 		    int id = 0; // Variable para almacenar el ID del álbum
