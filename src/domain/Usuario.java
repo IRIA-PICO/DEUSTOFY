@@ -8,17 +8,17 @@ public class Usuario {
 	private String nombre;
 	private String sexo;
 	private int edad;
-	private String correo; // correo
+	private String usuario; // usuario
 	private String contr; // contraseña
 	private List<Cancion> cancionesFavoritas;
 	
 	
-	public Usuario(String nombre, String sexo, int edad, String correo, String contr) {
+	public Usuario(String nombre, String sexo, int edad, String usuario, String contr) {
 		super();
 		this.nombre = nombre;
 		this.sexo = sexo;
 		this.edad = edad;
-		this.correo = correo;
+		this.usuario = usuario;
 		this.contr = contr;
 		this.cancionesFavoritas = new ArrayList<>();
 	}
@@ -42,11 +42,11 @@ public class Usuario {
 	public void setEdad(int edad) {
 		this.edad = edad;
 	}
-	public String getCorreo() {
-		return correo;
+	public String getUsuario() {
+		return usuario;
 	}
-	public void setCorreo(String correo) {
-		this.correo = correo;
+	public void setUsuario(String usuario) {
+		this.usuario = usuario;
 	}
 	public String getContr() {
 		return contr;
@@ -66,13 +66,13 @@ public class Usuario {
 	}
 	@Override
 	public String toString() {
-		return "Usuario [nombre=" + nombre + ", sexo=" + sexo + ", edad=" + edad + ", correo=" + correo + ", contr="
+		return "Usuario [nombre=" + nombre + ", sexo=" + sexo + ", edad=" + edad + ", usuario=" + usuario + ", contr="
 				+ contr + "]";
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(contr, correo, edad, nombre, sexo);
+		return Objects.hash(contr, usuario, edad, nombre, sexo);
 	}
 
 	@Override
@@ -84,7 +84,7 @@ public class Usuario {
 		if (getClass() != obj.getClass())
 			return false;
 		Usuario other = (Usuario) obj;
-		return Objects.equals(contr, other.contr) && Objects.equals(correo, other.correo) && edad == other.edad
+		return Objects.equals(contr, other.contr) && Objects.equals(usuario, other.usuario) && edad == other.edad
 				&& Objects.equals(nombre, other.nombre) && Objects.equals(sexo, other.sexo);
 	}
 	

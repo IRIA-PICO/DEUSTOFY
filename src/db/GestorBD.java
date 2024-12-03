@@ -112,7 +112,7 @@ public class GestorBD {
 	                + " nombre TEXT NOT NULL,\n"
 	                + " sexo TEXT NOT NULL,\n"
 	                + " edad INTEGER NOT NULL,\n"
-	                + " correo TEXT NOT NULL,\n"
+	                + " usuario TEXT UNIQUE NOT NULL,\n"
 	                + " contr TEXT NOT NULL"
 	                + ");";
 
@@ -381,6 +381,7 @@ public class GestorBD {
 		                for (String titulo : a.getTitulos()) {
 			                // aqui es donde empiezo a hacer cambio en album cancion
 		                	insertarAlbumCancion(getIdCancionByTitulo(titulo), getIdAlbumByTitulo(a.getTitulo()), posicion);
+		                	System.out.println(getIdCancionByTitulo(titulo) + "-" +getIdAlbumByTitulo(a.getTitulo())+ "-" +posicion);
 			                posicion ++;
 
 		                }
@@ -429,10 +430,10 @@ public class GestorBD {
 		    String sql = "INSERT INTO AlbumCancion (album_id, cancion_id, posicion) VALUES (?, ?, ?);";
 		    try (Connection con = DriverManager.getConnection(connectionString);
 		         PreparedStatement pStmt = con.prepareStatement(sql)) {
-		            pStmt.setInt(1, idCancion);
-		            pStmt.setInt(2, idAlbum);
+		            pStmt.setInt(1, idAlbum);
+		            pStmt.setInt(2, idCancion);
 		            pStmt.setInt(3, posicion);
-
+		            pStmt.executeUpdate();
 		        logger.info(String.format("Se ha insertado la relacion albumCancion"));
 
 		    } catch (Exception ex) {
@@ -484,7 +485,7 @@ public class GestorBD {
 
 		public void insertarUsuario(Usuario usuario) {
 			//Se define la plantilla de la sentencia SQL			
-			String sqlInsert = "INSERT INTO Usuario (nombre, sexo, edad, correo, contr) VALUES (?, ?, ?, ?, ?);";
+			String sqlInsert = "INSERT INTO Usuario (nombre, sexo, edad, usuario, contr) VALUES (?, ?, ?, ?, ?);";
 
 			// Prepare the statement
 			try (Connection con = DriverManager.getConnection(connectionString);
@@ -493,7 +494,7 @@ public class GestorBD {
 			    stmt.setString(1, usuario.getNombre());   
 			    stmt.setString(2, usuario.getSexo());      
 			    stmt.setInt(3, usuario.getEdad());         
-			    stmt.setString(4, usuario.getCorreo());  
+			    stmt.setString(4, usuario.getUsuario());  
 			    stmt.setString(5, usuario.getContr());   
 
 			    // Execute the statement
@@ -503,47 +504,8 @@ public class GestorBD {
 			}			
 		}
 		
-//		private void updateCancion(Album album, List<Cancion> canciones) {
-//		    String sql = "INSERT INTO AlbumCancion (album_id, cancion_id) VALUES (?, ?);";
-//
-//		    try (Connection con = DriverManager.getConnection(connectionString);
-//		         PreparedStatement pStmt = con.prepareStatement(sql)) {
-//		         
-//		        for (Cancion cancion : canciones) {
-//		            if (album.getListacanciones().contains(cancion.getTitulo())) {
-//		                //pStmt.setInt(1, album.getId());
-//		                //pStmt.setInt(2, cancion.getId());
-//		                pStmt.executeUpdate();
-//		            }
-//		        }
-//		    } catch (Exception ex) {
-//		        logger.warning(String.format("Error al actualizar relación Canción-Álbum: %s", ex.getMessage()));
-//		    }
-//		}
-/*		
-		private void updateCancion(Album album, List<Cancion> canciones) {		
-			// Relacionar albumes y sus canciones con los artistas
-			for (int i = 0; i < album.getListacanciones().size(); i++) {
-				for(Cancion c: canciones) {
-					if( album.getListacanciones().get(i).getTitulo().equals(c.getTitulo())) {
-						album.getListacanciones().set(i, c);
-					}
-				}
-			}
-		}
-		
-		private void updateAlbumes(Artista artista, List<Album> albumes) {		
-			// Relacionar albumes y sus canciones con los artistas
-			for (int i = 0; i < artista.getAlbumes().size(); i++) {
-				for(Album a: albumes) {
-					if( artista.getAlbumes().get(i).getTitulo().equals(a.getTitulo())) {
-						artista.getAlbumes().set(i, a);
-					}
-				}
-			}
-		}
-*/
-		//Recupera Las CAnciones de la BBDD
+
+		//Recupera Las Canciones de la BBDD
 		public List<Cancion> getCanciones() {
 			List<Cancion> canciones = new ArrayList<>();
 			String sql = "SELECT * FROM Cancion";
@@ -645,7 +607,7 @@ public class GestorBD {
 		            usuario = new Usuario(rs.getString("nombre"), 
 		                                  rs.getString("sexo"), 
 		                                  rs.getInt("edad"), 
-		                                  rs.getString("correo"), 
+		                                  rs.getString("usuario"), 
 		                                  rs.getString("contr"));
 		            usuarios.add(usuario);
 		        }
@@ -817,29 +779,4 @@ public class GestorBD {
 		}
 
 
-		public List<Integer> getIDsCancionesdelAlbum(Album album){
-			List<Integer> idsCancion = new ArrayList<>();		
-			String sql = "SELECT cancion_id FROM AlbumCancion WHERE album_id = ?";
-			
-			try (Connection con = DriverManager.getConnection(connectionString);
-			     PreparedStatement pStmt = con.prepareStatement(sql)) {			
-				
-				pStmt.setInt(1, album.getId());
-				ResultSet rs = pStmt.executeQuery();			
-
-				while (rs.next()) {
-					idsCancion.add(rs.getInt("cancion_id"));
-				}
-				
-				rs.close();
-				
-				logger.info(String.format("Se han recuperado %d ids de los personajes del comic %s", 
-						idsCancion.size(), album.getTitulo()));			
-			} catch (Exception ex) {
-				logger.warning(String.format("Error recuperar los ids de los personajes del comic %d: %s",
-						album.getTitulo(), ex.getMessage()));						
-			}		
-			
-			return idsCancion;
-		}
 }
