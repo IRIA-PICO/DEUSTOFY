@@ -304,7 +304,6 @@ public class GestorBD {
 	                    
 	                    //Añadimos las canciones a los albumes escogidos
 	                    for (int i=5; i<fragmentos.length; i++) {
-	                    	System.out.println(fragmentos[i]);
 	                    	album.getTitulos().add(fragmentos[i]);
 	                    }
 	                }
@@ -381,8 +380,7 @@ public class GestorBD {
 		                for (String titulo : a.getTitulos()) {
 			                // aqui es donde empiezo a hacer cambio en album cancion
 		                	insertarAlbumCancion(getIdCancionByTitulo(titulo), getIdAlbumByTitulo(a.getTitulo()), posicion);
-		                	System.out.println(getIdCancionByTitulo(titulo) + "-" +getIdAlbumByTitulo(a.getTitulo())+ "-" +posicion);
-			                posicion ++;
+		                	posicion ++;
 
 		                }
 		            }
@@ -778,5 +776,95 @@ public class GestorBD {
 		    return id; 
 		}
 
+		//GETS VENTANALISTA CANCIONES
+		public List<Cancion> getCancionesByIDAlbum(Album album){
+			List<Cancion> canciones = new ArrayList<>(); 
+		    String sql = "SELECT * FROM AlbumCancion WHERE album_id = ?"; 
 
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        
+		        // Configura el parámetro de la consulta
+		        pStmt.setInt(1, album.getId());
+
+		        // Ejecuta la consulta
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            while (rs.next()) {
+		                int id=rs.getInt("cancion_id");
+		                canciones.add(getCancionByID(id));
+		                
+		            }
+		        }
+		    } catch (SQLException ex) {
+		        // Log de error en caso de excepciones
+		        logger.warning(String.format("Error al recuperar canciones con el album_id %d: %s",  album.getId(), ex.getMessage()));
+		    }
+
+		    // Devuelve la lista de canciones
+		    return canciones;
+		}
+		public Cancion getCancionByID(int id) {
+			String sql = "SELECT * FROM Cancion WHERE id = ?"; 
+			Cancion cancion= null;
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        
+		        // Configura el parámetro de la consulta
+		        pStmt.setInt(1, id);
+
+		        // Ejecuta la consulta
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            while (rs.next()) {
+		            	cancion = new Cancion(rs.getInt("id"),
+		            			rs.getString("nombre"),
+		            			rs.getInt("duracion"),
+		            			rs.getInt("id_artista")
+		            			);
+		            	
+		            }
+		        }
+		    } catch (SQLException ex) {
+		        // Log de error en caso de excepciones
+		        logger.warning(String.format("Error al recuperar cancion con el id %d: %s", id, ex.getMessage()));
+		    }
+			return cancion;
+		}
+		public List<Cancion> getCancionesByIDArtista(Artista artista){
+			List<Cancion> canciones = new ArrayList<>(); 
+		    String sqlAlbumes = "SELECT id FROM Album WHERE id_artista = ?";
+		    String sqlCanciones = "SELECT * FROM Cancion WHERE album_id = ?";
+
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmtAlbumes = con.prepareStatement(sqlAlbumes)) {
+		        
+		        pStmtAlbumes.setInt(1, artista.getId());
+
+		        // Ejecuta la consulta para obtener los álbumes del artista
+		        try (ResultSet rsAlbumes = pStmtAlbumes.executeQuery()) {
+		            while (rsAlbumes.next()) {
+		                int albumId = rsAlbumes.getInt("id");
+
+		                // Ahora busca las canciones para cada álbum
+		                try (PreparedStatement pStmtCanciones = con.prepareStatement(sqlCanciones)) {
+		                    pStmtCanciones.setInt(1, albumId);
+
+		                    try (ResultSet rsCanciones = pStmtCanciones.executeQuery()) {
+		                        while (rsCanciones.next()) {
+		                        	
+		                            Cancion cancion = new Cancion(rsCanciones.getInt("id"),
+		                            		rsCanciones.getString("nombre"),
+		                            		rsCanciones.getInt("duracion"),
+		                            		rsAlbumes.getInt("id_artista"));
+		                           canciones.add(cancion);
+		                        }
+		                    }
+		                }
+		            }
+		        }
+		    } catch (SQLException ex) {
+		        logger.warning(String.format("Error al recuperar canciones para el artista con ID %d: %s",artista.getId(), ex.getMessage()));
+		    }
+
+		    return canciones;
+		}
 }

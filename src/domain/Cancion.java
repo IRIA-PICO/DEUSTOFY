@@ -10,13 +10,6 @@ public class Cancion {
 	 private Artista artista;	 
 	 private int ArtistaID;
 	 
-	public Cancion(String titulo, double duracion, Album album, Artista artista) {
-		super();
-		this.titulo = titulo;
-        this.duracion = duracion;
-        this.album = album;
-        this.artista = artista;
-	}
 	
 	public Cancion(int id, String titulo, double duracion, int ArtistaID) {
 		this.id = id;

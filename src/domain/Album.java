@@ -15,23 +15,6 @@ public class Album {
 	private int anyo;
 	private ArrayList<String> titulos;
 	
-
-	public int getAnyo() {
-		return anyo;
-	}
-
-	public void setAnyo(int anyo) {
-		this.anyo = anyo;
-	}
-
-	public Album(String titulo, Genero genero, Artista artista,String rutaFoto) {
-		super();
-		this.titulo = titulo;
-		this.genero = genero;
-		this.artista = artista;
-		this.listacanciones = new ArrayList<>();
-		this.rutaFoto = rutaFoto;
-	}
 	
 	public Album(int id, String titulo, Genero genero, String rutaFoto, int artistaID, int anyo) {
 		super();
@@ -46,7 +29,13 @@ public class Album {
 	}
 
 	
+	public int getAnyo() {
+		return anyo;
+	}
 
+	public void setAnyo(int anyo) {
+		this.anyo = anyo;
+	}
 	
 
 	public int getArtistaID() {
