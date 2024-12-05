@@ -100,7 +100,7 @@ public class Cancion {
 	
 	@Override
 	public String toString() {
-		return "Cancion [titulo=" + titulo + ", duracion=" + duracion + ", album=" + album + ", artista=" + artista
+		return "Cancion [titulo=" + titulo + ", duracion=" + duracion + ", album=" + album + ", artista=" + artista + ",artistaID=" + ArtistaID
 				+ "]";
 	}
 	 

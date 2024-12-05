@@ -132,14 +132,14 @@ public class VentanaIdentificacion extends JFrame {
             this.dispose();
             Usuario user = new Usuario(nombreUsuario, sexoUsuario, edadUsuario, nombreGuardado, contraseñaGuardada);
             gestorBD.insertarUsuario(user);
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user, gestorBD); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
         } else if (id.equals("") && contraseña.equals("")) { // PREDETERMINADO
             JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
             Usuario user= new Usuario("", "", 0, " ", "");
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
+            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user, gestorBD); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
             vAlbumArtista.setVisible(true);
             
         } else { // INCORRECTO

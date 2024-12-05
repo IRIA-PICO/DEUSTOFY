@@ -66,8 +66,9 @@ public class GestorBD {
 	                + " titulo TEXT NOT NULL,\n"
 	                + " genero TEXT NOT NULL,\n"
 	                + " rutafoto TEXT, \n"
-	                + " id_artista TEXT NOT NULL,\n"
-	                + " fecha TEXT NOT NULL"
+	                + " id_artista INTEGER NOT NULL,\n"
+	                + " fecha TEXT NOT NULL,\n"
+	                + " FOREIGN KEY (id_artista) REFERENCES Artista(id)"
 	                + ");";
 	
 			String sql2 = "CREATE TABLE IF NOT EXISTS Artista (\n"
@@ -79,8 +80,9 @@ public class GestorBD {
 			String sql3 = "CREATE TABLE IF NOT EXISTS Cancion (\n"
 	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 	                + " titulo TEXT NOT NULL,\n"
-	                + " duracion INTEGER NOT NULL, \n"
-	                + " id_artista TEXT NOT NULL"
+	                + " duracion INTEGER NOT NULL,\n"
+	                + " id_artista INTEGER NOT NULL,\n"
+	                + " FOREIGN KEY (id_artista) REFERENCES Artista(id)"
 	                + ");";
 	
 			String sql4 = "CREATE TABLE IF NOT EXISTS AlbumCancion (\n"
@@ -96,14 +98,14 @@ public class GestorBD {
 					+ " nomPlayList TEXT UNIQUE NOT NULL,\n"
 					+ " cancion_id INTEGER NOT NULL,\n"
                     + " usuario_id INTEGER NOT NULL,\n"
-                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id)"
+                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id),\n"
                     + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id)"
                     + ");";
 			
 			String sql6= "CREATE TABLE IF NOT EXISTS Favoritos (\n"
 					+ " cancion_id INTEGER NOT NULL,\n"
                     + " usuario_id INTEGER NOT NULL,\n"
-                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id)"
+                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id),\n"
                     + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id)"
                     + ");";
 			
@@ -816,7 +818,7 @@ public class GestorBD {
 		        try (ResultSet rs = pStmt.executeQuery()) {
 		            while (rs.next()) {
 		            	cancion = new Cancion(rs.getInt("id"),
-		            			rs.getString("nombre"),
+		            			rs.getString("titulo"),
 		            			rs.getInt("duracion"),
 		            			rs.getInt("id_artista")
 		            			);
@@ -831,34 +833,25 @@ public class GestorBD {
 		}
 		public List<Cancion> getCancionesByIDArtista(Artista artista){
 			List<Cancion> canciones = new ArrayList<>(); 
-		    String sqlAlbumes = "SELECT id FROM Album WHERE id_artista = ?";
-		    String sqlCanciones = "SELECT * FROM Cancion WHERE album_id = ?";
+		    String sqlCanciones = "SELECT * FROM Cancion WHERE id_artista = ?";
 
 		    try (Connection con = DriverManager.getConnection(connectionString);
-		         PreparedStatement pStmtAlbumes = con.prepareStatement(sqlAlbumes)) {
+		         PreparedStatement pStmtCanciones = con.prepareStatement(sqlCanciones)) {
 		        
-		        pStmtAlbumes.setInt(1, artista.getId());
+		        pStmtCanciones.setInt(1, artista.getId());
 
-		        // Ejecuta la consulta para obtener los álbumes del artista
-		        try (ResultSet rsAlbumes = pStmtAlbumes.executeQuery()) {
-		            while (rsAlbumes.next()) {
-		                int albumId = rsAlbumes.getInt("id");
-
-		                // Ahora busca las canciones para cada álbum
-		                try (PreparedStatement pStmtCanciones = con.prepareStatement(sqlCanciones)) {
-		                    pStmtCanciones.setInt(1, albumId);
-
-		                    try (ResultSet rsCanciones = pStmtCanciones.executeQuery()) {
-		                        while (rsCanciones.next()) {
-		                        	
-		                            Cancion cancion = new Cancion(rsCanciones.getInt("id"),
-		                            		rsCanciones.getString("nombre"),
-		                            		rsCanciones.getInt("duracion"),
-		                            		rsAlbumes.getInt("id_artista"));
-		                           canciones.add(cancion);
-		                        }
-		                    }
-		                }
+		        // Ejecuta la consulta para obtener las canciones del artista
+		        try (ResultSet rsCanciones = pStmtCanciones.executeQuery()) {
+		            while (rsCanciones.next()) {
+		            	Cancion cancion = new Cancion(rsCanciones.getInt("id"),
+                        		rsCanciones.getString("titulo"),
+                        		rsCanciones.getInt("duracion"),
+                        		rsCanciones.getInt("id_artista"));
+		            
+		            cancion.setArtista(getArtistaByID(cancion.getArtistaID()));
+		            System.out.println(getArtistaByID(cancion.getArtistaID()));
+		            System.out.println(cancion);
+                       canciones.add(cancion);		                
 		            }
 		        }
 		    } catch (SQLException ex) {

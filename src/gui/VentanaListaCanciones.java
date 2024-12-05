@@ -33,9 +33,11 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
 
+import db.GestorBD;
 import domain.Album;
 import domain.Artista;
 import domain.Cancion;
+import domain.PlayList;
 import domain.Usuario;
 
 
@@ -50,12 +52,15 @@ public class VentanaListaCanciones extends JFrame {
 	private DefaultTableModel modeloDatosCanciones;
 	private JTextField busqueda;
 	private VentanaCancion ventanaCancion;
+	private GestorBD gestorBD;
 	
-	public VentanaListaCanciones(Object albumArtista, List<Album> albumesAnt, List<Artista> artistasAnt, Usuario userAnt) {
+	public VentanaListaCanciones(Object albumArtistaPlayList, List<Album> albumesAnt, List<Artista> artistasAnt, Usuario userAnt, GestorBD gestorBD) {
+		this.gestorBD = gestorBD;
 		albumes = albumesAnt;
 		artistas =artistasAnt;
 		user = userAnt;
 		ventanaCancion = null;
+		// gestorBD = 	new GestorBD();
 		Color colorFondo = new Color(40, 40, 40);
         Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
 		//Configuracion del JFrame
@@ -69,12 +74,14 @@ public class VentanaListaCanciones extends JFrame {
         setLocationRelativeTo(null);
         
         // Asignamos la lista de canciones a la variable local canciones
-        if (albumArtista instanceof Album) {
-        	this.canciones = ((Album) albumArtista).getListacanciones();
-        } else if (albumArtista instanceof Artista) {
-        	this.canciones = ((Artista) albumArtista).getCanciones();
-        	
-        }
+        if (albumArtistaPlayList instanceof Album) {
+        	this.canciones = this.gestorBD.getCancionesByIDAlbum((Album) albumArtistaPlayList);
+        } else if (albumArtistaPlayList instanceof Artista) {
+        	this.canciones = this.gestorBD.getCancionesByIDArtista((Artista) albumArtistaPlayList);        	
+        } else if (albumArtistaPlayList instanceof PlayList) { // CAMBIARLO CUANDO HAGAMOS PLAYLIST
+        	this.canciones = ((PlayList) albumArtistaPlayList).getListacanciones();
+        } 
+
         
         // Inicializar tabla y cargar canciones
         this.initTable();
@@ -105,15 +112,18 @@ public class VentanaListaCanciones extends JFrame {
         panelNombre.setForeground(Color.WHITE);
         panelNombre.setFont(fuenteTexto);
         
-        ImageIcon imgAlbumArtista = null;
+        ImageIcon imgalbumArtistaPlayList = null;
         JLabel labelImagen = null;
         try {
-        	if (albumArtista instanceof Album) {
-        		imgAlbumArtista = new ImageIcon(((Album) albumArtista).getRutaFoto());
-        	} else if (albumArtista instanceof Artista) {
-        		imgAlbumArtista = new ImageIcon(((Artista) albumArtista).getRutaFoto());
+        	if (albumArtistaPlayList instanceof Album) {
+        		imgalbumArtistaPlayList = new ImageIcon(((Album) albumArtistaPlayList).getRutaFoto());
+        	} else if (albumArtistaPlayList instanceof Artista) {
+        		imgalbumArtistaPlayList = new ImageIcon(((Artista) albumArtistaPlayList).getRutaFoto());
+        	} else if (albumArtistaPlayList instanceof PlayList) {
+        		imgalbumArtistaPlayList = new ImageIcon(((PlayList) albumArtistaPlayList).getRutaFoto());
         	}
-        	Image img = imgAlbumArtista.getImage();
+
+        	Image img = imgalbumArtistaPlayList.getImage();
             
             if (img == null) {
                 throw new Exception("La imagen del álbum no se ha podido cargar.");
@@ -122,18 +132,20 @@ public class VentanaListaCanciones extends JFrame {
             labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(140, 140, Image.SCALE_SMOOTH)));            
         } catch (Exception e) {
             System.err.println("Error cargando la imagen del álbum");
-            imgAlbumArtista = new ImageIcon("resources/images/logo.png");
-            Image img = imgAlbumArtista.getImage();
+            imgalbumArtistaPlayList = new ImageIcon("resources/images/logo.png");
+            Image img = imgalbumArtistaPlayList.getImage();
             labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(140, 140, Image.SCALE_SMOOTH)));
         }
 
         // Agregar el JLabel al panel
         panelNombre.add(labelImagen, BorderLayout.WEST);
         Label nombre = null;
-        if (albumArtista instanceof Album) {
-        	nombre = new Label(((Album) albumArtista).getTitulo());
-        } else if (albumArtista instanceof Artista) {
-        	nombre = new Label(((Artista) albumArtista).getNombre());
+        if (albumArtistaPlayList instanceof Album) {
+        	nombre = new Label(((Album) albumArtistaPlayList).getTitulo());
+        } else if (albumArtistaPlayList instanceof Artista) {
+        	nombre = new Label(((Artista) albumArtistaPlayList).getNombre());
+        } else if (albumArtistaPlayList instanceof PlayList) {
+        	nombre = new Label(((PlayList) albumArtistaPlayList).getTitulo());
         }
         
         nombre.setAlignment(Label.CENTER);
@@ -327,7 +339,7 @@ public class VentanaListaCanciones extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_E) {
 		            dispose(); 
-		            new VentanaAlbumArtista(albumes, artistas, user);
+		            new VentanaAlbumArtista(albumes, artistas, user, gestorBD);
 		        }
 				
 			}
