@@ -661,7 +661,7 @@ public class GestorBD {
 		
 		public Artista getArtistaByID(int id) {
 		    Artista artista = null; // Inicializamos la variable que contendrá el artista
-		    String sql = "SELECT * FROM Artista WHERE id_artista = ? LIMIT 1"; // Cambiamos la tabla y campo a 'Artista'
+		    String sql = "SELECT * FROM Artista WHERE id = ? LIMIT 1"; // Cambiamos la tabla y campo a 'Artista'
 
 		    // Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
 		    try (Connection con = DriverManager.getConnection(connectionString);
@@ -675,11 +675,13 @@ public class GestorBD {
 		            if (rs.next()) {
 		                // Creamos el objeto Artista a partir de los datos del ResultSet
 		                artista = new Artista(
-		                    rs.getInt("id_artista"),   // ID del artista
+		                    rs.getInt("id"),   // ID del artista
 		                    rs.getString("nombre"),    // Nombre del artista
 		                    rs.getString("rutaFoto")
 		                );
+		                
 		            }
+
 		        }
 
 		        // Registro informativo de que se recuperó el artista
@@ -822,7 +824,7 @@ public class GestorBD {
 		            			rs.getInt("duracion"),
 		            			rs.getInt("id_artista")
 		            			);
-		            	
+		            	cancion.setArtista(getArtistaByID(cancion.getArtistaID()));
 		            }
 		        }
 		    } catch (SQLException ex) {
@@ -849,9 +851,7 @@ public class GestorBD {
                         		rsCanciones.getInt("id_artista"));
 		            
 		            cancion.setArtista(getArtistaByID(cancion.getArtistaID()));
-		            System.out.println(getArtistaByID(cancion.getArtistaID()));
-		            System.out.println(cancion);
-                       canciones.add(cancion);		                
+                    canciones.add(cancion);		                
 		            }
 		        }
 		    } catch (SQLException ex) {
