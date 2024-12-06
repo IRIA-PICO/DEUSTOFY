@@ -621,10 +621,10 @@ public class GestorBD {
 		    return usuarios;
 		}
 
-		//Recupera un ArrayList<Cancion> del Object que recibe
+		
 		public Album getAlbumByID(int id) {
 		    Album album = null; // Inicializamos la variable que contendrá el álbum
-		    String sql = "SELECT * FROM Album WHERE id_album = ? LIMIT 1"; // Cambiamos 'Cancion' a 'Album' y ajustamos el campo ID
+		    String sql = "SELECT * FROM Album WHERE id = ? LIMIT 1"; // Cambiamos 'Cancion' a 'Album' y ajustamos el campo ID
 
 		    // Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
 		    try (Connection con = DriverManager.getConnection(connectionString);
@@ -638,7 +638,7 @@ public class GestorBD {
 		            if (rs.next()) {
 		                // Creamos el objeto Album a partir de los datos del ResultSet
 		                album = new Album(
-		                    rs.getInt("id_album"),      // ID del álbum
+		                    rs.getInt("id"),      // ID del álbum
 		                    rs.getString("titulo"),     // Título del álbum
 		                    Genero.valueOf(rs.getString("genero")),
 		                    rs.getString("rutaFoto"),
@@ -692,7 +692,8 @@ public class GestorBD {
 
 		    }
 			return artista;
-}
+		}
+		
 		public int getIdCancionByTitulo(String titulo) {
 		    int id = 0; // Variable para almacenar el ID del álbum
 		    String sql = "SELECT * FROM Cancion WHERE titulo = ? LIMIT 1";
@@ -825,6 +826,7 @@ public class GestorBD {
 		            			rs.getInt("id_artista")
 		            			);
 		            	cancion.setArtista(getArtistaByID(cancion.getArtistaID()));
+			            cancion.setAlbum(getAlbumByID(getIDAlbumByIDCancion(cancion.getId())));
 		            }
 		        }
 		    } catch (SQLException ex) {
@@ -851,6 +853,7 @@ public class GestorBD {
                         		rsCanciones.getInt("id_artista"));
 		            
 		            cancion.setArtista(getArtistaByID(cancion.getArtistaID()));
+		            cancion.setAlbum(getAlbumByID(getIDAlbumByIDCancion(cancion.getId())));
                     canciones.add(cancion);		                
 		            }
 		        }
@@ -859,5 +862,28 @@ public class GestorBD {
 		    }
 
 		    return canciones;
+		}
+		public int getIDAlbumByIDCancion(int id){
+			int id_album= 0;
+		    String sql = "SELECT * FROM AlbumCancion WHERE cancion_id = ?"; 
+
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        
+		        // Configura el parámetro de la consulta
+		        pStmt.setInt(1, id);
+
+		        // Ejecuta la consulta
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		        	if(rs.next()) {
+		               id_album= rs.getInt(1);
+		            }
+		        }
+		    } catch (SQLException ex) {
+		        // Log de error en caso de excepciones
+		        logger.warning(String.format("Error al recuperar album con el cancion_id %d: %s",  id, ex.getMessage()));
+		    }
+
+		   return id_album; 
 		}
 }
