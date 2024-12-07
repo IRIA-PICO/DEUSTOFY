@@ -7,14 +7,12 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Label;
-import java.awt.Point;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -228,7 +226,7 @@ public class VentanaListaCanciones extends JFrame {
         
         // Botones que añaden y eliminan canciones de las PlayLists
         JPanel panelBotones = new JPanel(new FlowLayout());
-        
+        panelBotones.setBackground(colorFondo);
         JButton agregarCancion = new JButton("Añadir a PlayList");
         agregarCancion.addActionListener((e) -> {
         	//Vamos a obtener la fila seleccionada
@@ -280,6 +278,14 @@ public class VentanaListaCanciones extends JFrame {
 				JOptionPane.showMessageDialog(null, "Cancion eliminada de la PlayList ", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
 			}
         });
+        agregarCancion.setBackground(colorFondo);
+        agregarCancion.setFont(fuenteTexto);
+        agregarCancion.setForeground(Color.WHITE);
+        
+        eliminarCancion.setBackground(colorFondo);
+        eliminarCancion.setFont(fuenteTexto);
+        eliminarCancion.setForeground(Color.WHITE);
+        
         panelBotones.add(eliminarCancion);
         panelBotones.add(agregarCancion);
         add(panelBotones, BorderLayout.SOUTH);
@@ -305,35 +311,6 @@ public class VentanaListaCanciones extends JFrame {
 		this.tablaCanciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		this.tablaCanciones.setBackground(new Color(40, 40, 40));
 		
-		// Para que cambie de color al pasar el raton por encima
-		this.tablaCanciones.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseEntered(MouseEvent e) {
-	            JTable table = (JTable) e.getSource();
-	            int row = table.rowAtPoint(e.getPoint());
-	            if (row != -1) {
-	                table.setRowSelectionInterval(row, row);
-	                table.repaint();
-	            }
-	        }
-	        @Override
-	        public void mouseExited(MouseEvent e) {
-	            JTable table = (JTable) e.getSource();
-	            table.clearSelection();
-	            table.repaint();
-	        }
-	    });
-		this.tablaCanciones.addMouseMotionListener(new MouseMotionAdapter() {
-			@Override
-			public void mouseMoved(MouseEvent e) {
-				JTable table = (JTable) e.getSource();
-	            int row = table.rowAtPoint(e.getPoint());
-	            if (row != -1) {
-	                table.setRowSelectionInterval(row, row);
-	                table.repaint();
-	            }
-			}
-		});
 		TableCellRenderer cellRenderer = (table, value, isSelected, hasFocus, row, column) -> {
 			JLabel result = new JLabel(value.toString());
 			result.setForeground(Color.WHITE);
@@ -389,19 +366,25 @@ public class VentanaListaCanciones extends JFrame {
 		this.tablaCanciones.getTableHeader().setDefaultRenderer(headerRenderer);
 		this.tablaCanciones.setDefaultRenderer(Object.class, cellRenderer);
 		
-		//Saltar a VentanaCancion cuando se haga click en una canci
-		this.tablaCanciones.addMouseListener(new MouseAdapter() {
-			
+		//Saltar a VentanaCancion cuando se haga dobleclick en una cancion y seleccionar la cancion cuando se haga un click
+		this.tablaCanciones.addMouseListener(new MouseAdapter() {			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount()==2) {
-					Point p= e.getPoint();
-					int fila= tablaCanciones.rowAtPoint(p);
-					int id_cancion= (int) tablaCanciones.getValueAt(fila, 0);
-					ventanaCancion = new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1, idUsuario, gestorBD);
-				}
+				JTable table = (JTable) e.getSource();
+		        int fila = table.rowAtPoint(e.getPoint());
+		        if (fila != -1) {
+					if(e.getClickCount() == 2) {
+						int id_cancion = (int) tablaCanciones.getValueAt(fila, 0);
+						ventanaCancion = new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1, idUsuario, gestorBD);
+					}
+		        } else if (e.getClickCount() == 1) {
+	                // Si es un solo clic, selecciona la fila y actualiza la tabla
+	                tablaCanciones.setRowSelectionInterval(fila, fila);
+	                tablaCanciones.repaint(); // Refresca la tabla para mostrar los cambios visuales
+	            }
 			}
 		});
+		
 	//Si presiona ctrl y luego "e" la ventana vuelve a VentanaAlbumartista
 		this.tablaCanciones.addKeyListener(new KeyAdapter() {
 			
