@@ -48,6 +48,7 @@ public class VentanaListaCanciones extends JFrame {
 	private List<Album>albumes;
 	private List<Artista> artistas;
 	private Usuario user;
+	private int idUsuario;
 	private JTable tablaCanciones;
 	private DefaultTableModel modeloDatosCanciones;
 	private JTextField busqueda;
@@ -59,6 +60,7 @@ public class VentanaListaCanciones extends JFrame {
 		albumes = albumesAnt;
 		artistas =artistasAnt;
 		user = userAnt;
+		idUsuario = gestorBD.getIdUsuarioByUsuario(user.getUsuario());
 		ventanaCancion = null;
 		// gestorBD = 	new GestorBD();
 		Color colorFondo = new Color(40, 40, 40);
@@ -93,7 +95,13 @@ public class VentanaListaCanciones extends JFrame {
                 int fila = tablaCanciones.rowAtPoint(e.getPoint());
                 if (columna == 2) {
                     Cancion cancion = canciones.get(fila);
-                    user.updateCancionFavorita(cancion); 
+                    int idCancion = gestorBD.getIdCancionByTitulo(cancion.getTitulo());
+                    if (gestorBD.getIDCancionesFavoritas(idUsuario).contains(idCancion)) {
+                    	gestorBD.eliminarCancionDeFavoritos(idUsuario, idCancion);
+                    } else {
+                        gestorBD.insertarCancionFavorita(idUsuario, idCancion);
+
+                    }
                     actualizarIconoFavorito(fila);
                     if (ventanaCancion != null && ventanaCancion.getCancion().equals(cancion)) {
             	        ventanaCancion.modificarDatos();
@@ -350,7 +358,7 @@ public class VentanaListaCanciones extends JFrame {
 	private void loadCanciones() {
 		this.modeloDatosCanciones.setRowCount(0);
 		this.canciones.forEach(c -> this.modeloDatosCanciones.addRow(new Object[] {
-				posicionCancion(c) + 1, c.getTitulo(), user.getCancionesFavoritas().contains(c), c.getArtista(), formatoDuracion(c)}));
+				posicionCancion(c) + 1, c.getTitulo(), gestorBD.getIDCancionesFavoritas(idUsuario).contains(gestorBD.getIdCancionByTitulo(c.getTitulo())), c.getArtista(), formatoDuracion(c)}));
 	}
 	
 	// Para conseguir la posicion de la cancion el el array
@@ -377,7 +385,8 @@ public class VentanaListaCanciones extends JFrame {
 	// Actualiza la imagen de la tabla segun lo que recibe de value y el cell renderer
 	private void actualizarIconoFavorito(int fila) {
 	    Cancion cancion = canciones.get(fila);
-	    modeloDatosCanciones.setValueAt(user.getCancionesFavoritas().contains(cancion), fila, 2);
+	    int idCancion = gestorBD.getIdCancionByTitulo(cancion.getTitulo());        
+	    modeloDatosCanciones.setValueAt(gestorBD.getIDCancionesFavoritas(idUsuario).contains(idCancion), fila, 2);
 	}
 	
 	// Quita todo lo que hay en la tabla y añade solo lo que coincide con la busqueda
@@ -387,7 +396,7 @@ public class VentanaListaCanciones extends JFrame {
 		this.canciones.forEach(c -> {
 			if (c.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
 				this.modeloDatosCanciones.addRow(
-						new Object[] {posicionCancion(c) + 1, c.getTitulo(), user.getCancionesFavoritas().contains(c), c.getArtista(), formatoDuracion(c)} );
+						new Object[] {posicionCancion(c) + 1, c.getTitulo(), gestorBD.getIDCancionesFavoritas(idUsuario).contains(gestorBD.getIdCancionByTitulo(c.getTitulo())), c.getArtista(), formatoDuracion(c)} );
 			}
 		});
 	}

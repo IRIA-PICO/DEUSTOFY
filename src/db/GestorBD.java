@@ -95,10 +95,9 @@ public class GestorBD {
 	                + ");";
 			
 			String sql5= "CREATE TABLE IF NOT EXISTS PlayList (\n"
+	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ " nomPlayList TEXT UNIQUE NOT NULL,\n"
-					+ " cancion_id INTEGER NOT NULL,\n"
                     + " usuario_id INTEGER NOT NULL,\n"
-                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id),\n"
                     + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id)"
                     + ");";
 			
@@ -117,7 +116,13 @@ public class GestorBD {
 	                + " usuario TEXT UNIQUE NOT NULL,\n"
 	                + " contr TEXT NOT NULL"
 	                + ");";
-
+			
+			String sql8 = "CREATE TABLE IF NOT EXISTS CancionPlayList (\n"
+					+ " cancion_id INTEGER NOT NULL,\n"
+                    + " playlist_id INTEGER NOT NULL,\n"
+                    + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id),\n"
+                    + " FOREIGN KEY (playlist_id) REFERENCES PlayList(id)"
+                    + ");";
 
 	        //Se abre la conexión y se crea un PreparedStatement para crer cada tabla
 			//Al abrir la conexión, si no existía el fichero por defecto, se crea.
@@ -128,10 +133,11 @@ public class GestorBD {
 				PreparedStatement pStmt4 = con.prepareStatement(sql3);
 				PreparedStatement pStmt5 = con.prepareStatement(sql4);
 				PreparedStatement pStmt6 = con.prepareStatement(sql5);
-				PreparedStatement pStmt7 = con.prepareStatement(sql6);) {
+				PreparedStatement pStmt7 = con.prepareStatement(sql6);
+				PreparedStatement pStmt8 = con.prepareStatement(sql8);) {
 				
 				//Se ejecutan las sentencias de creación de las tablas
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()  && !pStmt6.execute() && !pStmt7.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute()  && !pStmt6.execute() && !pStmt7.execute() && !pStmt8.execute()) {
 		        	logger.info("Se han creado las tablas");
 		        }
 			} catch (Exception ex) {
@@ -147,9 +153,11 @@ public class GestorBD {
 			String sql2 = "DROP TABLE IF EXISTS Artista";
 			String sql3 = "DROP TABLE IF EXISTS Cancion;";
 			String sql4 = "DROP TABLE IF EXISTS AlbumCancion;";
-			String sql5 = "DROP TABLE IF EXISTS UsuarioPlaylist;";
-			String sql6 = "DROP TABLE IF EXISTS PlaylistCancion;";
+			String sql5 = "DROP TABLE IF EXISTS PlayList;";
+			String sql6 = "DROP TABLE IF EXISTS Favoritos;";
 			String sql7 = "DROP TABLE IF EXISTS Usuario;";
+			String sql8 = "DROP TABLE IF EXISTS CancionPlayList;";
+
 			
 	        //Se abre la conexión y se crea un PreparedStatement para borrar cada tabla
 			try (Connection con = DriverManager.getConnection(connectionString);
@@ -159,10 +167,11 @@ public class GestorBD {
 					PreparedStatement pStmt4 = con.prepareStatement(sql4);
 					PreparedStatement pStmt5 = con.prepareStatement(sql5);
 					PreparedStatement pStmt6 = con.prepareStatement(sql6);
-					PreparedStatement pStmt7 = con.prepareStatement(sql7);) {
+					PreparedStatement pStmt7 = con.prepareStatement(sql7);
+					PreparedStatement pStmt8 = con.prepareStatement(sql8);) {
 				
 				//Se ejecutan las sentencias de borrado de las tablas
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute() && !pStmt8.execute()) {
 		        	logger.info("Se han borrado las tablas");
 		        }
 			} catch (Exception ex) {
@@ -202,9 +211,10 @@ public class GestorBD {
 			String sql2 = "DELETE FROM Artista;";
 			String sql3 = "DELETE FROM Cancion;";
 			String sql4 = "DELETE FROM AlbumCancion;";
-			String sql5 = "DELETE FROM UsuarioPlaylist;";
-			String sql6 = "DELETE FROM PlaylistCancion;";
+			String sql5 = "DELETE FROM PlayList;";
+			String sql6 = "DELETE FROM Favoritos;";
 			String sql7 = "DELETE FROM Usuario;";
+			String sql8 = "DELETE FROM CancionPlayList;";
 			
 	        //Se abre la conexión y se crea un PreparedStatement para borrar los datos de cada tabla
 			try (Connection con = DriverManager.getConnection(connectionString);
@@ -214,10 +224,12 @@ public class GestorBD {
 					PreparedStatement pStmt4 = con.prepareStatement(sql4);
 					PreparedStatement pStmt5 = con.prepareStatement(sql5);
 					PreparedStatement pStmt6 = con.prepareStatement(sql6);
-					PreparedStatement pStmt7 = con.prepareStatement(sql7)) {
+					PreparedStatement pStmt7 = con.prepareStatement(sql7);
+					PreparedStatement pStmt8 = con.prepareStatement(sql8)) {
+
 					
 				//Se ejecutan las sentencias de borrado de las tablas
-		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute()) {
+		        if (!pStmt1.execute() && !pStmt2.execute() && !pStmt3.execute() && !pStmt4.execute() && !pStmt5.execute() && !pStmt6.execute() && !pStmt7.execute() && !pStmt8.execute()) {
 		        	logger.info("Se han borrado los datos");
 		        }
 			} catch (Exception ex) {
@@ -440,48 +452,6 @@ public class GestorBD {
 		        logger.warning("Error al insertar la relacion albumCancion: " + ex.getMessage());
 		    }
 		}
-		
-		public void insertarUsuarioPlaylist(int idPlaylist, int idUsuario) {
-			String sql = "INSERT INTO UsuarioPlaylist (id, usuario_id) VALUES (?, ?);";
-			
-			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
-			try (Connection con = DriverManager.getConnection(connectionString);
-				 PreparedStatement pStmt = con.prepareStatement(sql)) {
-					
-				//Se añaden los parámetros al PreparedStatement
-				pStmt.setInt(1, idPlaylist);
-				pStmt.setInt(2, idUsuario);
-					
-				if (pStmt.executeUpdate() != 1) {					
-					logger.warning(String.format("No se ha insertado la playlist %d del usuario %d.", idPlaylist, idUsuario));
-				} else {
-					logger.info(String.format("Se ha insertado la playlist %d del usuario %d.", idPlaylist, idUsuario));
-				}
-			} catch (Exception ex) {
-				logger.warning(String.format("Error al insertar la playlist del usuario: %s", ex.getMessage()));
-			}				
-		}
-		
-		public void insertarPlaylistCancion(int idPlaylist, int idCancion) {
-			String sql = "INSERT INTO PlaylistCancion (playlist_id, cancion_id) VALUES (?, ?);";
-			
-			//Se abre la conexión y se crea el PreparedStatement con la sentencia SQL
-			try (Connection con = DriverManager.getConnection(connectionString);
-				 PreparedStatement pStmt = con.prepareStatement(sql)) {
-					
-				//Se añaden los parámetros al PreparedStatement
-				pStmt.setInt(1, idPlaylist);
-				pStmt.setInt(2, idCancion);
-					
-				if (pStmt.executeUpdate() != 1) {					
-					logger.warning(String.format("No se ha insertado la cancion %d de la playlist %d.", idPlaylist, idCancion));
-				} else {
-					logger.info(String.format("Se ha insertado la cancion %d de la playlist %d.", idPlaylist, idCancion));
-				}
-			} catch (Exception ex) {
-				logger.warning(String.format("Error al insertar la cancion de la playlist: %s", ex.getMessage()));
-			}				
-		}
 
 		public void insertarUsuario(Usuario usuario) {
 			//Se define la plantilla de la sentencia SQL			
@@ -504,7 +474,52 @@ public class GestorBD {
 			}			
 		}
 		
+		public void insertarCancionFavorita(int idUsuario, int idCancion) { 
+		    String sql = "INSERT INTO Favoritos (cancion_id, usuario_id) VALUES (?, ?);";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {		        
+		        pStmt.setInt(1, idCancion);
+		        pStmt.setInt(2, idUsuario);
+		        pStmt.executeUpdate();
+		        logger.info(String.format("Se ha insertado la cancion con ID: %d como favorita para el usuario con ID %d", idCancion, idUsuario));
+		    } catch (Exception ex) {
+		        logger.warning("Error al insertar la cancion como favorita: " + ex.getMessage());
+		    }
+		}
+		
+		public void eliminarCancionDeFavoritos(int idUsuario, int idCancion) {
+		    String sql = "DELETE FROM Favoritos WHERE usuario_id = ? AND cancion_id = ?;";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        pStmt.setInt(1, idUsuario);
+		        pStmt.setInt(2, idCancion);
+		        int rowsAffected = pStmt.executeUpdate();
+		        if (rowsAffected > 0) {
+		            logger.info(String.format("Cancion con ID %d eliminada de favoritos para el usuario con ID %d", idCancion, idUsuario));
+		        } else {
+		            logger.info(String.format("No se encontró la canción con ID %d en los favoritos del usuario con ID %d", idCancion, idUsuario));
+		        }
 
+		    } catch (Exception ex) {
+		        logger.warning("Error al eliminar canción de favoritos: " + ex.getMessage());
+		    }
+		}
+
+		
+		public void insertarPlaylist(int idUsuario, String nombre) { 
+		    String sql = "INSERT INTO PlayList (nomPlayList, usuario_id) VALUES (?, ?);";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {		        
+		        pStmt.setString(1, nombre);
+		        pStmt.setInt(2, idUsuario);
+		        pStmt.executeUpdate();
+		        logger.info(String.format("Se ha insertado la playlist: %s para el usuario con ID %d", nombre, idUsuario));
+		    } catch (Exception ex) {
+		        logger.warning("Error al insertar la playlist: " + ex.getMessage());
+		    }
+		}
+		
+		
 		//Recupera Las Canciones de la BBDD
 		public List<Cancion> getCanciones() {
 			List<Cancion> canciones = new ArrayList<>();
@@ -621,7 +636,26 @@ public class GestorBD {
 		    return usuarios;
 		}
 
-		
+		public int getIdUsuarioByUsuario(String usuario) {
+		    int idUsuario = -1;
+		    String sql = "SELECT id FROM Usuario WHERE usuario = ? LIMIT 1;";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        pStmt.setString(1, usuario);
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            if (rs.next()) {
+		                idUsuario = rs.getInt("id_usuario");
+		                logger.info(String.format("Se ha encontrado el ID %d para el usuario '%s'", idUsuario, usuario));
+		            } else {
+		                logger.warning(String.format("No se encontró un ID para el usuario '%s'", usuario));
+		            }
+		        }
+		    } catch (Exception ex) {
+		        logger.warning("Error al obtener ID de usuario: " + ex.getMessage());
+		    }
+		    return idUsuario;
+		}
+
 		public Album getAlbumByID(int id) {
 		    Album album = null; // Inicializamos la variable que contendrá el álbum
 		    String sql = "SELECT * FROM Album WHERE id = ? LIMIT 1"; // Cambiamos 'Cancion' a 'Album' y ajustamos el campo ID
@@ -885,5 +919,25 @@ public class GestorBD {
 		    }
 
 		   return id_album; 
+		}
+		
+		// GET PARA LAS CANCIONES FAVORITAS
+		public List <Integer> getIDCancionesFavoritas(int idUsuario) {
+		    List <Integer> idCanciones = new ArrayList<>();
+		    String sql = "SELECT cancion_id FROM Favoritos WHERE usuario_id = ?";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        pStmt.setInt(1, idUsuario);
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            while (rs.next()) {
+		            	idCanciones.add(rs.getInt("cancion_id"));
+		            }
+		        }
+		        logger.info(String.format("Se han recuperado %d canciones favoritas para el usuario con ID %d", idCanciones.size(), idUsuario));
+		    } catch (Exception ex) {
+		        logger.warning("Error al recuperar canciones favoritas: " + ex.getMessage());
+		    }
+
+		    return idCanciones; 
 		}
 }
