@@ -7,6 +7,10 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -28,278 +32,228 @@ import javax.swing.JPasswordField;
 import javax.swing.JDialog;
 
 public class VentanaIdentificacion extends JFrame {
-    private static final long serialVersionUID = 1L;
-    private JButton btnRegistrarme, btnInicioSesion;
-    private JLabel lblTitulo;
-    
-    private List<Album> albumes;
-    private List<Artista> artistas;
-    
-    private static String nombreGuardado;
-    private static String contraseñaGuardada;
-    private String nombreUsuario;
-    private int edadUsuario;
-    private String sexoUsuario;
-    private GestorBD gestorBD;
+	  private static final long serialVersionUID = 1L;
 
-    private JPanel pCentro, pNorte, pEste, pOeste, pSur;
-    
-    
+	    private JTextField userField;
+	    private JPasswordField passwordField;
+	    private JButton loginButton, registerButton;
+	    private JLabel forgotPasswordLabel;    
 
     public VentanaIdentificacion(GestorBD gestorBD) {
-    	this.gestorBD = gestorBD;		
-		//Se recupera la lista de comics de la BBDD
-		this.albumes = this.gestorBD.getAlbum();
-		this.artistas = this.gestorBD.getArtistas();
+//      connectToDatabase();
+  	this.setTitle("INICIO SESION");
+      this.setSize(800, 600);
+      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+      this.setLocationRelativeTo(null);
+      this.setLayout(new BorderLayout());
+      this.getContentPane().setBackground(new Color(30, 30, 30)); // Fondo gris oscuro
 
-        setBounds(300, 200, 400, 350);
-        setTitle("Deustofy - Inicio de Sesión");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ImageIcon imagen = new ImageIcon("resources/images/logo.png");
-        setIconImage(imagen.getImage());
-        
-        // Fondo negro y layout nulo para posicionar componentes manualmente
-        getContentPane().setBackground(Color.BLACK);
-        setLayout(null);
-        
-        // DISEÑO TITULO:
-        lblTitulo = new JLabel("Inicia sesión en Deustofy");
-        lblTitulo.setForeground(Color.WHITE);
-        lblTitulo.setFont(new Font("Arial", Font.BOLD, 16));
-        lblTitulo.setBounds(120, 30, 200, 30);
-        add(lblTitulo);
+      // Panel central para el formulario de login
+      JPanel formPanel = new JPanel();
+      formPanel.setBackground(new Color(45, 45, 45)); // Fondo gris más oscuro
+      formPanel.setLayout(null); // Layout manual para control total del diseño
+      this.add(formPanel, BorderLayout.CENTER);
 
-        // JTextFields ID y Contraseña (barras grises)
-        JTextField txtID = new JTextField();
-        txtID.setBackground(Color.DARK_GRAY);
-        txtID.setForeground(Color.WHITE);
-        txtID.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        txtID.setBounds(90, 80, 220, 30);
+      // Título de la app (más pequeño y elegante)
+      JLabel titleLabel = new JLabel("DEUSTOFY");
+      titleLabel.setFont(new Font("Arial", Font.BOLD, 36));
+      titleLabel.setForeground(Color.WHITE);
+      titleLabel.setHorizontalAlignment(JLabel.CENTER);
+      titleLabel.setBounds(0, 50, 800, 50); // Centrado en la parte superior
+      formPanel.add(titleLabel);
 
-        JPasswordField txtContraseña = new JPasswordField();
-        txtContraseña.setBackground(Color.DARK_GRAY);
-        txtContraseña.setForeground(Color.WHITE);
-        txtContraseña.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        txtContraseña.setBounds(90, 120, 220, 30);
-        
-        add(txtID);
-        add(txtContraseña);
-        
-        
-        // Paneles:
-        pCentro = new JPanel();
-        pCentro.setLayout(new GridLayout(2, 1)); // botones Registrarse y IniciarSesion
-        pNorte = new JPanel();
-        pSur = new JPanel();
-        pEste = new JPanel();
-        pOeste = new JPanel();
+      // Campo de texto para el usuario
+      JLabel userLabel = new JLabel("Usuario:");
+      userLabel.setForeground(Color.WHITE);
+      userLabel.setBounds(250, 150, 100, 30);
+      formPanel.add(userLabel);
 
-        getContentPane().add(pNorte, BorderLayout.NORTH);
-        getContentPane().add(pEste, BorderLayout.EAST);
-        getContentPane().add(pOeste, BorderLayout.WEST);
-        getContentPane().add(pSur, BorderLayout.SOUTH);
-        getContentPane().add(pCentro, BorderLayout.CENTER);
+      userField = new JTextField();
+      userField.setBounds(250, 180, 300, 40);
+      userField.setBackground(new Color(60, 60, 60));
+      userField.setForeground(Color.WHITE);
+      userField.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+      userField.setFont(new Font("Arial", Font.PLAIN, 14));
+      userField.setCaretColor(Color.WHITE);
+      userField.addFocusListener(new FocusAdapter() {
+          public void focusGained(FocusEvent e) {
+              userField.setBackground(new Color(50, 50, 50)); // Efecto al enfocar
+          }
 
-        // Botón Iniciar Sesión con listener
-        btnInicioSesion = crearBoton("Iniciar Sesión", 120, 170, 150, 35);
-        btnInicioSesion.addActionListener(e -> DialogoInicioSesion(txtID.getText(), new String(txtContraseña.getPassword())));
-        add(btnInicioSesion);
+          public void focusLost(FocusEvent e) {
+              userField.setBackground(new Color(60, 60, 60)); // Vuelve al color original
+          }
 
-        // Botón Registrarse con listener
-        btnRegistrarme = crearBoton("Registrarme", 120, 220, 150, 35);
-        btnRegistrarme.addActionListener(e -> DialogoRegistro());
-        add(btnRegistrarme);
+      });
 
-        setVisible(true);
-    }
-    
-    // Método para DISEÑO de botones Iniciar Sesión y registrarse
-    private JButton crearBoton(String texto, int x, int y, int ancho, int alto) {
-        JButton boton = new JButton(texto);
-        boton.setFont(new Font("Arial", Font.PLAIN, 14));
-        boton.setBackground(new Color(25, 25, 25)); // Fondo oscuro
-        boton.setForeground(Color.LIGHT_GRAY); // Texto claro
-        boton.setFocusPainted(false);
-        boton.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY)); // Borde claro
-        boton.setBounds(x, y, ancho, alto); // Posición específica
-        return boton;
-    }
-    
-    // Diálogo de error para INICIO DE SESIÓN fallido
-    private void DialogoInicioSesion(String id, String contraseña) {
-        if (id.equals(nombreGuardado) && contraseña.equals(contraseñaGuardada)) { // HABIÉNDOME REGISTRADO
-        	JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
-            Usuario user = new Usuario(nombreUsuario, sexoUsuario, edadUsuario, nombreGuardado, contraseñaGuardada);
-            gestorBD.insertarUsuario(user);
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user, gestorBD); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
-            vAlbumArtista.setVisible(true);
-            
-        } else if (id.equals("") && contraseña.equals("")) { // PREDETERMINADO
-            JOptionPane.showMessageDialog(this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-            this.dispose();
-            Usuario user= new Usuario("", "", 0, " ", "");
-            VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, user, gestorBD); // -------------- CAMBIO DE VENTANA A VentanaAlbumArtista
-            vAlbumArtista.setVisible(true);
-            
-        } else { // INCORRECTO
-            JOptionPane.showMessageDialog(this, "ID o contraseña incorrectos, vuelva a intentarlo.", "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
- 
-        
-    // DIÁLOGO DE REGISTRARME: ----------------------------------------------------------------------------------
- 
-    private void DialogoRegistro() {
-        JDialog dialogo = new JDialog(this, "Registrarse", true);
-        dialogo.setSize(350, 250);
-        dialogo.setLayout(new BorderLayout());
-        dialogo.setLocationRelativeTo(this);
-        dialogo.getContentPane().setBackground(Color.BLACK);
+      formPanel.add(userField);
 
-        // Panel CENTER --> ID, Contraseña, Confirmar Contraseña
-        JPanel panelCentral = new JPanel(new GridLayout(3, 2, 10, 10));
-        panelCentral.setBackground(Color.BLACK);
-        
-        JLabel lblID = new JLabel("Correo:");
-        lblID.setForeground(Color.WHITE);
-        JTextField txtID = new JTextField();
-        txtID.setBackground(Color.DARK_GRAY);
-        txtID.setForeground(Color.WHITE);
-        
-        JLabel lblContraseña = new JLabel("Contraseña:");
-        lblContraseña.setForeground(Color.WHITE);
-        JPasswordField txtContraseña = new JPasswordField();
-        txtContraseña.setBackground(Color.DARK_GRAY);
-        txtContraseña.setForeground(Color.WHITE);
-        
-        JLabel lblConfirmarContraseña = new JLabel("Confirmar Contraseña:");
-        lblConfirmarContraseña.setForeground(Color.WHITE);
-        JPasswordField txtConfirmarContraseña = new JPasswordField();
-        txtConfirmarContraseña.setBackground(Color.DARK_GRAY);
-        txtConfirmarContraseña.setForeground(Color.WHITE);
+      // Campo de texto para la contraseña
+      JLabel passwordLabel = new JLabel("Contraseña:");
+      passwordLabel.setForeground(Color.WHITE);
+      passwordLabel.setBounds(250, 240, 100, 30);
+      formPanel.add(passwordLabel);
 
-        panelCentral.add(lblID);
-        panelCentral.add(txtID);
-        panelCentral.add(lblContraseña);
-        panelCentral.add(txtContraseña);
-        panelCentral.add(lblConfirmarContraseña);
-        panelCentral.add(txtConfirmarContraseña);
+      passwordField = new JPasswordField();
+      passwordField.setBounds(250, 270, 300, 40);
+      passwordField.setBackground(new Color(60, 60, 60));
+      passwordField.setForeground(Color.WHITE);
+      passwordField.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10));
+      passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
+      passwordField.setCaretColor(Color.WHITE);
+      passwordField.addFocusListener(new FocusAdapter() {
 
-        dialogo.add(panelCentral, BorderLayout.CENTER);
-        
+          public void focusGained(FocusEvent e) {
+              passwordField.setBackground(new Color(50, 50, 50)); // Efecto al enfocar
+          }
 
-        // Panel SOUTH --> Botones Volver y ConfirmarRegistro
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBotones.setBackground(Color.BLACK);
-        JButton btnVolver = crearBoton("Volver", 0, 0, 100, 30);
-        JButton btnConfirmarRegistro = crearBoton("Confirmar Registro", 0, 0, 150, 30);
+          public void focusLost(FocusEvent e) {
+              passwordField.setBackground(new Color(60, 60, 60)); // Vuelve al color original
+          }
 
-        panelBotones.add(btnVolver);
-        panelBotones.add(btnConfirmarRegistro);
-        dialogo.add(panelBotones, BorderLayout.SOUTH);
+      });
 
+      formPanel.add(passwordField);      
 
-        // Listener CONFIRMAR REGISTRO
-        btnConfirmarRegistro.addActionListener(e -> {
-            String contraseña = new String(txtContraseña.getPassword());
-            String confirmarContraseña = new String(txtConfirmarContraseña.getPassword());
+      forgotPasswordLabel = new JLabel("<html><u>¿Olvidaste tu contraseña?</u></html>");
+      forgotPasswordLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+      forgotPasswordLabel.setForeground(Color.WHITE);
+      forgotPasswordLabel.setBounds(250, 460, 300, 20);
+      forgotPasswordLabel.addMouseListener(new MouseAdapter() {
 
-            // Que las contraseñas coincidan:
-            if (!contraseña.equals(confirmarContraseña)) {
-                JOptionPane.showMessageDialog(dialogo, "Las contraseñas no coinciden", "Error", JOptionPane.ERROR_MESSAGE);
-            } else {
-            	nombreGuardado = txtID.getText(); // Guardamos el ID de usuario
-                contraseñaGuardada = contraseña;  // Guardamos la contraseña
-                dialogo.dispose();
-                DialogoDatosExtra(); // ABRIR DIALOGO DE Nombre, Edad, Sexo
-            }
-        });
-        
-     // Listener VOLVER:
-        btnVolver.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dialogo.dispose();
-            }
-        });
+          public void mouseEntered(MouseEvent e) {
+              forgotPasswordLabel.setForeground(Color.CYAN); // Efecto hover
+          }
 
-        dialogo.setVisible(true);
-    }
-    
-    
-    private void DialogoDatosExtra() { // DIALOGO DE Nombre, Edad, Sexo
-        JDialog dialogoDatos = new JDialog(this, "Datos Adicionales", true);
-        dialogoDatos.setSize(350, 250);
-        dialogoDatos.setLayout(new BorderLayout());
-        dialogoDatos.setLocationRelativeTo(this);
-        dialogoDatos.getContentPane().setBackground(Color.BLACK);
+          public void mouseExited(MouseEvent e) {
+              forgotPasswordLabel.setForeground(Color.WHITE); // Vuelve al color original
+          }
 
-        JPanel panelCentral = new JPanel(new GridLayout(3, 2, 10, 10));
-        panelCentral.setBackground(Color.BLACK);
+          public void mouseClicked(MouseEvent e) {
+              // Acción cuando se hace clic en "Olvidaste tu contraseña"
+              JOptionPane.showMessageDialog(VentanaIdentificacion.this, "Te redirigiremos a la recuperación de contraseña.");
+          }
 
-        JLabel lblNombre = new JLabel("Nombre:");
-        lblNombre.setForeground(Color.WHITE);
-        JTextField txtNombre = new JTextField();
-        txtNombre.setBackground(Color.DARK_GRAY);
-        txtNombre.setForeground(Color.WHITE);
+      });
 
-        JLabel lblEdad = new JLabel("Edad:");
-        lblEdad.setForeground(Color.WHITE);
-        JTextField txtEdad = new JTextField();
-        txtEdad.setBackground(Color.DARK_GRAY);
-        txtEdad.setForeground(Color.WHITE);
+      formPanel.add(forgotPasswordLabel);
 
-        JLabel lblSexo = new JLabel("Sexo:");
-        lblSexo.setForeground(Color.WHITE);
-        JComboBox<String> comboSexo = new JComboBox<>(new String[]{"Hombre", "Mujer"});
-        comboSexo.setBackground(Color.DARK_GRAY);
-        comboSexo.setForeground(Color.WHITE);
+      // Botón de Login con estilo moderno
+      loginButton = new JButton("Iniciar Sesión");
+      loginButton.setBounds(250, 340, 300, 40);
+      loginButton.setBackground(Color.blue); 
+      loginButton.setForeground(Color.WHITE);
+      loginButton.setFont(new Font("Helvetica Neue", Font.BOLD, 16));
+      loginButton.setFocusPainted(false);
+      loginButton.setBorderPainted(false);
+      loginButton.addMouseListener(new MouseAdapter() {
 
-        panelCentral.add(lblNombre);
-        panelCentral.add(txtNombre);
-        panelCentral.add(lblEdad);
-        panelCentral.add(txtEdad);
-        panelCentral.add(lblSexo);
-        panelCentral.add(comboSexo);
+          public void mouseEntered(MouseEvent e) {
+              loginButton.setBackground(Color.BLACK); // Efecto hover
+          }
 
-        dialogoDatos.add(panelCentral, BorderLayout.CENTER);
+          public void mouseExited(MouseEvent e) {
+              loginButton.setBackground(Color.blue);
+          }
 
-        // Panel de botones para confirmar
-        JPanel panelBotones = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBotones.setBackground(Color.BLACK);
-        JButton btnConfirmar = crearBoton("Confirmar", 0, 0, 100, 30);
+      });
 
-        panelBotones.add(btnConfirmar);
-        dialogoDatos.add(panelBotones, BorderLayout.SOUTH);
+      //loginButton.addActionListener(e -> handleLogin()); // Acción al hacer clic
 
-        // Listener
-        btnConfirmar.addActionListener(e -> {
-            String nombre = txtNombre.getText();
-            String edadStr = (String) txtEdad.getText();
-            String sexo = (String) comboSexo.getSelectedItem();
+      formPanel.add(loginButton);
 
-            if (nombre.isEmpty() || edadStr.isEmpty() || sexo.isEmpty()) {
-                JOptionPane.showMessageDialog(dialogoDatos, "Por favor, complete todos los campos", "Error", JOptionPane.WARNING_MESSAGE);
-            } else {
-            	try {
-                    int edad = Integer.parseInt(edadStr); // Intentamos convertir a int
-                    nombreUsuario = nombre;
-                    edadUsuario = edad;
-                    sexoUsuario = sexo;
+      // Botón de Registro
+      registerButton = new JButton("Crear Cuenta");
+      registerButton.setBounds(250, 400, 300, 40);
+      registerButton.setBackground(new Color(60, 60, 60));
+      registerButton.setForeground(Color.WHITE);
+      registerButton.setFont(new Font("Arial", Font.PLAIN, 14));
+      registerButton.setFocusPainted(false);
+      registerButton.setBorderPainted(false);
+      registerButton.addActionListener(e -> openRegisterForm());
+      formPanel.add(registerButton);
 
-                    // Si la conversión es exitosa, procedemos con el registro
-                    JOptionPane.showMessageDialog(dialogoDatos, "¡Registro completo!", "Registro", JOptionPane.INFORMATION_MESSAGE);
-                    dialogoDatos.dispose();
-                } catch (NumberFormatException ex) {
-                    // Si ocurre un error en la conversión, mostramos un mensaje de error
-                    JOptionPane.showMessageDialog(dialogoDatos, "Por favor, ingrese una edad valida (número entero)", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
+           
+
+  }
+    private void openRegisterForm() {
+        JFrame registerFrame = new JFrame("Registro");
+        registerFrame.setSize(400, 400);
+        registerFrame.setLayout(null);
+        registerFrame.setLocationRelativeTo(this);
+        registerFrame.getContentPane().setBackground(new Color(45, 45, 45));
+
+        JLabel nameLabel = new JLabel("Nombre:");
+        nameLabel.setForeground(Color.WHITE);
+        nameLabel.setBounds(50, 50, 100, 30);
+        registerFrame.add(nameLabel);
+
+        JTextField nameField = new JTextField();
+        nameField.setBounds(150, 50, 180, 30);
+        nameField.setBackground(new Color(60, 60, 60));
+        nameField.setForeground(Color.WHITE);
+        registerFrame.add(nameField);
+
+        JLabel genderLabel = new JLabel("Sexo:");
+        genderLabel.setForeground(Color.WHITE);
+        genderLabel.setBounds(50, 100, 100, 30);
+        registerFrame.add(genderLabel);
+
+        JComboBox<String> genderComboBox = new JComboBox<>(new String[]{"M", "F"});
+        genderComboBox.setBounds(150, 100, 180, 30);
+        genderComboBox.setBackground(new Color(60, 60, 60));
+        genderComboBox.setForeground(Color.WHITE);
+        registerFrame.add(genderComboBox);
+
+        JLabel ageLabel = new JLabel("Edad:");
+        ageLabel.setForeground(Color.WHITE);
+        ageLabel.setBounds(50, 150, 100, 30);
+        registerFrame.add(ageLabel);
+
+        JTextField ageField = new JTextField();
+        ageField.setBounds(150, 150, 180, 30);
+        ageField.setBackground(new Color(60, 60, 60));
+        ageField.setForeground(Color.WHITE);
+        registerFrame.add(ageField);
+
+        JLabel userLabel = new JLabel("Usuario:");
+        userLabel.setForeground(Color.WHITE);
+        userLabel.setBounds(50, 200, 100, 30);
+        registerFrame.add(userLabel);
+
+        JTextField userField = new JTextField();
+        userField.setBounds(150, 200, 180, 30);
+        userField.setBackground(new Color(60, 60, 60));
+        userField.setForeground(Color.WHITE);
+        registerFrame.add(userField);
+
+        JLabel passwordLabel = new JLabel("Contraseña:");
+        passwordLabel.setForeground(Color.WHITE);
+        passwordLabel.setBounds(50, 250, 100, 30);
+        registerFrame.add(passwordLabel);
+
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setBounds(150, 250, 180, 30);
+        passwordField.setBackground(new Color(60, 60, 60));
+        passwordField.setForeground(Color.WHITE);
+        registerFrame.add(passwordField);
+
+        JButton registerButton = new JButton("Registrar");
+        registerButton.setBounds(150, 300, 180, 30);
+        registerButton.setBackground(Color.BLUE);
+        registerButton.setForeground(Color.WHITE);
+        registerButton.addActionListener(e -> {
+            String nombre = nameField.getText();
+            String sexo = genderComboBox.getSelectedItem().toString();
+            int edad = Integer.parseInt(ageField.getText());
+            String usuario = userField.getText();
+            String contraseña = String.valueOf(passwordField.getPassword());
+
         });
 
-        dialogoDatos.setVisible(true);
-    }
+        registerFrame.add(registerButton);
+        registerFrame.setVisible(true);
+}
 
 
 }
