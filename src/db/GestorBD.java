@@ -646,7 +646,7 @@ public class GestorBD {
 		        pStmt.setString(1, usuario);
 		        try (ResultSet rs = pStmt.executeQuery()) {
 		            if (rs.next()) {
-		                idUsuario = rs.getInt("id_usuario");
+		                idUsuario = rs.getInt("id");
 		                logger.info(String.format("Se ha encontrado el ID %d para el usuario '%s'", idUsuario, usuario));
 		            } else {
 		                logger.warning(String.format("No se encontró un ID para el usuario '%s'", usuario));
