@@ -16,8 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
+import db.GestorBD;
 import domain.Cancion;
-import domain.Usuario;
 
 public class VentanaCancion extends JFrame {
 
@@ -27,7 +27,7 @@ public class VentanaCancion extends JFrame {
 	private JButton btnpausa, btnatras, btnalante, btnVelocidad, btnBucle;
 	private JLabel lblTitulo, lblImagen, lblDur0, lblDurTotal, lblfavorito, lblrepetir;
 	private JSlider slmusica;
-	private Usuario user;
+	private int idUsuario;
 	private boolean enPausa = false;
 	private int pos,durcancion, posicionsl=0;
 	private Cancion c;
@@ -35,12 +35,15 @@ public class VentanaCancion extends JFrame {
 	private boolean enBucle = false;
     private double multiplicadorVelocidad = 1; 
     private List<Cancion> lcan;
-	public VentanaCancion(List<Cancion> listcan, int posicion, Usuario userAnt) {
+	private GestorBD gestorBD;
+
+	public VentanaCancion(List<Cancion> listcan, int posicion, int idUsuario, GestorBD gestorBD) {
+		this.gestorBD = gestorBD;
 		lcan = listcan;
 		//propiedades JFrame
 		setBounds(1000, 100, 400, 600);
 		pos = posicion;
-		user= userAnt;
+		this.idUsuario = idUsuario;
 		setTitle("DEUSTOFY - Cancion");
 		ImageIcon imagen = new ImageIcon("resources/images/logo.png");
 		Font fuenteTexto = new Font("Gotham", Font.BOLD, 16);
@@ -71,7 +74,7 @@ public class VentanaCancion extends JFrame {
 		lblfavorito= new JLabel();
 		lblfavorito.setSize(40, 40);
 		lblfavorito.setLocation(lblImagen.getX() + lblImagen.getWidth() - lblfavorito.getWidth(), lblImagen.getY());
-		if(user.getCancionesFavoritas().contains(c)) {
+		if(gestorBD.getIDCancionesFavoritas(idUsuario).contains(gestorBD.getIdCancionByTitulo(c.getTitulo()))) {
 		ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
 		ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
 		lblfavorito.setIcon(imagenConDimensiones2);
@@ -240,7 +243,7 @@ public class VentanaCancion extends JFrame {
 			ImageIcon im = new ImageIcon(c.getAlbum().getRutaFoto());
 			ImageIcon imagenConDimensiones = new ImageIcon(im.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_DEFAULT));
 			
-			if(user.getCancionesFavoritas().contains(c)) {
+			if(gestorBD.getIDCancionesFavoritas(idUsuario).contains(gestorBD.getIdCancionByTitulo(c.getTitulo()))) {
 				ImageIcon im2 = new ImageIcon("resources/images/estrella.png");
 				ImageIcon imagenConDimensiones2 = new ImageIcon(im2.getImage().getScaledInstance(lblfavorito.getWidth(), lblfavorito.getHeight(), Image.SCALE_DEFAULT));
 				lblfavorito.setIcon(imagenConDimensiones2);

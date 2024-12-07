@@ -3,6 +3,7 @@ package gui;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Label;
@@ -20,8 +21,11 @@ import java.util.Vector;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -222,6 +226,64 @@ public class VentanaListaCanciones extends JFrame {
         panelBusqueda.add(busqueda, BorderLayout.CENTER);
         add(panelBusqueda, BorderLayout.NORTH);
         
+        // Botones que añaden y eliminan canciones de las PlayLists
+        JPanel panelBotones = new JPanel(new FlowLayout());
+        
+        JButton agregarCancion = new JButton("Añadir a PlayList");
+        agregarCancion.addActionListener((e) -> {
+        	//Vamos a obtener la fila seleccionada
+			int fila = tablaCanciones.getSelectedRow();
+			if(fila==-1) {
+				JOptionPane.showMessageDialog(null, "Primero debes seleccionado una cancion", "ERROR EN SELECCIÓN", JOptionPane.ERROR_MESSAGE);
+			}else {
+				String titulo = (String) modeloDatosCanciones.getValueAt(fila, 1);
+				int idCancion = gestorBD.getIdCancionByTitulo(titulo);
+				
+				JComboBox<String> comboBoxAgregarPlaylists = new JComboBox<>();
+		        for (String nombrePlaylist : gestorBD.getPlayListByIdUsuario(idUsuario)) {
+		        	comboBoxAgregarPlaylists.addItem(nombrePlaylist);
+		        }
+		        
+				String playlistSeleccionada = (String) comboBoxAgregarPlaylists.getSelectedItem();
+		        if (playlistSeleccionada == null) {
+		            JOptionPane.showMessageDialog(null, "Debes seleccionar una playlist", "ERROR EN SELECCIÓN", JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+		        int idPlayList = gestorBD.getIdPlayListByNombre(playlistSeleccionada);
+				gestorBD.insertarCancionPlayList(idCancion, idPlayList);
+				JOptionPane.showMessageDialog(null, "Cancion añadida a la PlayList ", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+			}		
+        });
+        
+        JButton eliminarCancion = new JButton("Eliminar de PlayList");
+        eliminarCancion.addActionListener((e) -> {
+        	//Vamos a obtener la fila seleccionada
+			int fila = tablaCanciones.getSelectedRow();
+			if(fila==-1) {
+				JOptionPane.showMessageDialog(null, "Primero debes seleccionado una cancion", "ERROR EN SELECCIÓN", JOptionPane.ERROR_MESSAGE);
+			}else {
+				String titulo = (String) modeloDatosCanciones.getValueAt(fila, 1);
+				int idCancion = gestorBD.getIdCancionByTitulo(titulo);
+				
+				JComboBox<String> comboBoxEliminarPlaylists = new JComboBox<>();
+		        for (String nombrePlaylist : gestorBD.getPlayListByIdUsuarioIdCancion(idUsuario, idCancion)) {
+		        	comboBoxEliminarPlaylists.addItem(nombrePlaylist);
+		        }
+				
+				String playlistSeleccionada = (String) comboBoxEliminarPlaylists.getSelectedItem();
+		        if (playlistSeleccionada == null) {
+		            JOptionPane.showMessageDialog(null, "Debes seleccionar una playlist", "ERROR EN SELECCIÓN", JOptionPane.ERROR_MESSAGE);
+		            return;
+		        }
+		        int idPlayList = gestorBD.getIdPlayListByNombre(playlistSeleccionada);
+				gestorBD.eliminarCancionPlayList(idCancion, idPlayList);
+				JOptionPane.showMessageDialog(null, "Cancion eliminada de la PlayList ", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+			}
+        });
+        panelBotones.add(eliminarCancion);
+        panelBotones.add(agregarCancion);
+        add(panelBotones, BorderLayout.SOUTH);
+        
         setVisible(true);
 	}
 	
@@ -336,7 +398,7 @@ public class VentanaListaCanciones extends JFrame {
 					Point p= e.getPoint();
 					int fila= tablaCanciones.rowAtPoint(p);
 					int id_cancion= (int) tablaCanciones.getValueAt(fila, 0);
-					ventanaCancion = new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1, user );
+					ventanaCancion = new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1, idUsuario, gestorBD);
 				}
 			}
 		});

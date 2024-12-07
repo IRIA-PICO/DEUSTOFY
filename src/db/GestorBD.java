@@ -506,7 +506,6 @@ public class GestorBD {
 		        logger.warning("Error al eliminar canción de favoritos: " + ex.getMessage());
 		    }
 		}
-
 		
 		public void insertarPlaylist(int idUsuario, String nombre) { 
 		    String sql = "INSERT INTO PlayList (nomPlayList, usuario_id) VALUES (?, ?);";
@@ -521,6 +520,36 @@ public class GestorBD {
 		    }
 		}
 		
+		public void insertarCancionPlayList(int idCancion, int idPlaylist) { 
+		    String sql = "INSERT INTO CancionPlayList (cancion_id, playlist_id) VALUES (?, ?);";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {		        
+		        	pStmt.setInt(1, idCancion);
+		        	pStmt.setInt(2, idPlaylist);
+		        	pStmt.executeUpdate();
+		        logger.info(String.format("Se ha insertado la cancion con ID: %d a la PlayList con ID %d", idCancion, idPlaylist));
+		    } catch (Exception ex) {
+		        logger.warning("Error al insertar la cancion a la PlayList: " + ex.getMessage());
+		    }
+		}
+		
+		public void eliminarCancionPlayList(int idCancion, int idPlaylist) {
+		    String sql = "DELETE FROM CancionPlayList WHERE cancion_id = ? AND playlist_id = ?;";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		    		pStmt.setInt(1, idCancion);
+		    		pStmt.setInt(2, idPlaylist);;
+		        int rowsAffected = pStmt.executeUpdate();
+		        if (rowsAffected > 0) {
+		            logger.info(String.format("Cancion con ID %d eliminada de la PlayList con ID %d", idCancion, idPlaylist));
+		        } else {
+		            logger.info(String.format("No se encontró la canción con ID %d en la PlayList con ID %d", idCancion, idPlaylist));
+		        }
+
+		    } catch (Exception ex) {
+		        logger.warning("Error al eliminar cancion de la PlayList: " + ex.getMessage());
+		    }
+		}
 		
 		//Recupera Las Canciones de la BBDD
 		public List<Cancion> getCanciones() {
@@ -941,5 +970,64 @@ public class GestorBD {
 		    }
 
 		    return idCanciones; 
+		}
+		
+		public List <String> getPlayListByIdUsuario(int idUsuario) {
+		    List <String> PlayLists = new ArrayList<>();
+		    String sql = "SELECT nomPlayList FROM PlayList WHERE usuario_id = ?";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        	pStmt.setInt(1, idUsuario);
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            while (rs.next()) {
+		            	PlayLists.add(rs.getString("nomPlayList"));
+		            }
+		        }
+		        logger.info(String.format("Se han recuperado %d PlayLists para el usuario con ID %d", PlayLists.size(), idUsuario));
+		    } catch (Exception ex) {
+		        logger.warning("Error al recuperar PlayLists: " + ex.getMessage());
+		    }
+
+		    return PlayLists; 
+		}
+		
+		public List <String> getPlayListByIdUsuarioIdCancion(int idUsuario, int idCancion) {
+		    List <String> PlayLists = new ArrayList<>();
+		    String sql = "SELECT nomPlayList FROM PlayList WHERE usuario_id = ? AND cancion_id = ?";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        	pStmt.setInt(1, idUsuario);
+		        	pStmt.setInt(2, idCancion);
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            while (rs.next()) {
+		            	PlayLists.add(rs.getString("nomPlayList"));
+		            }
+		        }
+		        logger.info(String.format("Se han recuperado %d PlayLists que contienen la cancion con ID &d para el usuario con ID %d", PlayLists.size(), idCancion, idUsuario));
+		    } catch (Exception ex) {
+		        logger.warning("Error al recuperar PlayLists: " + ex.getMessage());
+		    }
+
+		    return PlayLists; 
+		}
+		
+		public int getIdPlayListByNombre(String nombre) {
+		    int id = -1; // Variable para almacenar el ID del artista
+		    String sql = "SELECT * FROM PlayList WHERE nombre = ? LIMIT 1"; // Cambié 'titulo' a 'nombre' para que coincida con la columna correcta
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        pStmt.setString(1, nombre);
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            if (rs.next()) {
+		                id = rs.getInt("id"); // Se obtiene el ID de la columna 'id_artista'
+		            } else {
+		                logger.warning(String.format("No se encontró una PlayList con el nombre: %s", nombre)); 
+		            }
+		        }
+		        logger.info(String.format("Se ha recuperado la PlayList con nombre %s y ID %d", nombre, id)); 
+		    } catch (Exception ex) {
+		        logger.warning(String.format("Error al recuperar la PlayList con nombre %s: %s", nombre, ex.getMessage())); 
+		    }
+		    return id; 
 		}
 }
