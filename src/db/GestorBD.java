@@ -17,6 +17,8 @@ import java.util.Properties;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import domain.Album;
 import domain.Artista;
 import domain.Cancion;
@@ -453,26 +455,26 @@ public class GestorBD {
 		    }
 		}
 
-		public void insertarUsuario(Usuario usuario) {
-			//Se define la plantilla de la sentencia SQL			
-			String sqlInsert = "INSERT INTO Usuario (nombre, sexo, edad, usuario, contr) VALUES (?, ?, ?, ?, ?);";
-
-			// Prepare the statement
-			try (Connection con = DriverManager.getConnection(connectionString);
-					PreparedStatement stmt = con.prepareStatement(sqlInsert)) {
-			    // Set the parameters for the statement
-			    stmt.setString(1, usuario.getNombre());   
-			    stmt.setString(2, usuario.getSexo());      
-			    stmt.setInt(3, usuario.getEdad());         
-			    stmt.setString(4, usuario.getUsuario());  
-			    stmt.setString(5, usuario.getContr());   
-
-			    // Execute the statement
-			    stmt.executeUpdate();
-			} catch (SQLException e) {
-			    e.printStackTrace(); 
-			}			
-		}
+		public void insertarUsuario(String nombre, String sexo, int edad, String usuario, String contraseña) {
+	        String query = "INSERT INTO Usuario (nombre, sexo, edad, usuario, contr) VALUES (?, ?, ?, ?, ?)";
+	        
+	        try (Connection con = DriverManager.getConnection(connectionString);
+	        	PreparedStatement stmt = con.prepareStatement(query)) {
+	            // Establecer los valores en la consulta
+	            stmt.setString(1, nombre);
+	            stmt.setString(2, sexo);
+	            stmt.setInt(3, edad);
+	            stmt.setString(4, usuario);
+	            stmt.setString(5, contraseña);
+	            
+	            // Ejecutar la actualización en la base de datos
+	            stmt.executeUpdate();
+	            JOptionPane.showMessageDialog(null, "Usuario registrado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+	        } catch (SQLException ex) {
+	            ex.printStackTrace();
+	            JOptionPane.showMessageDialog(null, "Error al registrar el usuario.", "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
 		
 		public void insertarCancionFavorita(int idUsuario, int idCancion) { 
 		    String sql = "INSERT INTO Favoritos (cancion_id, usuario_id) VALUES (?, ?);";
@@ -608,32 +610,32 @@ public class GestorBD {
 		    return artistas;
 		}
 		//Recupera Usuarios
-		public List<Usuario> getUsuarios() {
-		    List<Usuario> usuarios = new ArrayList<>();
-		    String sql = "SELECT * FROM Usuario";
+		public Usuario getUsuario(String nombreUsuario) {
+		    String sql = "SELECT * FROM Usuario WHERE usuario = ?";
 		    
 		    try (Connection con = DriverManager.getConnection(connectionString);
 		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		    	pStmt.setString(1, nombreUsuario);
 		         
 		        ResultSet rs = pStmt.executeQuery();
-		        Usuario usuario;
+		        
 		        
 		        while (rs.next()) {
-		            usuario = new Usuario(rs.getString("nombre"), 
-		                                  rs.getString("sexo"), 
-		                                  rs.getInt("edad"), 
-		                                  rs.getString("usuario"), 
-		                                  rs.getString("contr"));
-		            usuarios.add(usuario);
+		        	String nombre = rs.getString("nombre");
+	                String sexo = rs.getString("sexo");
+	                int edad = rs.getInt("edad");
+	                
+	                String contraseña = rs.getString("contr");
+	                return new Usuario(nombre, sexo, edad, nombreUsuario, contraseña);
 		        }
 		        
 		        rs.close();
-		        logger.info(String.format("Se han recuperado %d usuarios.", usuarios.size()));
-		    } catch (Exception ex) {
-		        logger.warning(String.format("Error al recuperar los usuarios: %s", ex.getMessage()));
-		    }
+		        logger.info(String.format("Se han recuperado %d usuario.", nombreUsuario));
+		    }catch (SQLException ex) {
+	            ex.printStackTrace();
+	        }
 		    
-		    return usuarios;
+		    return null;
 		}
 
 		public int getIdUsuarioByUsuario(String usuario) {

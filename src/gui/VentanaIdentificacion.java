@@ -2,9 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -14,7 +12,6 @@ import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -29,24 +26,28 @@ import domain.Artista;
 import domain.Usuario;
 
 import javax.swing.JPasswordField;
-import javax.swing.JDialog;
 
 public class VentanaIdentificacion extends JFrame {
 	  private static final long serialVersionUID = 1L;
-
-	    private JTextField userField;
-	    private JPasswordField passwordField;
-	    private JButton loginButton, registerButton;
-	    private JLabel forgotPasswordLabel;    
+	  private GestorBD gestorBD;
+	  private JTextField userField;
+	  private JPasswordField passwordField;
+	  private JButton loginButton, registerButton;
+	  private JLabel forgotPasswordLabel;    
+	  private List<Album> albumes;
+	  private List<Artista> artistas;
 
     public VentanaIdentificacion(GestorBD gestorBD) {
-//      connectToDatabase();
-  	this.setTitle("INICIO SESION");
-      this.setSize(800, 600);
-      this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-      this.setLocationRelativeTo(null);
-      this.setLayout(new BorderLayout());
-      this.getContentPane().setBackground(new Color(30, 30, 30)); // Fondo gris oscuro
+    	this.gestorBD = gestorBD;
+    	this.albumes = this.gestorBD.getAlbum();
+		this.artistas = this.gestorBD.getArtistas();
+    	this.setTitle("INICIO SESION");
+    	this.setSize(800, 600);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
+		this.setLayout(new BorderLayout());
+		this.getContentPane().setBackground(new Color(30, 30, 30)); // Fondo gris oscuro
+		this.setVisible(true);
 
       // Panel central para el formulario de login
       JPanel formPanel = new JPanel();
@@ -157,8 +158,30 @@ public class VentanaIdentificacion extends JFrame {
           }
 
       });
+   // Dentro de tu clase VentanaIdentificacion
+      loginButton.addActionListener(new ActionListener() {
+          @Override
+          public void actionPerformed(ActionEvent e) {
+              // Obtener los datos del formulario
+              String user = userField.getText();
+              String password = String.valueOf(passwordField.getPassword());
 
-      //loginButton.addActionListener(e -> handleLogin()); // Acción al hacer clic
+              // Verificar si el usuario existe en la base de datos
+              Usuario usuarioGuardado = gestorBD.getUsuario(user);  // Obtener el usuario registrado por su nombre
+
+              if (usuarioGuardado != null && password.equals(usuarioGuardado.getContr())) {
+                  JOptionPane.showMessageDialog(VentanaIdentificacion.this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                  
+                  // Crear la nueva ventana de álbumes
+                   VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, usuarioGuardado, gestorBD);
+                   vAlbumArtista.setVisible(true);
+
+                  VentanaIdentificacion.this.dispose();  // Cierra la ventana actual
+              } else {
+                  JOptionPane.showMessageDialog(VentanaIdentificacion.this, "ID o contraseña incorrectos", "Error", JOptionPane.ERROR_MESSAGE);
+              }
+          }
+      });
 
       formPanel.add(loginButton);
 
@@ -172,9 +195,6 @@ public class VentanaIdentificacion extends JFrame {
       registerButton.setBorderPainted(false);
       registerButton.addActionListener(e -> openRegisterForm());
       formPanel.add(registerButton);
-
-           
-
   }
     private void openRegisterForm() {
         JFrame registerFrame = new JFrame("Registro");
@@ -248,9 +268,12 @@ public class VentanaIdentificacion extends JFrame {
             int edad = Integer.parseInt(ageField.getText());
             String usuario = userField.getText();
             String contraseña = String.valueOf(passwordField.getPassword());
+            
+            gestorBD.insertarUsuario(nombre, sexo, edad, usuario, contraseña);
+            
+            registerFrame.dispose();
 
         });
-
         registerFrame.add(registerButton);
         registerFrame.setVisible(true);
 }
