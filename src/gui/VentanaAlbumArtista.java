@@ -177,88 +177,47 @@ public class VentanaAlbumArtista extends JFrame {
         add(sidebar, BorderLayout.WEST);
 
 // -----------------------------------------------------------------------------------
-     // Añadir KeyListener para Ctrl+F
+     // KeyListener --> Ctrl + F
         addKeyListener(new KeyAdapter() {
-            @Override
             public void keyPressed(KeyEvent e) {
                 if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_F) {
-                    mostrarPanelPlaylist(); // -- FUNCION
+                    String tituloPlaylist = JOptionPane.showInputDialog(
+                            VentanaAlbumArtista.this,
+                            "Introduce el título de la playlist:",
+                            "Crear Playlist",
+                            JOptionPane.QUESTION_MESSAGE
+                    );
+
+                    if (tituloPlaylist != null && !tituloPlaylist.isEmpty()) {
+                        JOptionPane.showMessageDialog(
+                                VentanaAlbumArtista.this,
+                                "Se ha creado la playlist: " + tituloPlaylist,
+                                "Playlist Creada",
+                                JOptionPane.INFORMATION_MESSAGE
+                        );
+                    } else if (tituloPlaylist != null) {
+                        JOptionPane.showMessageDialog(
+                                VentanaAlbumArtista.this,
+                                "El título no puede estar vacío.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
                 }
             }
         });
 
-        // Crear panel de playlists, pero inicialmente oculto
-        crearPanelPlaylist(); // -- FUNCION
-
-        // Añadir componentes al JFrame
-        add(Panelbusqueda, BorderLayout.NORTH);
-        add(panel_artistas_albumes, BorderLayout.CENTER);
-        add(sidebar, BorderLayout.WEST);
+        // Hacer que el foco esté en el JFrame para capturar teclas
+        setFocusable(true);
+        setVisible(true);
+    
 
 // -----------------------------------------------------------------------------------
 
         setVisible(true);
     }
 
- // -----------------------------------------------------------------------------------
-    // Funciones:
-    
-    private void crearPanelPlaylist() {
-        playlistPanel = new JPanel(new BorderLayout());
-        playlistPanel.setBackground(new Color(40, 40, 40));
-        playlistPanel.setBorder(BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(new Color(24, 24, 24), 2),
-                "Crear Playlist",
-                TitledBorder.CENTER,
-                TitledBorder.TOP,
-                new Font("Arial", Font.BOLD, 14),
-                Color.WHITE
-        ));
-
-        // Campo para el título de la playlist
-        playlistTitleField = new JTextField();
-        playlistTitleField.setFont(new Font("Arial", Font.PLAIN, 14));
-        playlistTitleField.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
-        playlistTitleField.setPreferredSize(new Dimension(300, 30));
-
-        // Botón para agregar la canción a la playlist
-        JButton addToPlaylistButton = new JButton("Agregar a Playlist");
-        addToPlaylistButton.setBackground(new Color(24, 24, 24));
-        addToPlaylistButton.setForeground(Color.WHITE);
-        addToPlaylistButton.setFocusPainted(false);
-        addToPlaylistButton.addActionListener(e -> agregarCancionAPlaylist());
-
-        // Añadir componentes al panel
-        JPanel inputPanel = new JPanel(new FlowLayout());
-        inputPanel.setBackground(new Color(40, 40, 40));
-        inputPanel.add(new JLabel("Título:"));
-        inputPanel.add(playlistTitleField);
-        inputPanel.add(addToPlaylistButton);
-
-        playlistPanel.add(inputPanel, BorderLayout.CENTER);
-        playlistPanel.setVisible(false); // Oculto inicialmente
-
-        add(playlistPanel, BorderLayout.SOUTH); // Añadir al JFrame
-    }
-
-    private void mostrarPanelPlaylist() {
-        playlistPanel.setVisible(!playlistPanel.isVisible());
-        revalidate();
-        repaint();
-    }
-
-    private void agregarCancionAPlaylist() {
-        String titulo = playlistTitleField.getText();
-        if (titulo.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El título de la playlist no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-            // Aquí puedes implementar la lógica para agregar la canción seleccionada a la playlist
-            JOptionPane.showMessageDialog(this, "Canción agregada a la playlist: " + titulo, "Éxito", JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-    
-    
-// -----------------------------------------------------------------------------------
+ 
     
 	private JPanel createAlbumPanel(Album album) {
         JPanel albumPanel = new JPanel(new BorderLayout());
