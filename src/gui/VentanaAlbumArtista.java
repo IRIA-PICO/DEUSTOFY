@@ -405,19 +405,29 @@ public class VentanaAlbumArtista extends JFrame {
         navPanel.setLayout(new BoxLayout(navPanel, BoxLayout.Y_AXIS));
         
         // Botones de navegación
-        navPanel.add(crearBotonNavegacion("Inicio", "resources/images/casa.png"));
-        navPanel.add(crearBotonNavegacion("Explorar", "resources/images/explorar.png"));
-        navPanel.add(crearBotonNavegacion("Tu Biblioteca", "resources/images/libro.png"));
+        navPanel.add(crearBotonNavegacion("Inicio", "resources/images/casa.png", false));
+        navPanel.add(crearBotonNavegacion("Explorar", "resources/images/explorar.png", false));
         
         JLabel playlistsLabel = new JLabel("Listas de Reproducción");
         playlistsLabel.setForeground(Color.GRAY);
         playlistsLabel.setBorder(new EmptyBorder(10, 0, 5, 0));
         navPanel.add(playlistsLabel);
         
-        navPanel.add(crearBotonNavegacion("Mis Favoritas", "resources/images/estrella.png"));
-        navPanel.add(crearBotonNavegacion("Para Relajarse", "resources/images/reloj.png"));
+        navPanel.add(crearBotonNavegacion("Mis Favoritas", "resources/images/estrella.png", true));
+        
         initializePremiumLabel();
         navPanel.add(premiumLabel);
+        JLabel playlists = new JLabel("Mis Playlists");
+        playlists.setForeground(Color.GRAY);
+        playlists.setBorder(new EmptyBorder(10, 0, 5, 0));
+        navPanel.add(playlists);
+        playlists.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				JOptionPane.showMessageDialog(null, "Si quieres crear una playlist, pulsa CTRL+F");
+			}
+        });
         
         // Añadir secciones al sidebar
         sidebar.add(userPanel, BorderLayout.NORTH);
@@ -483,7 +493,7 @@ public class VentanaAlbumArtista extends JFrame {
         sidebar.add(premiumAd, BorderLayout.SOUTH);
     }
 
-    private JButton crearBotonNavegacion(String texto, String iconoRuta) {
+    private JButton crearBotonNavegacion(String texto, String iconoRuta, boolean favorito) {
         JButton button = new JButton(texto);
         button.setAlignmentX(Component.CENTER_ALIGNMENT);
         button.setPreferredSize(new Dimension(200, 40));
@@ -505,7 +515,17 @@ public class VentanaAlbumArtista extends JFrame {
                 button.setBackground(new Color(50, 50, 50));
             }
         });
-
+        
+        if (favorito) {
+        	button.addMouseListener(new MouseAdapter() {
+        		 @Override
+     			public void mouseClicked(MouseEvent e) {
+     				if(e.getClickCount()==1) {
+     					new VentanaListaCanciones(user.getCancionesFavoritas(),albumes, artistas, user, gestorBD);
+     				}
+     			}
+        	});
+        }
         return button;
     }
     private void setPremiumBorder() {
