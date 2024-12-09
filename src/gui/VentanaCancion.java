@@ -110,7 +110,7 @@ public class VentanaCancion extends JFrame {
 		pBotones= new JPanel();
 		pBotones.setBackground(new Color(60, 60, 60));
 		btnatras= new JButton("<<");
-		ImageIcon imgOriginal=new ImageIcon("resources/images/ButonPlay.png");
+		ImageIcon imgOriginal=new ImageIcon("resources/images/ButtonPause.png");
 		btnpausa= new JButton(new ImageIcon(imgOriginal.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 		btnalante= new JButton(">>");	
 		btnVelocidad = new JButton("x1");
@@ -167,11 +167,11 @@ public class VentanaCancion extends JFrame {
 			synchronized (hilo) {
 				enPausa = !enPausa;
 				if (enPausa) {
-			        ImageIcon imgPlay = new ImageIcon("resources/images/ButtonPause.png");
+			        ImageIcon imgPlay = new ImageIcon("resources/images/ButonPlay.png");
 			        btnpausa.setIcon(new ImageIcon(imgPlay.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 			    } else {
 			        // Cambia a imagen de "pause"
-			        ImageIcon imgPause = new ImageIcon("resources/images/ButonPlay.png");
+			        ImageIcon imgPause = new ImageIcon("resources/images/ButtonPause.png");
 			        btnpausa.setIcon(new ImageIcon(imgPause.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 			        hilo.notifyAll();
 			    }
