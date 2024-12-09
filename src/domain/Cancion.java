@@ -5,13 +5,13 @@ import java.util.Objects;
 public class Cancion {
 	private int id;
 	private String titulo;
-	 private double duracion;
+	 private int duracion;
 	 private Album album;
 	 private Artista artista;	 
 	 private int ArtistaID;
 	 
 	
-	public Cancion(int id, String titulo, double duracion, int ArtistaID) {
+	public Cancion(int id, String titulo, int duracion, int ArtistaID) {
 		this.id = id;
 		this.titulo = titulo;
         this.duracion = duracion; 
@@ -26,10 +26,6 @@ public class Cancion {
 
 	public void setArtistaID(int artistaID) {
 		ArtistaID = artistaID;
-	}
-
-	public void setDuracion(double duracion) {
-		this.duracion = duracion;
 	}
 
 	public int getId() {
@@ -69,12 +65,12 @@ public class Cancion {
 	}
 
 
-	public double getDuracion() {
+	public int getDuracion() {
 		return duracion;
 	}
 
 
-	public void setDuracion(float duracion) {
+	public void setDuracion(int duracion) {
 		this.duracion = duracion;
 	}
 

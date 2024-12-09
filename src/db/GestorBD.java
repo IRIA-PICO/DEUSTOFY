@@ -255,7 +255,7 @@ public class GestorBD {
 				String artistaNombre= fragmentos[2];
                 int artistaId = getIdArtistaByNombre(artistaNombre);
                 if (artistaId != -1) {
-                    Cancion cancion = new Cancion(-1, fragmentos[0], Double.parseDouble(fragmentos[1]), artistaId);
+                    Cancion cancion = new Cancion(-1, fragmentos[0], Integer.parseInt(fragmentos[1]), artistaId);
                     canciones.add(cancion);
                 }
 								
@@ -426,7 +426,7 @@ public class GestorBD {
 		                continue;  // Salta esta canción si no tiene artista
 		            }
 		            pStmt.setString(1, c.getTitulo());
-		            pStmt.setDouble(2, c.getDuracion());
+		            pStmt.setInt(2, c.getDuracion());
 		            pStmt.setInt(3, c.getArtistaID());
 
 		            if (pStmt.executeUpdate() != 1) {
@@ -567,9 +567,9 @@ public class GestorBD {
 				
 				while (rs.next()) {
 					cancion = new Cancion(rs.getInt("id"), 
-						rs.getString("titulo"), 
-						rs.getDouble("duracion"),
-						rs.getInt("id_artista"));
+							rs.getString("titulo"), 
+							rs.getInt("duracion"),
+							rs.getInt("id_artista"));
 					 					 
 					canciones.add(cancion);
 				}

@@ -12,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 
@@ -88,19 +87,17 @@ public class VentanaCancion extends JFrame {
 		pSlider.setBackground(new Color(60, 60, 60));
 		
 		//Cargamos Slider y duracion de la cancion
-		int minutos = (int) c.getDuracion();
-		int sec= (int)(c.getDuracion() % 1 *100);
-		durcancion= minutos*60+sec;
+		durcancion = c.getDuracion();
 		
 		slmusica = new JSlider(0, durcancion, 0);
 		slmusica.setPaintLabels(true);
 		slmusica.setMinorTickSpacing(1);
 		slmusica.setBackground(new Color(60, 60, 60));
 		
-		lblDur0= new JLabel("0.00");
+		lblDur0= new JLabel("0:00");
 		lblDur0.setForeground(Color.WHITE);
 		lblDur0.setFont(fuenteTexto);
-		lblDurTotal= new JLabel(String.valueOf(c.getDuracion()));
+		lblDurTotal= new JLabel(formatoDuracion(c));
 		lblDurTotal.setForeground(Color.WHITE);
 		lblDurTotal.setFont(fuenteTexto);
 	
@@ -170,11 +167,11 @@ public class VentanaCancion extends JFrame {
 			synchronized (hilo) {
 				enPausa = !enPausa;
 				if (enPausa) {
-			        ImageIcon imgPlay = new ImageIcon("resources/images/ButtonPause.png");
+			        ImageIcon imgPlay = new ImageIcon("resources/images/ButonPlay.png");
 			        btnpausa.setIcon(new ImageIcon(imgPlay.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 			    } else {
 			        // Cambia a imagen de "pause"
-			        ImageIcon imgPause = new ImageIcon("resources/images/ButonPlay.png");
+			        ImageIcon imgPause = new ImageIcon("resources/images/ButtonPause.png");
 			        btnpausa.setIcon(new ImageIcon(imgPause.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH)));
 			        hilo.notifyAll();
 			    }
@@ -249,13 +246,11 @@ public class VentanaCancion extends JFrame {
 			
 			lblImagen.setIcon(imagenConDimensiones);
 			lblTitulo.setText(c.reproducir());
-			lblDurTotal.setText(String.valueOf(c.getDuracion()));
+			lblDurTotal.setText(formatoDuracion(c));
 			slmusica.setValue(0);
 			
 			//cambiar datos duracion cancion y reiniciar hilo
-			int minutos = (int) c.getDuracion();
-			int sec = (int) (c.getDuracion() % 1 * 100);
-			durcancion = minutos * 60 + sec;
+			durcancion = c.getDuracion();
 			slmusica.setMaximum(durcancion);			
 	    }
 	    posicionsl=0;
@@ -268,6 +263,17 @@ public class VentanaCancion extends JFrame {
 		return c;
 	}
 	
+	// Formato minutos:segundos
+	private static String formatoDuracion(Cancion c) {
+		int minutes = (int) (c.getDuracion()/60);
+		int seconds = (int) (c.getDuracion()%60);
+		String secondsStr = String.valueOf(seconds);
+		if (seconds < 10) {
+			secondsStr = "0" + seconds;
+		}
+		return (minutes + ":" + secondsStr);
+	}
+		
 	private class HiloSlider extends Thread{
 		@Override
         public void run() {

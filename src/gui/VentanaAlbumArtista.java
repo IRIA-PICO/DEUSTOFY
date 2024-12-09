@@ -36,7 +36,7 @@ public class VentanaAlbumArtista extends JFrame {
     private boolean isPremiumUser = false;
     private JLabel premiumLabel;
     private GestorBD gestorBD;
-    
+    private JPanel panelPlaylists; 
     
     
     public VentanaAlbumArtista(Usuario user1, GestorBD gestorBD) {
@@ -183,7 +183,7 @@ public class VentanaAlbumArtista extends JFrame {
                     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
                     JTextField tituloField = new JTextField();
-                    JComboBox<String> colorComboBox = new JComboBox<>(new String[]{"Rojo", "Azul", "Verde", "Amarillo"});
+                    JComboBox<String> colorComboBox = new JComboBox<>(new String[]{"Rojo", "Azul", "Verde", "Amarillo", "Predeterminado"});
 
                     panel.add(new JLabel("Introduce el título de la playlist:"));
                     panel.add(tituloField);
@@ -206,8 +206,9 @@ public class VentanaAlbumArtista extends JFrame {
 
                         if (tituloPlaylist != null && !tituloPlaylist.isEmpty()) {
                             boolean success = gestorBD.crearPlaylist(tituloPlaylist, colorSeleccionado, rutaFoto, gestorBD.getIdUsuarioByUsuario(user.getUsuario()));
-
+                            actualizarVistaPlaylists();
                             if (success) {
+                            	
                                 JOptionPane.showMessageDialog(
                                         VentanaAlbumArtista.this,
                                         "Se ha creado la playlist: " + tituloPlaylist + " con el color " + colorSeleccionado,
@@ -414,62 +415,11 @@ public class VentanaAlbumArtista extends JFrame {
 				JOptionPane.showMessageDialog(null, "Si quieres crear una playlist, pulsa CTRL+F");
 			}
         });
-        JPanel panelPlaylists = new JPanel();
+        panelPlaylists = new JPanel();
         panelPlaylists.setLayout(new BoxLayout(panelPlaylists, BoxLayout.Y_AXIS));
         panelPlaylists.setBackground(new Color(30, 30, 30)); // Ajusta el color de fondo
         panelPlaylists.setBorder(new EmptyBorder(10, 10, 10, 10));
-        int idUsuario = gestorBD.getIdUsuarioByUsuario(user.getUsuario());
-        List<PlayList> listaPlaylists = gestorBD.getPlayListByIdUsuario(idUsuario);
-        for (PlayList playlist : listaPlaylists) {
-        	JPanel playlistPanel = new JPanel();
-            playlistPanel.setLayout(new BorderLayout());
-            playlistPanel.setPreferredSize(new Dimension(200, 40));
-            playlistPanel.setMaximumSize(new Dimension(200, 40));
-            playlistPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-            playlistPanel.addMouseListener(new MouseAdapter() {
-                //Saltar a la clase VentanaListaCanciones
-                @Override
-    			public void mouseClicked(MouseEvent e) {
-    				if(e.getClickCount()==1) {
-    					new VentanaListaCanciones(false, playlist, user, gestorBD);
-    				}
-    			}
-            });
-            // Configurar el color del fondo basado en el atributo "color"
-            String color = playlist.getColor();
-            if (color.equalsIgnoreCase("Rojo")) {
-                playlistPanel.setBackground(Color.RED);
-            } else if (color.equalsIgnoreCase("Azul")) {
-                playlistPanel.setBackground(Color.BLUE);
-            } else if (color.equalsIgnoreCase("Verde")) {
-                playlistPanel.setBackground(Color.GREEN);
-            } else {
-                playlistPanel.setBackground(new Color(50, 50, 50)); // Color por defecto
-            }
-
-            // Añadir un JLabel para el título de la playlist
-            JLabel tituloLabel = new JLabel(playlist.getTitulo());
-            tituloLabel.setForeground(Color.WHITE);
-            tituloLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-
-            // Añadir un ícono si la playlist tiene una ruta de foto
-            if (playlist.getRutaFoto() != null && !playlist.getRutaFoto().isEmpty()) {
-                ImageIcon icono = new ImageIcon(new ImageIcon("resources/images/playlist.png")
-                        .getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
-                tituloLabel.setIcon(icono);
-            }
-
-            // Agregar el JLabel al panel de la playlist
-            playlistPanel.add(tituloLabel, BorderLayout.CENTER);
-            playlistPanel.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    JOptionPane.showMessageDialog(null, "Has seleccionado la playlist: " + playlist.getTitulo());
-                }
-            });
-
-            panelPlaylists.add(playlistPanel);
-        }
+        actualizarVistaPlaylists();
         JScrollPane scrollPane = new JScrollPane(panelPlaylists);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -594,4 +544,63 @@ public class VentanaAlbumArtista extends JFrame {
         premiumLabel.setVisible(false); // Solo se mostrará si el usuario es premium
     }
     
+    private JPanel createPlaylistPanel(PlayList playlist) {
+    	JPanel playlistPanel = new JPanel();
+        playlistPanel.setLayout(new BorderLayout());
+        playlistPanel.setPreferredSize(new Dimension(200, 40));
+        playlistPanel.setMaximumSize(new Dimension(200, 40));
+        playlistPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+        playlistPanel.addMouseListener(new MouseAdapter() {
+            //Saltar a la clase VentanaListaCanciones
+            @Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getClickCount()==1) {
+					new VentanaListaCanciones(false, playlist, user, gestorBD);
+				}
+			}
+        });
+        // Configurar el color del fondo basado en el atributo "color"
+        String color = playlist.getColor();
+        if (color.equalsIgnoreCase("Rojo")) {
+            playlistPanel.setBackground(Color.RED);
+        } else if (color.equalsIgnoreCase("Azul")) {
+            playlistPanel.setBackground(Color.BLUE);
+        } else if (color.equalsIgnoreCase("Verde")) {
+            playlistPanel.setBackground(Color.GREEN);
+        } else if (color.equalsIgnoreCase("Amarillo")) {
+            playlistPanel.setBackground(Color.YELLOW);
+        } else {
+            playlistPanel.setBackground(new Color(50, 50, 50)); // Color por defecto
+        }
+        // Añadir un JLabel para el título de la playlist
+        JLabel tituloLabel = new JLabel(playlist.getTitulo());
+        tituloLabel.setForeground(Color.WHITE);
+        tituloLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        // Añadir un ícono si la playlist tiene una ruta de foto
+        if (playlist.getRutaFoto() != null && !playlist.getRutaFoto().isEmpty()) {
+            ImageIcon icono = new ImageIcon(new ImageIcon("resources/images/playlist.png")
+                    .getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH));
+            tituloLabel.setIcon(icono);
+        }
+        // Agregar el JLabel al panel de la playlist
+        playlistPanel.add(tituloLabel, BorderLayout.CENTER);
+        playlistPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                JOptionPane.showMessageDialog(null, "Has seleccionado la playlist: " + playlist.getTitulo());
+            }
+        });
+        panelPlaylists.add(playlistPanel);        
+        return playlistPanel;        
+    }
+
+    private void actualizarVistaPlaylists() {
+    	panelPlaylists.removeAll();
+        for (PlayList p : gestorBD.getPlayListByIdUsuario(gestorBD.getIdUsuarioByUsuario(user.getUsuario()))) {
+        	panelPlaylists.add(createPlaylistPanel(p));
+        }
+        panelPlaylists.revalidate(); 
+        panelPlaylists.repaint();
+    }
+
 }
