@@ -13,6 +13,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
@@ -47,8 +48,6 @@ public class VentanaListaCanciones extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
 	private List<Cancion> canciones;
-	private List<Album>albumes;
-	private List<Artista> artistas;
 	private Usuario user;
 	private int idUsuario;
 	private JTable tablaCanciones;
@@ -57,10 +56,8 @@ public class VentanaListaCanciones extends JFrame {
 	private VentanaCancion ventanaCancion;
 	private GestorBD gestorBD;
 	
-	public VentanaListaCanciones(Object albumArtistaPlayList, List<Album> albumesAnt, List<Artista> artistasAnt, Usuario userAnt, GestorBD gestorBD) {
+	public VentanaListaCanciones(Boolean favoritos, Object albumArtistaPlayList, Usuario userAnt, GestorBD gestorBD) {
 		this.gestorBD = gestorBD;
-		albumes = albumesAnt;
-		artistas =artistasAnt;
 		user = userAnt;
 		idUsuario = gestorBD.getIdUsuarioByUsuario(user.getUsuario());
 		ventanaCancion = null;
@@ -78,12 +75,15 @@ public class VentanaListaCanciones extends JFrame {
         setLocationRelativeTo(null);
         
         // Asignamos la lista de canciones a la variable local canciones
-        if (albumArtistaPlayList instanceof Album) {
+        if (favoritos) {
+        	this.canciones = new ArrayList<>();
+        	this.gestorBD.getIDCancionesFavoritas(idUsuario).forEach(id -> this.canciones.add(this.gestorBD.getCancionByID(id)));
+        } else if (albumArtistaPlayList instanceof Album) {
         	this.canciones = this.gestorBD.getCancionesByIDAlbum((Album) albumArtistaPlayList);
         } else if (albumArtistaPlayList instanceof Artista) {
         	this.canciones = this.gestorBD.getCancionesByIDArtista((Artista) albumArtistaPlayList);        	
         } else if (albumArtistaPlayList instanceof PlayList) { // CAMBIARLO CUANDO HAGAMOS PLAYLIST
-        	this.canciones = ((PlayList) albumArtistaPlayList).getListacanciones();
+        	this.canciones = this.gestorBD.getIdCancionesByIdPlayList(this.gestorBD.getIdPlayListByNombre(((PlayList) albumArtistaPlayList).getTitulo()));
         } 
         
         
@@ -125,7 +125,9 @@ public class VentanaListaCanciones extends JFrame {
         ImageIcon imgalbumArtistaPlayList = null;
         JLabel labelImagen = null;
         try {
-        	if (albumArtistaPlayList instanceof Album) {
+        	if (favoritos) {
+        		imgalbumArtistaPlayList = new ImageIcon("resources/images/estrella.png");
+        	} else if (albumArtistaPlayList instanceof Album) {
         		imgalbumArtistaPlayList = new ImageIcon(((Album) albumArtistaPlayList).getRutaFoto());
         	} else if (albumArtistaPlayList instanceof Artista) {
         		imgalbumArtistaPlayList = new ImageIcon(((Artista) albumArtistaPlayList).getRutaFoto());
@@ -136,12 +138,12 @@ public class VentanaListaCanciones extends JFrame {
         	Image img = imgalbumArtistaPlayList.getImage();
             
             if (img == null) {
-                throw new Exception("La imagen del álbum no se ha podido cargar.");
+                throw new Exception("La imagen no se ha podido cargar.");
             }
             
             labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(140, 140, Image.SCALE_SMOOTH)));            
         } catch (Exception e) {
-            System.err.println("Error cargando la imagen del álbum");
+            System.err.println("Error cargando la imagen");
             imgalbumArtistaPlayList = new ImageIcon("resources/images/logo.png");
             Image img = imgalbumArtistaPlayList.getImage();
             labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(140, 140, Image.SCALE_SMOOTH)));
@@ -150,7 +152,9 @@ public class VentanaListaCanciones extends JFrame {
         // Agregar el JLabel al panel
         panelNombre.add(labelImagen, BorderLayout.WEST);
         Label nombre = null;
-        if (albumArtistaPlayList instanceof Album) {
+        if (favoritos) {
+        	nombre = new Label("TUS CANCIONES FAVORITAS");
+        } else if (albumArtistaPlayList instanceof Album) {
         	nombre = new Label(((Album) albumArtistaPlayList).getTitulo());
         } else if (albumArtistaPlayList instanceof Artista) {
         	nombre = new Label(((Artista) albumArtistaPlayList).getNombre());
@@ -401,7 +405,7 @@ public class VentanaListaCanciones extends JFrame {
 			public void keyPressed(KeyEvent e) {
 				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_E) {
 		            dispose(); 
-		            new VentanaAlbumArtista(albumes, artistas, user, gestorBD);
+		            new VentanaAlbumArtista(user, gestorBD);
 		        }
 				
 			}

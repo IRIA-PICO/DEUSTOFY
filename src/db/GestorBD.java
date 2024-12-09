@@ -1043,7 +1043,7 @@ public class GestorBD {
 		
 		public int getIdPlayListByNombre(String nombre) {
 		    int id = -1; // Variable para almacenar el ID del artista
-		    String sql = "SELECT * FROM PlayList WHERE nombre = ? LIMIT 1"; // Cambié 'titulo' a 'nombre' para que coincida con la columna correcta
+		    String sql = "SELECT * FROM PlayList WHERE nomPlayList = ? LIMIT 1"; // Cambié 'titulo' a 'nombre' para que coincida con la columna correcta
 		    try (Connection con = DriverManager.getConnection(connectionString);
 		         PreparedStatement pStmt = con.prepareStatement(sql)) {
 		        pStmt.setString(1, nombre);
@@ -1059,6 +1059,28 @@ public class GestorBD {
 		        logger.warning(String.format("Error al recuperar la PlayList con nombre %s: %s", nombre, ex.getMessage())); 
 		    }
 		    return id; 
+		}
+		
+		public List<Cancion> getIdCancionesByIdPlayList(int idPlayList) {
+			List<Cancion> canciones = new ArrayList<>(); 
+		    String sqlCanciones = "SELECT * FROM CancionPlayList WHERE playlist_id = ?";
+
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmtCanciones = con.prepareStatement(sqlCanciones)) {
+		        
+		        pStmtCanciones.setInt(1, idPlayList);
+
+		        // Ejecuta la consulta para obtener las canciones del artista
+		        try (ResultSet rs = pStmtCanciones.executeQuery()) {
+		            while (rs.next()) {
+		            	canciones.add(this.getCancionByID(rs.getInt("cancion_id")));                
+		            }
+		        }
+		    } catch (SQLException ex) {
+		        logger.warning(String.format("Error al recuperar canciones para la PlayList con ID %d:", idPlayList, ex.getMessage()));
+		    }
+
+		    return canciones;
 		}
 		
 }

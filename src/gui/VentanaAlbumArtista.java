@@ -39,7 +39,7 @@ public class VentanaAlbumArtista extends JFrame {
     
     
     
-    public VentanaAlbumArtista(List<Album> albumes1, List<Artista> artistas1, Usuario user1, GestorBD gestorBD) {
+    public VentanaAlbumArtista(Usuario user1, GestorBD gestorBD) {
     	this.gestorBD = gestorBD;
     	albumes = this.gestorBD.getAlbum();
     	artistas = this.gestorBD.getArtistas();
@@ -202,10 +202,10 @@ public class VentanaAlbumArtista extends JFrame {
                     if (result == JOptionPane.OK_OPTION) {
                         String tituloPlaylist = tituloField.getText().trim();
                         String colorSeleccionado = (String) colorComboBox.getSelectedItem();
-                        String rutaFoto = "resources/images/playlist.png";
+                        String rutaFoto = "resources/images/" + colorSeleccionado +".png";
 
                         if (tituloPlaylist != null && !tituloPlaylist.isEmpty()) {
-                            boolean success = gestorBD.crearPlaylist(tituloPlaylist, colorSeleccionado, rutaFoto, gestorBD.getIdUsuarioByUsuario(user1.getNombre()));
+                            boolean success = gestorBD.crearPlaylist(tituloPlaylist, colorSeleccionado, rutaFoto, gestorBD.getIdUsuarioByUsuario(user.getUsuario()));
 
                             if (success) {
                                 JOptionPane.showMessageDialog(
@@ -273,7 +273,7 @@ public class VentanaAlbumArtista extends JFrame {
             @Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(album,albumes, artistas, user, gestorBD);
+					new VentanaListaCanciones(false, album, user, gestorBD);
 				}
 			}
         });
@@ -315,7 +315,7 @@ public class VentanaAlbumArtista extends JFrame {
             @Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(artista, albumes, artistas, user, gestorBD);
+					new VentanaListaCanciones(false, artista, user, gestorBD);
 				}
 			}
         });
@@ -418,7 +418,7 @@ public class VentanaAlbumArtista extends JFrame {
         panelPlaylists.setLayout(new BoxLayout(panelPlaylists, BoxLayout.Y_AXIS));
         panelPlaylists.setBackground(new Color(30, 30, 30)); // Ajusta el color de fondo
         panelPlaylists.setBorder(new EmptyBorder(10, 10, 10, 10));
-        int idUsuario = gestorBD.getIdUsuarioByUsuario(user.getNombre());
+        int idUsuario = gestorBD.getIdUsuarioByUsuario(user.getUsuario());
         List<PlayList> listaPlaylists = gestorBD.getPlayListByIdUsuario(idUsuario);
         for (PlayList playlist : listaPlaylists) {
         	JPanel playlistPanel = new JPanel();
@@ -426,7 +426,15 @@ public class VentanaAlbumArtista extends JFrame {
             playlistPanel.setPreferredSize(new Dimension(200, 40));
             playlistPanel.setMaximumSize(new Dimension(200, 40));
             playlistPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-
+            playlistPanel.addMouseListener(new MouseAdapter() {
+                //Saltar a la clase VentanaListaCanciones
+                @Override
+    			public void mouseClicked(MouseEvent e) {
+    				if(e.getClickCount()==1) {
+    					new VentanaListaCanciones(false, playlist, user, gestorBD);
+    				}
+    			}
+            });
             // Configurar el color del fondo basado en el atributo "color"
             String color = playlist.getColor();
             if (color.equalsIgnoreCase("Rojo")) {
@@ -563,7 +571,7 @@ public class VentanaAlbumArtista extends JFrame {
         		 @Override
      			public void mouseClicked(MouseEvent e) {
      				if(e.getClickCount()==1) {
-     					new VentanaListaCanciones(user.getCancionesFavoritas(),albumes, artistas, user, gestorBD);
+     					new VentanaListaCanciones(true, null, user, gestorBD);
      				}
      			}
         	});

@@ -9,7 +9,6 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -21,8 +20,6 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import db.GestorBD;
-import domain.Album;
-import domain.Artista;
 import domain.Usuario;
 
 import javax.swing.JPasswordField;
@@ -34,13 +31,10 @@ public class VentanaIdentificacion extends JFrame {
 	  private JPasswordField passwordField;
 	  private JButton loginButton, registerButton;
 	  private JLabel forgotPasswordLabel;    
-	  private List<Album> albumes;
-	  private List<Artista> artistas;
+
 
     public VentanaIdentificacion(GestorBD gestorBD) {
     	this.gestorBD = gestorBD;
-    	this.albumes = this.gestorBD.getAlbum();
-		this.artistas = this.gestorBD.getArtistas();
     	this.setTitle("INICIO SESION");
     	this.setSize(800, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -175,7 +169,7 @@ public class VentanaIdentificacion extends JFrame {
                   JOptionPane.showMessageDialog(VentanaIdentificacion.this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                   
                   // Crear la nueva ventana de álbumes
-                   VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(albumes, artistas, usuarioGuardado, gestorBD);
+                   VentanaAlbumArtista vAlbumArtista = new VentanaAlbumArtista(usuarioGuardado, gestorBD);
                    vAlbumArtista.setVisible(true);
 
                   VentanaIdentificacion.this.dispose();  // Cierra la ventana actual
