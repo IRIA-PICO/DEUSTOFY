@@ -169,7 +169,9 @@ public class VentanaIdentificacion extends JFrame {
               // Verificar si el usuario existe en la base de datos
               Usuario usuarioGuardado = gestorBD.getUsuario(user);  // Obtener el usuario registrado por su nombre
 
-              if (usuarioGuardado != null && password.equals(usuarioGuardado.getContr())) {
+              if (usuarioGuardado == null) {//Si no se ha registrado primero
+                  JOptionPane.showMessageDialog( VentanaIdentificacion.this, "El usuario no está registrado. Por favor, regístrate primero.", "Usuario no registrado", JOptionPane.WARNING_MESSAGE );
+              } else if (usuarioGuardado != null && password.equals(usuarioGuardado.getContr())) {
                   JOptionPane.showMessageDialog(VentanaIdentificacion.this, "Inicio de sesión exitoso", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                   
                   // Crear la nueva ventana de álbumes
@@ -265,7 +267,17 @@ public class VentanaIdentificacion extends JFrame {
         registerButton.addActionListener(e -> {
             String nombre = nameField.getText();
             String sexo = genderComboBox.getSelectedItem().toString();
-            int edad = Integer.parseInt(ageField.getText());
+            int edad;
+            try {
+                edad = Integer.parseInt(ageField.getText());
+                if (edad <= 0) {
+                    throw new NumberFormatException("La edad debe ser mayor que cero.");
+                }
+            } catch (NumberFormatException e2) {
+                JOptionPane.showMessageDialog( this,"Por favor, ingrese un número entero válido para la edad", "Entrada inválida", JOptionPane.ERROR_MESSAGE );
+                return; // Salir del método si la edad no es válida
+            }
+            
             String usuario = userField.getText();
             String contraseña = String.valueOf(passwordField.getPassword());
             
