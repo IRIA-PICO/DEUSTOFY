@@ -95,7 +95,7 @@ public class VentanaListaCanciones extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 int columna = tablaCanciones.columnAtPoint(e.getPoint());
                 int fila = tablaCanciones.rowAtPoint(e.getPoint());
-                if (columna == 2) {
+                if (columna == 2 && fila!=-1) {
                     Cancion cancion = canciones.get(fila);
                     int idCancion = gestorBD.getIdCancionByTitulo(cancion.getTitulo());
                     if (gestorBD.getIDCancionesFavoritas(idUsuario).contains(idCancion)) {
@@ -398,13 +398,17 @@ public class VentanaListaCanciones extends JFrame {
 		        if (fila != -1) {
 					if(e.getClickCount() == 2) {
 						int id_cancion = (int) tablaCanciones.getValueAt(fila, 0);
+						if (ventanaCancion != null && ventanaCancion.isVisible()) {
+					        ventanaCancion.dispose();
+					    }
 						ventanaCancion = new VentanaCancion(VentanaListaCanciones.this.canciones, id_cancion -1, idUsuario, gestorBD);
 					}
-		        } else if (e.getClickCount() == 1) {
+		         else if (e.getClickCount() == 1) {
 	                // Si es un solo clic, selecciona la fila y actualiza la tabla
 	                tablaCanciones.setRowSelectionInterval(fila, fila);
 	                tablaCanciones.repaint(); // Refresca la tabla para mostrar los cambios visuales
 	            }
+		        }
 			}
 		});
 		
@@ -414,8 +418,8 @@ public class VentanaListaCanciones extends JFrame {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_E) {
-		            dispose(); 
 		            new VentanaAlbumArtista(user, gestorBD);
+		            dispose(); 		            
 		        }
 				
 			}

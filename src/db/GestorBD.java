@@ -99,8 +99,8 @@ public class GestorBD {
 			
 			String sql5= "CREATE TABLE IF NOT EXISTS PlayList (\n"
 	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
-					+ " nomPlayList TEXT UNIQUE NOT NULL,\n"
-	                + " color TEXT UNIQUE NOT NULL,\n"
+					+ " nomPlayList TEXT NOT NULL,\n"
+	                + " color TEXT NOT NULL,\n"
 	                + " rutaFoto TEXT NOT NULL,\n"
                     + " usuario_id INTEGER NOT NULL,\n"
                     + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id)"

@@ -273,8 +273,10 @@ public class VentanaAlbumArtista extends JFrame {
             //Saltar a la clase VentanaListaCanciones
             @Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(false, album, user, gestorBD);
+				if(e.getClickCount()==1) { 
+	                  VentanaListaCanciones vListaCanciones = new VentanaListaCanciones(false, album, user, gestorBD);
+	                  vListaCanciones.setVisible(true);
+	                  VentanaAlbumArtista.this.dispose(); 
 				}
 			}
         });
@@ -316,7 +318,9 @@ public class VentanaAlbumArtista extends JFrame {
             @Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(false, artista, user, gestorBD);
+	                VentanaListaCanciones vListaCanciones =new VentanaListaCanciones(false, artista, user, gestorBD);
+	                vListaCanciones.setVisible(true);
+	                VentanaAlbumArtista.this.dispose(); 
 				}
 			}
         });
@@ -521,7 +525,9 @@ public class VentanaAlbumArtista extends JFrame {
         		 @Override
      			public void mouseClicked(MouseEvent e) {
      				if(e.getClickCount()==1) {
-     					new VentanaListaCanciones(true, null, user, gestorBD);
+    	                VentanaListaCanciones vListaCanciones =new VentanaListaCanciones(true, null, user, gestorBD);
+    	                vListaCanciones.setVisible(true);
+    	                VentanaAlbumArtista.this.dispose();  
      				}
      			}
         	});
@@ -555,7 +561,9 @@ public class VentanaAlbumArtista extends JFrame {
             @Override
 			public void mouseClicked(MouseEvent e) {
 				if(e.getClickCount()==1) {
-					new VentanaListaCanciones(false, playlist, user, gestorBD);
+					VentanaListaCanciones vListaCanciones =new VentanaListaCanciones(false, playlist, user, gestorBD);
+	                vListaCanciones.setVisible(true);
+	                VentanaAlbumArtista.this.dispose(); 
 				}
 			}
         });
