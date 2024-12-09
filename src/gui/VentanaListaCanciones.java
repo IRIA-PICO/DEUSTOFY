@@ -431,8 +431,8 @@ public class VentanaListaCanciones extends JFrame {
 	
 	// Formato minutos:segundos
 	private static String formatoDuracion(Cancion c) {
-		int minutes = (int) (c.getDuracion());
-		int seconds = (int) ((c.getDuracion() - minutes)*100);
+		int minutes = (int) (c.getDuracion()/60);
+		int seconds = (int) (c.getDuracion()%60);
 		String secondsStr = String.valueOf(seconds);
 		if (seconds < 10) {
 			secondsStr = "0" + seconds;

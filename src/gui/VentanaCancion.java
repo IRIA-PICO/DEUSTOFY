@@ -189,8 +189,6 @@ public class VentanaCancion extends JFrame {
 					}
 				c = lcan.get(pos);
 				modificarDatos();
-			} else {
-				JOptionPane.showMessageDialog(null, "La lista de reproducciones ha finalizado");
 			}
 		});
 		
@@ -201,8 +199,6 @@ public class VentanaCancion extends JFrame {
 					}
 				c = lcan.get(pos);
 				modificarDatos();
-			} else {
-				JOptionPane.showMessageDialog(null, "La lista de reproducciones ha finalizado");
 			}
 		});
 		
@@ -291,7 +287,6 @@ public class VentanaCancion extends JFrame {
 		        				c = lcan.get(pos);
 		        				modificarDatos();
 		        			} else {
-		        				JOptionPane.showMessageDialog(null, "La lista de reproducciones ha finalizado");
 		        				break;
 		        			}
 		                }
