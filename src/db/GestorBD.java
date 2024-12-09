@@ -23,6 +23,7 @@ import domain.Album;
 import domain.Artista;
 import domain.Cancion;
 import domain.Genero;
+import domain.PlayList;
 import domain.Usuario;
 
 
@@ -99,6 +100,8 @@ public class GestorBD {
 			String sql5= "CREATE TABLE IF NOT EXISTS PlayList (\n"
 	                + " id INTEGER PRIMARY KEY AUTOINCREMENT,\n"
 					+ " nomPlayList TEXT UNIQUE NOT NULL,\n"
+	                + " color TEXT UNIQUE NOT NULL,\n"
+	                + " rutaFoto TEXT NOT NULL,\n"
                     + " usuario_id INTEGER NOT NULL,\n"
                     + " FOREIGN KEY (usuario_id) REFERENCES Usuario(id)"
                     + ");";
@@ -659,7 +662,6 @@ public class GestorBD {
 		        }
 		        
 		        rs.close();
-		        logger.info(String.format("Se han recuperado %d usuario.", nombreUsuario));
 		    }catch (SQLException ex) {
 	            ex.printStackTrace();
 	        }
@@ -972,15 +974,25 @@ public class GestorBD {
 		    return idCanciones; 
 		}
 		
-		public List <String> getPlayListByIdUsuario(int idUsuario) {
-		    List <String> PlayLists = new ArrayList<>();
-		    String sql = "SELECT nomPlayList FROM PlayList WHERE usuario_id = ?";
+		public List<PlayList> getPlayListByIdUsuario(int idUsuario) {
+		    List<PlayList> PlayLists = new ArrayList<>();
+		    String sql = "SELECT nomPlayList, rutaFoto, color FROM PlayList WHERE usuario_id = ?";
+
 		    try (Connection con = DriverManager.getConnection(connectionString);
 		         PreparedStatement pStmt = con.prepareStatement(sql)) {
-		        	pStmt.setInt(1, idUsuario);
+
+		        pStmt.setInt(1, idUsuario);
+
 		        try (ResultSet rs = pStmt.executeQuery()) {
 		            while (rs.next()) {
-		            	PlayLists.add(rs.getString("nomPlayList"));
+		                // Crear un objeto PlayList por cada fila del resultado
+		                String titulo = rs.getString("nomPlayList");
+		                String rutaFoto = rs.getString("rutaFoto");
+		                String color = rs.getString("color");
+
+		                // Crear el objeto PlayList y añadirlo a la lista
+		                PlayList playlist = new PlayList(titulo, new ArrayList<>(), rutaFoto, color);
+		                PlayLists.add(playlist);
 		            }
 		        }
 		        logger.info(String.format("Se han recuperado %d PlayLists para el usuario con ID %d", PlayLists.size(), idUsuario));
@@ -988,7 +1000,25 @@ public class GestorBD {
 		        logger.warning("Error al recuperar PlayLists: " + ex.getMessage());
 		    }
 
-		    return PlayLists; 
+		    return PlayLists;
+		}
+
+		
+		public boolean crearPlaylist(String titulo, String color, String rutaFoto, int idUsuario) {
+		    String sql = "INSERT INTO Playlist (nomPlaylist, color, rutaFoto, usuario_id) VALUES (?, ?, ?, ?)";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+			         PreparedStatement stmt = con.prepareStatement(sql)) {
+		        stmt.setString(1, titulo);
+		        stmt.setString(2, color);
+		        stmt.setString(3, rutaFoto);
+		        stmt.setInt(4, idUsuario);
+
+		        int filasAfectadas = stmt.executeUpdate();
+		        return filasAfectadas > 0; 
+		    } catch (SQLException e) {
+		        e.printStackTrace(); 
+		        return false;
+		    }
 		}
 		
 		public List <String> getPlayListByIdUsuarioIdCancion(int idUsuario, int idCancion) {
@@ -1030,4 +1060,5 @@ public class GestorBD {
 		    }
 		    return id; 
 		}
+		
 }

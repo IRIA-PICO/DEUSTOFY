@@ -7,11 +7,19 @@ public class PlayList {
 	private String titulo;
 	private List<Cancion> listacanciones;
 	private String rutaFoto;
+	private String color;
 	
-	public PlayList(String titulo, List<Cancion> listacanciones, String rutaFoto) {
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
+	public PlayList(String titulo, List<Cancion> listacanciones, String rutaFoto, String color) {
 		this.titulo = titulo;
 		this.listacanciones = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
+		this.color = color;
 	}
 	public String getTitulo() {
 		return titulo;

@@ -85,7 +85,7 @@ public class VentanaListaCanciones extends JFrame {
         } else if (albumArtistaPlayList instanceof PlayList) { // CAMBIARLO CUANDO HAGAMOS PLAYLIST
         	this.canciones = ((PlayList) albumArtistaPlayList).getListacanciones();
         } 
-
+        
         
         // Inicializar tabla y cargar canciones
         this.initTable();
@@ -236,11 +236,10 @@ public class VentanaListaCanciones extends JFrame {
 			}else {
 				String titulo = (String) modeloDatosCanciones.getValueAt(fila, 1);
 				int idCancion = gestorBD.getIdCancionByTitulo(titulo);
-				
 				JComboBox<String> comboBoxAgregarPlaylists = new JComboBox<>();
-		        for (String nombrePlaylist : gestorBD.getPlayListByIdUsuario(idUsuario)) {
-		        	comboBoxAgregarPlaylists.addItem(nombrePlaylist);
-		        }
+				for (PlayList playlist : gestorBD.getPlayListByIdUsuario(idUsuario)) {
+				    comboBoxAgregarPlaylists.addItem(playlist.getTitulo()); // Añade solo el título de la playlist
+				}
 		        
 				String playlistSeleccionada = (String) comboBoxAgregarPlaylists.getSelectedItem();
 		        if (playlistSeleccionada == null) {
@@ -292,6 +291,16 @@ public class VentanaListaCanciones extends JFrame {
         
         setVisible(true);
 	}
+//	private void mostrarListaDeCanciones(List<Cancion> canciones, JPanel panel) {
+//        JPanel listaPanel = new JPanel();
+//        listaPanel.setLayout(new BoxLayout(listaPanel, BoxLayout.Y_AXIS));
+//        for (Cancion cancion : canciones) {
+//            JLabel cancionLabel = new JLabel(cancion.getTitulo());
+//            listaPanel.add(cancionLabel);
+//        }
+//        JScrollPane scrollPane = new JScrollPane(listaPanel);
+//        panel.add(scrollPane, BorderLayout.CENTER);
+//    }
 	
 	// Inicializar tabla
 	private void initTable() {
