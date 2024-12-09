@@ -244,15 +244,20 @@ public class VentanaListaCanciones extends JFrame {
 				for (PlayList playlist : gestorBD.getPlayListByIdUsuario(idUsuario)) {
 				    comboBoxAgregarPlaylists.addItem(playlist.getTitulo()); // Añade solo el título de la playlist
 				}
-		        
-				String playlistSeleccionada = (String) comboBoxAgregarPlaylists.getSelectedItem();
-		        if (playlistSeleccionada == null) {
-		            JOptionPane.showMessageDialog(null, "Debes seleccionar una playlist", "ERROR EN SELECCIÓN", JOptionPane.ERROR_MESSAGE);
-		            return;
-		        }
-		        int idPlayList = gestorBD.getIdPlayListByNombre(playlistSeleccionada);
-				gestorBD.insertarCancionPlayList(idCancion, idPlayList);
-				JOptionPane.showMessageDialog(null, "Cancion añadida a la PlayList ", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+				int seleccion = JOptionPane.showConfirmDialog(null, comboBoxAgregarPlaylists, "Selecciona una Playlist", JOptionPane.OK_CANCEL_OPTION);
+				
+				if (seleccion == JOptionPane.OK_OPTION) {
+					String playlistSeleccionada = (String) comboBoxAgregarPlaylists.getSelectedItem();
+			        if (playlistSeleccionada == null) {
+			            JOptionPane.showMessageDialog(null, "Debes seleccionar una playlist", "ERROR EN SELECCIÓN", JOptionPane.ERROR_MESSAGE);
+			            return;
+			        }
+			        int idPlayList = gestorBD.getIdPlayListByNombre(playlistSeleccionada);
+					gestorBD.insertarCancionPlayList(idCancion, idPlayList);
+					JOptionPane.showMessageDialog(null, "Cancion añadida a la PlayList ", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+	            JOptionPane.showMessageDialog(null, "Acción cancelada", "CANCELACIÓN", JOptionPane.WARNING_MESSAGE);
+	        }
 			}		
         });
         
@@ -270,15 +275,20 @@ public class VentanaListaCanciones extends JFrame {
 		        for (String nombrePlaylist : gestorBD.getPlayListByIdUsuarioIdCancion(idUsuario, idCancion)) {
 		        	comboBoxEliminarPlaylists.addItem(nombrePlaylist);
 		        }
+		        int seleccion = JOptionPane.showConfirmDialog(null, comboBoxEliminarPlaylists, "Selecciona una Playlist", JOptionPane.OK_CANCEL_OPTION);
 				
-				String playlistSeleccionada = (String) comboBoxEliminarPlaylists.getSelectedItem();
-		        if (playlistSeleccionada == null) {
-		            JOptionPane.showMessageDialog(null, "Debes seleccionar una playlist", "ERROR EN SELECCIÓN", JOptionPane.ERROR_MESSAGE);
-		            return;
+				if (seleccion == JOptionPane.OK_OPTION) {
+					String playlistSeleccionada = (String) comboBoxEliminarPlaylists.getSelectedItem();
+			        if (playlistSeleccionada == null) {
+			            JOptionPane.showMessageDialog(null, "Debes seleccionar una playlist", "ERROR EN SELECCIÓN", JOptionPane.ERROR_MESSAGE);
+			            return;
+			        }
+			        int idPlayList = gestorBD.getIdPlayListByNombre(playlistSeleccionada);
+					gestorBD.eliminarCancionPlayList(idCancion, idPlayList);
+					JOptionPane.showMessageDialog(null, "Cancion eliminada de la PlayList ", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
+				} else {
+		            JOptionPane.showMessageDialog(null, "Acción cancelada", "CANCELACIÓN", JOptionPane.WARNING_MESSAGE);
 		        }
-		        int idPlayList = gestorBD.getIdPlayListByNombre(playlistSeleccionada);
-				gestorBD.eliminarCancionPlayList(idCancion, idPlayList);
-				JOptionPane.showMessageDialog(null, "Cancion eliminada de la PlayList ", "CONFIRMACION", JOptionPane.INFORMATION_MESSAGE);
 			}
         });
         agregarCancion.setBackground(colorFondo);

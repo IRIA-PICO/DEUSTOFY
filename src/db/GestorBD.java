@@ -1023,7 +1023,8 @@ public class GestorBD {
 		
 		public List <String> getPlayListByIdUsuarioIdCancion(int idUsuario, int idCancion) {
 		    List <String> PlayLists = new ArrayList<>();
-		    String sql = "SELECT nomPlayList FROM PlayList WHERE usuario_id = ? AND cancion_id = ?";
+		    String sql = "SELECT p.nomPlayList FROM CancionPlayList cp, PlayList p WHERE cp.playlist_id = p.id "
+		    		+ " AND p.usuario_id = ? AND cp.cancion_id = ?";
 		    try (Connection con = DriverManager.getConnection(connectionString);
 		         PreparedStatement pStmt = con.prepareStatement(sql)) {
 		        	pStmt.setInt(1, idUsuario);

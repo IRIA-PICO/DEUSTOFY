@@ -464,7 +464,7 @@ public class VentanaAlbumArtista extends JFrame {
             playlistPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    JOptionPane.showMessageDialog(null, "Has seleccionado la playlist: " + playlist);
+                    JOptionPane.showMessageDialog(null, "Has seleccionado la playlist: " + playlist.getTitulo());
                 }
             });
 
