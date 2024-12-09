@@ -291,6 +291,7 @@ public class VentanaListaCanciones extends JFrame {
 		        }
 			}
         });
+        JPanel panel_b_t = new JPanel(new BorderLayout());
         agregarCancion.setBackground(colorFondo);
         agregarCancion.setFont(fuenteTexto);
         agregarCancion.setForeground(Color.WHITE);
@@ -301,7 +302,20 @@ public class VentanaListaCanciones extends JFrame {
         
         panelBotones.add(eliminarCancion);
         panelBotones.add(agregarCancion);
-        add(panelBotones, BorderLayout.SOUTH);
+        panel_b_t.add(panelBotones, BorderLayout.CENTER);
+        
+        JPanel panelTextoInferior = new JPanel(new BorderLayout());
+        panelTextoInferior.setBackground(colorFondo);
+        JLabel textoEsquina = new JLabel("SI QUIERE RETROCEDER PULSE CTRL+E");
+        textoEsquina.setFont(new Font("Gotham", Font.BOLD, 12));
+        textoEsquina.setForeground(Color.WHITE);
+        JPanel panelEsquina = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        panelEsquina.setBackground(colorFondo);
+        panelEsquina.add(textoEsquina);
+        
+        panel_b_t.add(panelEsquina, BorderLayout.SOUTH);
+        add(panel_b_t, BorderLayout.SOUTH);
+        
         
         setVisible(true);
 	}

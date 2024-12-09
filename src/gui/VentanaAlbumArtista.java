@@ -183,7 +183,7 @@ public class VentanaAlbumArtista extends JFrame {
                     panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
                     JTextField tituloField = new JTextField();
-                    JComboBox<String> colorComboBox = new JComboBox<>(new String[]{"Rojo", "Azul", "Verde", "Amarillo", "Predeterminado"});
+                    JComboBox<String> colorComboBox = new JComboBox<>(new String[]{"Rojo", "Azul", "Verde", "Amarillo", "Rosa", "Naranja","Predeterminado"});
 
                     panel.add(new JLabel("Introduce el título de la playlist:"));
                     panel.add(tituloField);
@@ -577,13 +577,17 @@ public class VentanaAlbumArtista extends JFrame {
             playlistPanel.setBackground(Color.GREEN);
         } else if (color.equalsIgnoreCase("Amarillo")) {
             playlistPanel.setBackground(Color.YELLOW);
+        } else if (color.equalsIgnoreCase("Rosa")) {
+            playlistPanel.setBackground(Color.PINK);
+        } else if (color.equalsIgnoreCase("Naranja")) {
+            playlistPanel.setBackground(Color.ORANGE);
         } else {
             playlistPanel.setBackground(new Color(50, 50, 50)); // Color por defecto
         }
         // Añadir un JLabel para el título de la playlist
         JLabel tituloLabel = new JLabel(playlist.getTitulo());
-        tituloLabel.setForeground(Color.WHITE);
-        tituloLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        tituloLabel.setForeground(Color.BLACK);
+        tituloLabel.setFont(new Font("Tahoma", Font.BOLD, 14));
         // Añadir un ícono si la playlist tiene una ruta de foto
         if (playlist.getRutaFoto() != null && !playlist.getRutaFoto().isEmpty()) {
             ImageIcon icono = new ImageIcon(new ImageIcon("resources/images/playlist.png")
