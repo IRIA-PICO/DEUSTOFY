@@ -20,6 +20,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class VentanaAlbumArtista extends JFrame {
@@ -34,11 +35,10 @@ public class VentanaAlbumArtista extends JFrame {
     private JPanel albumGrid;
     private JPanel artistaGrid;
     private JPanel sidebar;
-    private boolean isPremiumUser = false;
     private JLabel premiumLabel;
     private GestorBD gestorBD;
     private JPanel panelPlaylists; 
-    
+    private HashMap<String, Color> mapa= new HashMap<>();
     
     public VentanaAlbumArtista(Usuario user1, GestorBD gestorBD) {
     	this.gestorBD = gestorBD;
@@ -488,13 +488,13 @@ public class VentanaAlbumArtista extends JFrame {
 
                 if (confirm == JOptionPane.OK_OPTION) {
                     String cuenta = JOptionPane.showInputDialog(null, "INTRODUCIR NUMERO DE CUENTA", "IBAN:", JOptionPane.PLAIN_MESSAGE);
-                    if (cuenta != null) {
+                    gestorBD.updatePremium(gestorBD.getIdUsuarioByUsuario(user.getNombre()));
+                    if (cuenta != null &&gestorBD.getIfPremiumByUsuario(user.getNombre())==1) {
                         JOptionPane.showMessageDialog(null, "Cuenta registrada: " + cuenta + "\n¡Actualización a premium exitosa!");
                         
                         // Marca al usuario como premium y cambia el borde
-                        isPremiumUser = true;
-                        setPremiumBorder();
-                        premiumLabel.setVisible(true);
+                        gestorBD.updatePremium(gestorBD.getIdUsuarioByUsuario(user.getNombre()));
+                        cambiosPremium();                        
                     }
                 }
             }
@@ -509,6 +509,7 @@ public class VentanaAlbumArtista extends JFrame {
 
         // Añadir el anuncio premium al sur del sidebar
         sidebar.add(premiumAd, BorderLayout.SOUTH);
+        cambiosPremium();//Si es premium se ve reflejado en la pantalla
     }
 
     private JButton crearBotonNavegacion(String texto, String iconoRuta, boolean favorito) {
@@ -548,12 +549,12 @@ public class VentanaAlbumArtista extends JFrame {
         }
         return button;
     }
-    private void setPremiumBorder() {
-        if (isPremiumUser) {
-            getRootPane().setBorder(BorderFactory.createLineBorder(new Color(0, 122, 255), 5)); // Borde azul de 5 px para premium
-        }
-        
-    }
+   private void cambiosPremium() {
+	   if(gestorBD.getIfPremiumByUsuario(user.getNombre())==1) {
+           getRootPane().setBorder(BorderFactory.createLineBorder(new Color(0, 122, 255), 5)); // Borde azul de 5 px para premium       
+            premiumLabel.setVisible(true);
+	   }
+   }
     private void initializePremiumLabel() {
         premiumLabel = new JLabel("PREMIUM", SwingConstants.CENTER);
         premiumLabel.setOpaque(true);
@@ -582,22 +583,11 @@ public class VentanaAlbumArtista extends JFrame {
 			}
         });
         // Configurar el color del fondo basado en el atributo "color"
+        colorMapa();//cargamos mapa con los colores
         String color = playlist.getColor();
-        if (color.equalsIgnoreCase("Rojo")) {
-            playlistPanel.setBackground(Color.RED);
-        } else if (color.equalsIgnoreCase("Azul")) {
-            playlistPanel.setBackground(Color.BLUE);
-        } else if (color.equalsIgnoreCase("Verde")) {
-            playlistPanel.setBackground(Color.GREEN);
-        } else if (color.equalsIgnoreCase("Amarillo")) {
-            playlistPanel.setBackground(Color.YELLOW);
-        } else if (color.equalsIgnoreCase("Rosa")) {
-            playlistPanel.setBackground(Color.PINK);
-        } else if (color.equalsIgnoreCase("Naranja")) {
-            playlistPanel.setBackground(Color.ORANGE);
-        } else {
-            playlistPanel.setBackground(new Color(50, 50, 50)); // Color por defecto
-        }
+        Color colorfondo = mapa.getOrDefault(color, new Color(50, 50, 50));
+        playlistPanel.setBackground(colorfondo);
+        
         // Añadir un JLabel para el título de la playlist
         JLabel tituloLabel = new JLabel(playlist.getTitulo());
         tituloLabel.setForeground(Color.BLACK);
@@ -628,5 +618,12 @@ public class VentanaAlbumArtista extends JFrame {
         panelPlaylists.revalidate(); 
         panelPlaylists.repaint();
     }
-
+    private void colorMapa(){
+    	mapa.put("Rojo", Color.RED);
+    	mapa.put("Azul", Color.BLUE);
+    	mapa.put("Verde", Color.GREEN);
+    	mapa.put("Amarillo", Color.YELLOW);
+    	mapa.put("Rosa", Color.PINK);
+    	mapa.put("Naranja", Color.ORANGE);
+    }
 }

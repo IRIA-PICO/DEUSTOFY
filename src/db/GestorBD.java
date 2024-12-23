@@ -119,7 +119,8 @@ public class GestorBD {
 	                + " sexo TEXT NOT NULL,\n"
 	                + " edad INTEGER NOT NULL,\n"
 	                + " usuario TEXT UNIQUE NOT NULL,\n"
-	                + " contr TEXT NOT NULL"
+	                + " contr TEXT NOT NULL,\n"
+	                + " premium BOOLEAN DEFAULT FALSE"
 	                + ");";
 			
 			String sql8 = "CREATE TABLE IF NOT EXISTS CancionPlayList (\n"
@@ -1083,5 +1084,36 @@ public class GestorBD {
 
 		    return canciones;
 		}
-		
+		public void updatePremium(int id) {
+			String sql = "UPDATE Usuario SET premium=TRUE WHERE id=?";
+
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        pStmt.setInt(1, id);
+		        pStmt.executeUpdate();
+
+		    } catch (SQLException ex) {
+		        logger.warning(String.format("Error al crear cuenta premium %d:", id, ex.getMessage()));
+		    }
+
+		}
+		public int getIfPremiumByUsuario(String usuario) {
+		    String sql = "SELECT premium FROM Usuario WHERE usuario = ?;";
+		    int isPremium = 0;
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        pStmt.setString(1, usuario);
+		        try (ResultSet rs = pStmt.executeQuery()) {
+		            if (rs.next()) {
+		            	isPremium = rs.getInt("premium");
+		            	logger.info(String.format("Se ha obtenido el estado premium (%d) para el usuario '%s'", isPremium, usuario));
+		            }else {
+		                 logger.warning(String.format("No se encontró el usuario '%s' en la base de datos.", usuario));
+		              }
+		        }
+		    } catch (Exception ex) {
+		    	logger.warning("Error al obtener el estado premium del usuario: " + ex.getMessage());
+		    }
+		    return isPremium;
+		}
 }
