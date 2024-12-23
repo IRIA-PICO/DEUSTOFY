@@ -19,6 +19,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.List;
 
 public class VentanaAlbumArtista extends JFrame {
@@ -41,8 +42,20 @@ public class VentanaAlbumArtista extends JFrame {
     
     public VentanaAlbumArtista(Usuario user1, GestorBD gestorBD) {
     	this.gestorBD = gestorBD;
-    	albumes = this.gestorBD.getAlbum();
-    	artistas = this.gestorBD.getArtistas();
+    	this.albumes = new ArrayList<>();
+    	this.gestorBD.getAlbum().forEach(album -> {
+    	    if (album != null) { 
+    	        this.albumes.add(album);
+    	    }
+    	});
+
+    	this.artistas = new ArrayList<>();
+    	this.gestorBD.getArtistas().forEach(artista -> {
+    	    if (artista != null) {
+    	        this.artistas.add(artista);
+    	    }
+    	});
+    	
     	user= user1;
         setTitle("DEUSTOFY");
         ImageIcon imagen = new ImageIcon("resources/images/logo.png");
@@ -342,9 +355,10 @@ public class VentanaAlbumArtista extends JFrame {
         albumGrid.setLayout(new BoxLayout(albumGrid, BoxLayout.X_AXIS));
         albumGrid.setBackground(new Color(18, 18, 18));
 
-        this.albumes.forEach(a -> {
+        albumes.forEach(a -> {
+            Artista artista = gestorBD.getArtistaByID(a.getArtistaID()); 
             if (a.getTitulo().toLowerCase().contains(this.busqueda.getText().toLowerCase()) ||
-                a.getArtista().getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
+                (artista != null && artista.getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase()))) {
                 albumGrid.add(createAlbumPanel(a));
             }
         });
@@ -352,7 +366,7 @@ public class VentanaAlbumArtista extends JFrame {
         artistaGrid.setLayout(new BoxLayout(artistaGrid, BoxLayout.X_AXIS));
         artistaGrid.setBackground(new Color(18, 18, 18));
 
-        this.artistas.forEach(a -> {
+        artistas.forEach(a -> {
             if (a.getNombre().toLowerCase().contains(this.busqueda.getText().toLowerCase())) {
                 artistaGrid.add(createArtistaPanel(a));
             }
