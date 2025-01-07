@@ -442,14 +442,37 @@ public class VentanaAlbumArtista extends JFrame {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         scrollPane.setPreferredSize(new Dimension(200, 300)); // Ajusta el tamaño del scroll
-
+            
         // Añadir el JScrollPane al panel de navegación
         navPanel.add(scrollPane);
         navPanel.revalidate();
         navPanel.repaint();
+        //Añadir Boton Que genera una playlist random, llamando a la clase Recursividad
+        JButton btnRandomPlaylist= crearBotonNavegacion("Random Playlist", null, false);
+        btnRandomPlaylist.addActionListener((e)->{
+        	JPanel paneltxt= new JPanel(new GridLayout(2, 1));
+        	paneltxt.add(new JLabel("Introduce los minutos que quieres que dure la playlist:"));
+        	JTextField txt= new JTextField();
+        	paneltxt.add(txt);
+
+        	int result = JOptionPane.showConfirmDialog(
+                    VentanaAlbumArtista.this,
+                    paneltxt,
+                    "Crear una Playlist al azar",
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.PLAIN_MESSAGE
+            );
+        	if(result== JOptionPane.OK_OPTION) {
+        		Recursividad.combinaciones(gestorBD.getCanciones(), Integer.parseInt(txt.getText()));
+        	}
+        });
+        navPanel.add(btnRandomPlaylist);
+        
         // Añadir secciones al sidebar
         sidebar.add(userPanel, BorderLayout.NORTH);
         sidebar.add(navPanel, BorderLayout.CENTER);
+        
+         //Creamos el panel para premium
         JPanel premiumAd = new JPanel();
         premiumAd.setLayout(new BorderLayout());
         premiumAd.setBackground(Color.BLUE); 

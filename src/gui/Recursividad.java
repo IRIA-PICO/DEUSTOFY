@@ -1,18 +1,17 @@
 package gui;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import db.GestorBD;
 import domain.Cancion;
 public class Recursividad {
+		
 	  public static List<List<Cancion>> combinaciones(List<Cancion> elementos, int tiempo) {
 	    	//Se inicializa la lista de combinaciones que se devolverá como resultado.
 	    	List<List<Cancion>> result = new ArrayList<>();
-	    	//COMPLETA EL MÉTODO
 	    	//Se invoca al método recursivo
+	    	tiempo= tiempo*60; //los calculos los hacemos en segundos
 	    	combinaciones(result, elementos, tiempo, new ArrayList<>());
 	    	//Se devuelve el resultado.
 	    	return result;
@@ -48,13 +47,4 @@ public class Recursividad {
 	        	}
 	        }
 	    }
-	    public static void main(String[] args) {
-	    	GestorBD gb= new GestorBD();
-	    	List<Cancion> elementos = gb.getCanciones();
-	    	int tiempo = 10*60;//Multiplicamos por 60 ya que en la BBDD los datos se guardan en segundos
-	    	
-	    	List<List<Cancion>> result = combinaciones(elementos, tiempo);
-	    	System.out.format("Combinaciones de canciones que duren menos de %d ", tiempo);
-	    	result.forEach(r -> System.out.format("\n%s", r));
-		} 
 }
