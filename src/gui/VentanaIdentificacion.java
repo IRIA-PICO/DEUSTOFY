@@ -126,8 +126,57 @@ public class VentanaIdentificacion extends JFrame {
 
           public void mouseClicked(MouseEvent e) {
               // Acción cuando se hace clic en "Olvidaste tu contraseña"
-              JOptionPane.showMessageDialog(VentanaIdentificacion.this, "Te redirigiremos a la recuperación de contraseña.");
-          }
+        	  String usuario = JOptionPane.showInputDialog(VentanaIdentificacion.this, 
+        	            "Ingresa tu nombre de usuario para verificar tu identidad:", 
+        	            "Verificación de identidad", 
+        	            JOptionPane.PLAIN_MESSAGE);
+        	        
+        	        if (usuario != null && !usuario.trim().isEmpty()) {
+        	            // Verificar si el nombre de usuario existe en la base de datos
+        	            boolean existeUsuario = gestorBD.verificarUsuario(usuario); // Método para verificar si el usuario existe
+
+        	            if (existeUsuario) {
+        	                // Mostrar un cuadro para que el usuario ingrese la nueva contraseña
+        	                String nuevaContrasena = JOptionPane.showInputDialog(VentanaIdentificacion.this, 
+        	                    "Ingresa tu nueva contraseña:", 
+        	                    "Cambio de contraseña", 
+        	                    JOptionPane.PLAIN_MESSAGE);
+        	                
+        	                // Verificar que la nueva contraseña sea válida
+        	                if (nuevaContrasena != null && !nuevaContrasena.trim().isEmpty()) {
+        	                    // Aquí puedes agregar validaciones de la contraseña como longitud mínima, caracteres especiales, etc.
+
+        	                    // Guardar la nueva contraseña en la base de datos
+        	                    boolean cambioExitoso = gestorBD.cambiarContrasena(usuario, nuevaContrasena);
+
+        	                    if (cambioExitoso) {
+        	                        JOptionPane.showMessageDialog(VentanaIdentificacion.this, 
+        	                            "Contraseña cambiada exitosamente.");
+        	                    } else {
+        	                        JOptionPane.showMessageDialog(VentanaIdentificacion.this, 
+        	                            "Error al cambiar la contraseña.", 
+        	                            "Error", 
+        	                            JOptionPane.ERROR_MESSAGE);
+        	                    }
+        	                } else {
+        	                    JOptionPane.showMessageDialog(VentanaIdentificacion.this, 
+        	                        "La nueva contraseña no puede estar vacía.", 
+        	                        "Error", 
+        	                        JOptionPane.ERROR_MESSAGE);
+        	                }
+        	            } else {
+        	                JOptionPane.showMessageDialog(VentanaIdentificacion.this, 
+        	                    "No se ha encontrado un usuario con ese nombre de usuario.", 
+        	                    "Error", 
+        	                    JOptionPane.ERROR_MESSAGE);
+        	            }
+        	        } else {
+        	            JOptionPane.showMessageDialog(VentanaIdentificacion.this, 
+        	                "No se ingresó un nombre de usuario válido.", 
+        	                "Error", 
+        	                JOptionPane.ERROR_MESSAGE);
+        	        }
+        	    }
 
       });
 

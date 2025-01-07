@@ -12,6 +12,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.LogManager;
@@ -374,6 +376,7 @@ public class GestorBD {
 		}
 	
 		public void insertarAlbum(Album... albumes) {
+			Arrays.sort(albumes, Comparator.comparingInt(Album::getAnyo));
 		    String sql = "INSERT INTO Album (titulo, genero, rutaFoto, id_artista, fecha) VALUES (?, ?, ?, ?, ?);";
 
 		    try (Connection con = DriverManager.getConnection(connectionString);
@@ -587,7 +590,7 @@ public class GestorBD {
 		//Recupera Los Albumes de la BBDD
 		public List<Album> getAlbum(){
 			List<Album> albumes = new ArrayList<>();
-			String sql = "SELECT * FROM Album";
+			String sql = "SELECT * FROM Album ORDER BY fecha ASC";
 			
 			try (Connection con = DriverManager.getConnection(connectionString);
 			     PreparedStatement pStmt = con.prepareStatement(sql)) {			
@@ -1107,13 +1110,46 @@ public class GestorBD {
 		            if (rs.next()) {
 		            	isPremium = rs.getInt("premium");
 		            	logger.info(String.format("Se ha obtenido el estado premium (%d) para el usuario '%s'", isPremium, usuario));
-		            }else {
-		                 logger.warning(String.format("No se encontró el usuario '%s' en la base de datos.", usuario));
-		              }
+		            }
 		        }
 		    } catch (Exception ex) {
 		    	logger.warning("Error al obtener el estado premium del usuario: " + ex.getMessage());
 		    }
 		    return isPremium;
+		}
+		public boolean verificarUsuario(String usuario) {
+		    // Consulta SQL para verificar si el usuario existe
+		    String sql = "SELECT * FROM Usuario WHERE usuario = ?";
+
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+
+		        pStmt.setString(1, usuario);  // Usamos el nombre de usuario
+
+		        ResultSet rs = pStmt.executeQuery();
+		        return rs.next();  // Si existe un resultado, el usuario existe
+
+		    } catch (SQLException ex) {
+		        logger.warning("Error al verificar usuario: " + ex.getMessage());
+		        return false;
+		    }
+		}
+		public boolean cambiarContrasena(String usuario, String nuevaContrasena) {
+		    // Consulta SQL para actualizar la contraseña del usuario
+		    String sql = "UPDATE Usuario SET contr = ? WHERE usuario = ?";
+
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+
+		        pStmt.setString(1, nuevaContrasena); // Usamos la nueva contraseña tal cual
+		        pStmt.setString(2, usuario);  // El nombre de usuario
+
+		        int filasAfectadas = pStmt.executeUpdate();
+		        return filasAfectadas > 0;  // Si se actualiza al menos una fila, el cambio fue exitoso
+
+		    } catch (SQLException ex) {
+		        logger.warning("Error al cambiar la contraseña: " + ex.getMessage());
+		        return false;
+		    }
 		}
 }

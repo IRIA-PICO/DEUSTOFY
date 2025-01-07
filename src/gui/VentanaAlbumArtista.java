@@ -48,6 +48,8 @@ public class VentanaAlbumArtista extends JFrame {
     	        this.albumes.add(album);
     	    }
     	});
+    	
+    	RecursiveBubbleSort.bubbleSortAlbums(this.albumes, this.albumes.size());
 
     	this.artistas = new ArrayList<>();
     	this.gestorBD.getArtistas().forEach(artista -> {
@@ -648,5 +650,20 @@ public class VentanaAlbumArtista extends JFrame {
     	mapa.put("Amarillo", Color.YELLOW);
     	mapa.put("Rosa", Color.PINK);
     	mapa.put("Naranja", Color.ORANGE);
+    }
+    public class RecursiveBubbleSort {
+        public static void bubbleSortAlbums(List<Album> albums, int n) {
+            if (n == 1) return;
+
+            for (int i = 0; i < n - 1; i++) {
+                if (albums.get(i).getAnyo() > albums.get(i + 1).getAnyo()) {
+                    Album temp = albums.get(i);
+                    albums.set(i, albums.get(i + 1));
+                    albums.set(i + 1, temp);
+                }
+            }
+
+            bubbleSortAlbums(albums, n - 1);
+        }
     }
 }
