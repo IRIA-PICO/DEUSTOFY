@@ -47,4 +47,16 @@ public class Recursividad {
 	        	}
 	        }
 	    }
+	    public static List<Cancion> combinacionAleatoria(List<Cancion> elementos, int tiempo) {
+	    	// Obtener todas las combinaciones posibles
+	        List<List<Cancion>> combinaciones = combinaciones(elementos, tiempo);
+	        
+	        // Si hay combinaciones, seleccionar una al azar
+	        if (!combinaciones.isEmpty()) {
+	            int indiceAleatorio = (int) (Math.random() * combinaciones.size());
+	            return combinaciones.get(indiceAleatorio);
+	        }
+	        
+	        return new ArrayList<>();
+	    }
 }
