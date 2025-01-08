@@ -8,6 +8,7 @@ import javax.swing.event.DocumentListener;
 
 import db.GestorBD;
 import domain.Artista;
+import domain.Cancion;
 import domain.PlayList;
 import domain.Usuario;
 import domain.Album;
@@ -447,15 +448,16 @@ public class VentanaAlbumArtista extends JFrame {
             
         // Añadir el JScrollPane al panel de navegación
         navPanel.add(scrollPane);
-        navPanel.revalidate();
-        navPanel.repaint();
         //Añadir Boton Que genera una playlist random, llamando a la clase Recursividad
         JButton btnRandomPlaylist= crearBotonNavegacion("Random Playlist", null, false);
         btnRandomPlaylist.addActionListener((e)->{
-        	JPanel paneltxt= new JPanel(new GridLayout(2, 1));
-        	paneltxt.add(new JLabel("Introduce los minutos que quieres que dure la playlist:"));
+        	JPanel paneltxt= new JPanel(new GridLayout(4, 1));
+        	paneltxt.add(new JLabel("Introduce el titulo de la playlist:"));
         	JTextField txt= new JTextField();
         	paneltxt.add(txt);
+        	paneltxt.add(new JLabel("Introduce los minutos que quieres que dure la playlist:"));
+        	JTextField txtmin= new JTextField();
+        	paneltxt.add(txtmin);
 
         	int result = JOptionPane.showConfirmDialog(
                     VentanaAlbumArtista.this,
@@ -465,11 +467,17 @@ public class VentanaAlbumArtista extends JFrame {
                     JOptionPane.PLAIN_MESSAGE
             );
         	if(result== JOptionPane.OK_OPTION) {
-        		Recursividad.combinaciones(gestorBD.getCanciones(), Integer.parseInt(txt.getText()));
+        		List<Cancion> lcanRandom=Recursividad.combinacionAleatoria(gestorBD.getCanciones(), Integer.parseInt(txtmin.getText()));
+        		gestorBD.crearPlaylist(txt.getText(), "Predeterminado", "", gestorBD.getIdUsuarioByUsuario(user.getUsuario()));
+        		for(Cancion c: lcanRandom) { 
+        			gestorBD.insertarCancionPlayList(c.getId(), gestorBD.getIdPlayListByNombre(txt.getText()));
+        			actualizarVistaPlaylists();
+        		}
         	}
         });
         navPanel.add(btnRandomPlaylist);
-        
+        navPanel.revalidate();
+        navPanel.repaint();
         // Añadir secciones al sidebar
         sidebar.add(userPanel, BorderLayout.NORTH);
         sidebar.add(navPanel, BorderLayout.CENTER);
