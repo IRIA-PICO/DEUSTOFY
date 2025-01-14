@@ -112,7 +112,7 @@ public class VentanaListaCanciones extends JFrame {
             }
         });
         this.loadCanciones();
-        
+        this.tablaCanciones.setFocusable(true);
         // BorderLayout para poner la lista de canciones y el album
         JPanel panelCentro = new JPanel(new BorderLayout());
         panelCentro.setBackground(colorFondo);

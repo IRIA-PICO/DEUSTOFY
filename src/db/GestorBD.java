@@ -129,7 +129,7 @@ public class GestorBD {
 					+ " cancion_id INTEGER NOT NULL,\n"
                     + " playlist_id INTEGER NOT NULL,\n"
                     + " FOREIGN KEY (cancion_id) REFERENCES Cancion(id),\n"
-                    + " FOREIGN KEY (playlist_id) REFERENCES PlayList(id)"
+                    + " FOREIGN KEY (playlist_id) REFERENCES PlayList(id) ON DELETE CASCADE"
                     + ");";
 
 	        //Se abre la conexión y se crea un PreparedStatement para crer cada tabla
@@ -980,7 +980,7 @@ public class GestorBD {
 		
 		public List<PlayList> getPlayListByIdUsuario(int idUsuario) {
 		    List<PlayList> PlayLists = new ArrayList<>();
-		    String sql = "SELECT nomPlayList, rutaFoto, color FROM PlayList WHERE usuario_id = ?";
+		    String sql = "SELECT id, nomPlayList, rutaFoto, color FROM PlayList WHERE usuario_id = ?";
 
 		    try (Connection con = DriverManager.getConnection(connectionString);
 		         PreparedStatement pStmt = con.prepareStatement(sql)) {
@@ -990,12 +990,13 @@ public class GestorBD {
 		        try (ResultSet rs = pStmt.executeQuery()) {
 		            while (rs.next()) {
 		                // Crear un objeto PlayList por cada fila del resultado
-		                String titulo = rs.getString("nomPlayList");
+		                int id = rs.getInt("id");
+		            	String titulo = rs.getString("nomPlayList");
 		                String rutaFoto = rs.getString("rutaFoto");
 		                String color = rs.getString("color");
 
 		                // Crear el objeto PlayList y añadirlo a la lista
-		                PlayList playlist = new PlayList(titulo, new ArrayList<>(), rutaFoto, color);
+		                PlayList playlist = new PlayList(id, titulo, new ArrayList<>(), rutaFoto, color);
 		                PlayLists.add(playlist);
 		            }
 		        }
@@ -1150,6 +1151,43 @@ public class GestorBD {
 		    } catch (SQLException ex) {
 		        logger.warning("Error al cambiar la contraseña: " + ex.getMessage());
 		        return false;
+		    }
+		}
+		
+		public void eliminarPlayList(int idPlayList) {
+			String sql = "DELETE FROM PlayList WHERE id = ?;";
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+		        pStmt.setInt(1, idPlayList);
+		        int rowsAffected = pStmt.executeUpdate();
+		        if (rowsAffected > 0) {
+		            logger.info(String.format("PlayList con ID %d eliminada", idPlayList));
+		        } else {
+		            logger.info(String.format("No se encontró la PlayList con ID %d", idPlayList));
+		        }
+
+		    } catch (Exception ex) {
+		        logger.warning("Error al eliminar la PlayList: " + ex.getMessage());
+		    }
+		}
+		
+		public void cambiarNombrePlayList(String nuevoNombre, int idPlayList) {
+		    // Consulta SQL para actualizar la contraseña del usuario
+		    String sql = "UPDATE PlayList SET nomPlayList = ? WHERE id = ?";
+
+		    try (Connection con = DriverManager.getConnection(connectionString);
+		         PreparedStatement pStmt = con.prepareStatement(sql)) {
+
+		        pStmt.setString(1, nuevoNombre);
+		        pStmt.setInt(2, idPlayList);
+		        int rowsAffected = pStmt.executeUpdate();
+		        if (rowsAffected > 0) {
+		            logger.info(String.format("EL nuevo nombre de la PlayList con ID %d es: %s", idPlayList, nuevoNombre));
+		        } else {
+		            logger.info(String.format("No se encontró la PlayList con ID %d", idPlayList));
+		        }
+		    } catch (SQLException ex) {
+		        logger.warning(String.format("Error al cambiar el nombre de la PlayList con ID %d: ", idPlayList) + ex.getMessage());
 		    }
 		}
 }

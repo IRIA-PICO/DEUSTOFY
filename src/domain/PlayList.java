@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayList {
+	private int id;
 	private String titulo;
 	private List<Cancion> listacanciones;
 	private String rutaFoto;
@@ -15,11 +16,24 @@ public class PlayList {
 	public void setColor(String color) {
 		this.color = color;
 	}
+	
 	public PlayList(String titulo, List<Cancion> listacanciones, String rutaFoto, String color) {
 		this.titulo = titulo;
 		this.listacanciones = new ArrayList<>();
 		this.rutaFoto = rutaFoto;
 		this.color = color;
+	}
+	
+	public PlayList(int id,String titulo, List<Cancion> listacanciones, String rutaFoto, String color) {
+		this.id = id;
+		this.titulo = titulo;
+		this.listacanciones = new ArrayList<>();
+		this.rutaFoto = rutaFoto;
+		this.color = color;
+	}
+	
+	public int getId() {
+		return id;
 	}
 	public String getTitulo() {
 		return titulo;

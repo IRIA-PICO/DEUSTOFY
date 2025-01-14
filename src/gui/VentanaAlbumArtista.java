@@ -604,11 +604,40 @@ public class VentanaAlbumArtista extends JFrame {
         playlistPanel.setPreferredSize(new Dimension(200, 40));
         playlistPanel.setMaximumSize(new Dimension(200, 40));
         playlistPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
-        playlistPanel.addMouseListener(new MouseAdapter() {
-            //Saltar a la clase VentanaListaCanciones
+        playlistPanel.addMouseListener(new MouseAdapter() {            
             @Override
 			public void mouseClicked(MouseEvent e) {
-				if(e.getClickCount()==1) {
+            	if (e.getButton() == MouseEvent.BUTTON3) {
+            		// Dar opcion de eliminar playList o cambiar Nombre
+    				if (e.getClickCount()==1) {
+    			        JTextField nombre = new JTextField(playlist.getTitulo());
+    					JComboBox<String> optionsBox = new JComboBox<>(new String[] { "Cambiar Nombre", "Eliminar Playlist"});
+    			        JPanel panel = new JPanel();
+    			        panel.setLayout(new GridLayout(2, 2));
+    			        panel.add(new JLabel("Nombre:"));
+    			        panel.add(nombre);
+    			        panel.add(new JLabel("Seleccione una accion:"));
+    			        panel.add(optionsBox);		        
+
+    			        int result = JOptionPane.showConfirmDialog(
+                                VentanaAlbumArtista.this,
+                                panel,
+                                "Accion sobre PlayList",
+                                JOptionPane.OK_CANCEL_OPTION,
+                                JOptionPane.PLAIN_MESSAGE
+                        );
+
+                        if (result == JOptionPane.OK_OPTION) {
+                        	if (optionsBox.getSelectedIndex() == 0) {
+        			        	playlist.setTitulo(nombre.getText());
+        			        	gestorBD.cambiarNombrePlayList(nombre.getText(), playlist.getId());
+        			        } else {
+        			        	gestorBD.eliminarPlayList(playlist.getId());
+        			        }
+                        	actualizarVistaPlaylists();
+                        }
+    				}
+            	} else if(e.getClickCount()==1) { //Saltar a la clase VentanaListaCanciones
 					VentanaListaCanciones vListaCanciones =new VentanaListaCanciones(false, playlist, user, gestorBD);
 	                vListaCanciones.setVisible(true);
 	                VentanaAlbumArtista.this.dispose(); 
@@ -642,7 +671,8 @@ public class VentanaAlbumArtista extends JFrame {
         panelPlaylists.add(playlistPanel);        
         return playlistPanel;        
     }
-
+    
+    
     private void actualizarVistaPlaylists() {
     	panelPlaylists.removeAll();
         for (PlayList p : gestorBD.getPlayListByIdUsuario(gestorBD.getIdUsuarioByUsuario(user.getUsuario()))) {
