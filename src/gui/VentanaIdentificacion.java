@@ -9,8 +9,12 @@ import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
@@ -18,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import db.GestorBD;
 import domain.Usuario;
@@ -30,7 +35,12 @@ public class VentanaIdentificacion extends JFrame {
 	  private JTextField userField;
 	  private JPasswordField passwordField;
 	  private JButton loginButton, registerButton;
-	  private JLabel forgotPasswordLabel;    
+	  private JLabel forgotPasswordLabel;
+	  private JLabel motivationalQuoteLabel;
+	  private ArrayList<String> quotes;
+	  private Timer quoteTimer;
+	  private int textXPosition; // Posición horizontal del texto
+	  private int currentQuoteIndex;
 
 
     public VentanaIdentificacion(GestorBD gestorBD) {
@@ -55,7 +65,20 @@ public class VentanaIdentificacion extends JFrame {
       titleLabel.setForeground(Color.WHITE);
       titleLabel.setHorizontalAlignment(JLabel.CENTER);
       titleLabel.setBounds(0, 50, 800, 50); // Centrado en la parte superior
+      
+      titleLabel.addMouseListener(new MouseAdapter() {
+          @Override
+          public void mouseEntered(MouseEvent e) {
+              titleLabel.setForeground(Color.BLUE); 
+          }
+
+          @Override
+          public void mouseExited(MouseEvent e) {
+              titleLabel.setForeground(Color.WHITE);
+          }
+      });
       formPanel.add(titleLabel);
+      
 
       // Campo de texto para el usuario
       JLabel userLabel = new JLabel("Usuario:");
@@ -240,7 +263,55 @@ public class VentanaIdentificacion extends JFrame {
       registerButton.setBorderPainted(false);
       registerButton.addActionListener(e -> openRegisterForm());
       formPanel.add(registerButton);
+      
+      motivationalQuoteLabel = new JLabel("Bienvenido a DEUSTOFY");
+      motivationalQuoteLabel.setForeground(Color.WHITE);
+      motivationalQuoteLabel.setFont(new Font("Arial", Font.ITALIC, 16));
+      motivationalQuoteLabel.setBounds(800, 10, 400, 30);
+      formPanel.add(motivationalQuoteLabel);
+
+      // Carga de frases motivadoras
+      loadMotivationalQuotes();
+      startQuoteRotation();
+      ImageIcon icon = new ImageIcon("resources/images/music.png");
+
+   // Crear un JLabel con la imagen como contenido
+      JLabel formBackgroundLabel = new JLabel(icon);
+      formBackgroundLabel.setBounds(100, 200, 800, 400); 
+      formPanel.add(formBackgroundLabel);
+      formBackgroundLabel.setOpaque(false); 
+      formPanel.add(formBackgroundLabel);
   }
+    private void loadMotivationalQuotes() {
+        quotes = new ArrayList<>();
+        quotes.add("La música da alma al universo y vida a todo.");
+        quotes.add("Sin música, la vida sería un error.");
+        quotes.add("La música expresa lo que no puede decirse con palabras.");
+    }
+
+    private void startQuoteRotation() {
+    	textXPosition = 800; // Empieza fuera de la pantalla
+        currentQuoteIndex = 0;
+
+        quoteTimer = new Timer();
+        quoteTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                SwingUtilities.invokeLater(() -> {
+                    textXPosition -= 2; // Mueve el texto hacia la izquierda
+                    if (textXPosition + motivationalQuoteLabel.getWidth() < 0) {
+                        // Si el texto desaparece por completo, reinicia
+                        textXPosition = 800;
+                        currentQuoteIndex = (currentQuoteIndex + 1) % quotes.size();
+                        motivationalQuoteLabel.setText(quotes.get(currentQuoteIndex));
+                        motivationalQuoteLabel.setSize(motivationalQuoteLabel.getPreferredSize());
+                    }
+                    motivationalQuoteLabel.setBounds(textXPosition, 10, motivationalQuoteLabel.getWidth(), 30);
+                });
+            }
+        }, 0, 15);
+    }
+    
     private void openRegisterForm() {
         JFrame registerFrame = new JFrame("Registro");
         registerFrame.setSize(400, 400);

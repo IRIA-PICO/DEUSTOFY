@@ -612,7 +612,16 @@ public class VentanaAlbumArtista extends JFrame {
     				if (e.getClickCount()==1) {
     			        JTextField nombre = new JTextField(playlist.getTitulo());
     					JComboBox<String> optionsBox = new JComboBox<>(new String[] { "Cambiar Nombre", "Eliminar Playlist"});
-    			        JPanel panel = new JPanel();
+    			        
+    					optionsBox.addActionListener(event -> {
+    			            if (optionsBox.getSelectedIndex() == 1) { 
+    			                nombre.setEnabled(false); 
+    			            } else {
+    			                nombre.setEnabled(true);
+    			            }
+    			        });
+    					
+    					JPanel panel = new JPanel();
     			        panel.setLayout(new GridLayout(2, 2));
     			        panel.add(new JLabel("Nombre:"));
     			        panel.add(nombre);
