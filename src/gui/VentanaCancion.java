@@ -53,6 +53,8 @@ public class VentanaCancion extends JFrame {
         //Cargamos la cancion que vamos a estar usando
 		c= lcan.get(pos);
 		
+		//Uso de IAG ChatGPT 
+		//ADAPTADO: Explicacion del uso del JLayeredPane(), adaptado entero con las propiedades de esta clase
 		pCentral = new JLayeredPane();
 		pCentral.setPreferredSize(new Dimension(400, 400));
 		pCentral.setBackground(new Color(60, 60, 60)); 
@@ -133,7 +135,9 @@ public class VentanaCancion extends JFrame {
 		pBotones.add(btnalante);		
 		pBotones.add(btnBucle);
 		
-		//Para repetir la cancion		
+		//Para repetir la cancion	
+		//Uso de IAG ChatGPT
+		//ADAPTADO: Cambiado el nombre de la label y la ruta de la imagen
 		lblrepetir= new JLabel();
 		lblrepetir.setSize(20, 20);
 		ImageIcon im3 = new ImageIcon("resources/images/bucle.jpg");
