@@ -152,6 +152,11 @@ public class VentanaAlbumArtista extends JFrame {
         albumScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
         albumScroll.getHorizontalScrollBar().setUnitIncrement(16);
         albumScroll.setBackground(new Color(18, 18, 18));
+     // Este código fue parcialmente asistido con ChatGPT:
+     // - Configuración de las barras de desplazamiento (horizontal y sin scroll vertical)
+     // - Personalización del borde con TitledBorder (colores, alineación y fuente del título)
+     // - Ajuste del incremento de desplazamiento horizontal
+     // - Selección de esquema de colores adecuado para un diseño oscuro
      
         // PANEL HORIZONTAL DE ARTISTAS
         artistaGrid = new JPanel();
@@ -521,12 +526,12 @@ public class VentanaAlbumArtista extends JFrame {
 
                 if (confirm == JOptionPane.OK_OPTION) {
                     String cuenta = JOptionPane.showInputDialog(null, "INTRODUCIR NUMERO DE CUENTA", "IBAN:", JOptionPane.PLAIN_MESSAGE);
-                    gestorBD.updatePremium(gestorBD.getIdUsuarioByUsuario(user.getNombre()));
-                    if (cuenta != null &&gestorBD.getIfPremiumByUsuario(user.getNombre())==1) {
+                    gestorBD.updatePremium(gestorBD.getIdUsuarioByUsuario(user.getUsuario()));
+                    if (cuenta != null &&gestorBD.getIfPremiumByUsuario(user.getUsuario())==1) {
                         JOptionPane.showMessageDialog(null, "Cuenta registrada: " + cuenta + "\n¡Actualización a premium exitosa!");
                         
                         // Marca al usuario como premium y cambia el borde
-                        gestorBD.updatePremium(gestorBD.getIdUsuarioByUsuario(user.getNombre()));
+                        gestorBD.updatePremium(gestorBD.getIdUsuarioByUsuario(user.getUsuario()));
                         cambiosPremium();                        
                     }
                 }
@@ -583,7 +588,7 @@ public class VentanaAlbumArtista extends JFrame {
         return button;
     }
    private void cambiosPremium() {
-	   if(gestorBD.getIfPremiumByUsuario(user.getNombre())==1) {
+	   if(gestorBD.getIfPremiumByUsuario(user.getUsuario())==1) {
            getRootPane().setBorder(BorderFactory.createLineBorder(new Color(0, 122, 255), 5)); // Borde azul de 5 px para premium       
             premiumLabel.setVisible(true);
 	   }
@@ -597,6 +602,12 @@ public class VentanaAlbumArtista extends JFrame {
         premiumLabel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         premiumLabel.setVisible(false); // Solo se mostrará si el usuario es premium
     }
+ // Asistencia obtenida con ChatGPT:
+ // - Diseño de paneles personalizados para álbumes y artistas (colores, bordes, eventos del mouse).
+ // - Implementación de la funcionalidad de playlists aleatorias con el uso de la clase Recursividad.
+ // - Configuración del sidebar con secciones dinámicas y manejo de componentes premium.
+ // - Lógica para abrir ventanas secundarias (VentanaListaCanciones) al hacer clic en álbumes/artistas.
+ // - Manejo del estado premium del usuario y actualizaciones en el UI.
     
     private JPanel createPlaylistPanel(PlayList playlist) {
     	JPanel playlistPanel = new JPanel();
