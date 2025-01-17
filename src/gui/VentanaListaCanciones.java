@@ -82,7 +82,7 @@ public class VentanaListaCanciones extends JFrame {
         	this.canciones = this.gestorBD.getCancionesByIDAlbum((Album) albumArtistaPlayList);
         } else if (albumArtistaPlayList instanceof Artista) {
         	this.canciones = this.gestorBD.getCancionesByIDArtista((Artista) albumArtistaPlayList);        	
-        } else if (albumArtistaPlayList instanceof PlayList) { // CAMBIARLO CUANDO HAGAMOS PLAYLIST
+        } else if (albumArtistaPlayList instanceof PlayList) {
         	this.canciones = this.gestorBD.getIdCancionesByIdPlayList(this.gestorBD.getIdPlayListByNombre(((PlayList) albumArtistaPlayList).getTitulo()));
         } 
         
@@ -140,7 +140,8 @@ public class VentanaListaCanciones extends JFrame {
             if (img == null) {
                 throw new Exception("La imagen no se ha podido cargar.");
             }
-            
+            // Uso de IAG ChatGPT
+            // ADAPTADO: Explicacion del uso del Image.SCALE_SMOOTH
             labelImagen = new JLabel(new ImageIcon(img.getScaledInstance(140, 140, Image.SCALE_SMOOTH)));            
         } catch (Exception e) {
             System.err.println("Error cargando la imagen");
@@ -346,6 +347,8 @@ public class VentanaListaCanciones extends JFrame {
 		this.tablaCanciones.getTableHeader().setReorderingAllowed(false);
 		this.tablaCanciones.getTableHeader().setResizingAllowed(false);
 		this.tablaCanciones.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		// Uso de IAG ChatGPT 
+		// ADAPTADO: Para que cuando la tabla no este llena el espacio libre se vea del mismo color que el resto
 		this.tablaCanciones.setBackground(new Color(40, 40, 40));
 		
 		TableCellRenderer cellRenderer = (table, value, isSelected, hasFocus, row, column) -> {
